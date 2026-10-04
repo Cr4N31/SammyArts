@@ -76,11 +76,11 @@ function Portfolio() {
   return (
     <section
       id="gallery"
-      className="relative overflow-hidden bg-accent px-5 py-20 text-brand md:px-10 md:py-32"
+      className="relative overflow-hidden bg-accent py-20 text-brand md:py-32"
     >
-      <div className="mx-auto max-w-6xl">
+      <div className="">
         {/* Header */}
-        <div className="mb-10 flex items-end justify-between gap-6 md:mb-14">
+        <div className="mb-10 flex px-5 md:px-10 items-end justify-between gap-6 md:mb-14">
           <div>
             <p className="mb-4 text-xs uppercase tracking-[0.3em] opacity-60">
               Gallery
@@ -183,6 +183,14 @@ function Portfolio() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="flex justify-center mt-6 items-center flex-row">
+        <a
+          href="/gallery"
+          className="text-lg font-medium border-b border-brand text-brand"
+        >
+          View more projects &rarr;
+        </a>
       </div>
     </section>
   );

@@ -18,6 +18,9 @@ const rightNavlinks = [
   { item: "Contact", href: "/contact" },
 ];
 const allNavlinks = [...leftNavlinks, ...rightNavlinks];
+const MotionDiv = motion.div;
+const MotionUl = motion.ul;
+const MotionLi = motion.li;
 
 function Header({ aboutRef }) {
   const [isOnLightBackground, setIsOnLightBackground] = useState(false);
@@ -25,12 +28,11 @@ function Header({ aboutRef }) {
 
   const { scrollYProgress } = useScroll({
     target: aboutRef,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end end"],
   });
 
-  // Light only while the About section is actually under the header
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    setIsOnLightBackground(progress > 0 && progress < 1);
+    setIsOnLightBackground(progress >= 0.75);
   });
 
   // Close on Escape
@@ -101,7 +103,7 @@ function Header({ aboutRef }) {
       {/* Mobile: dropdown */}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <MotionDiv
             key="backdrop"
             className="fixed inset-0 -z-10 md:hidden"
             initial={{ opacity: 0 }}
@@ -111,7 +113,7 @@ function Header({ aboutRef }) {
           />
         )}
         {open && (
-          <motion.ul
+          <MotionUl
             key="menu"
             id="mobile-menu"
             initial={{ opacity: 0, y: -12, scale: 0.98 }}
@@ -121,7 +123,7 @@ function Header({ aboutRef }) {
             className="absolute inset-x-4 top-full origin-top overflow-hidden rounded-2xl border border-accent/30 bg-brand/95 p-2 backdrop-blur-md md:hidden"
           >
             {allNavlinks.map((link, i) => (
-              <motion.li
+              <MotionLi
                 key={link.href}
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -141,9 +143,9 @@ function Header({ aboutRef }) {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </a>
-              </motion.li>
+              </MotionLi>
             ))}
-          </motion.ul>
+          </MotionUl>
         )}
       </AnimatePresence>
     </header>
