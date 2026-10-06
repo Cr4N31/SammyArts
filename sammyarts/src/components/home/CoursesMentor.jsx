@@ -158,7 +158,7 @@ function CoursesMentor() {
 
           <a
             href="/courses"
-            className="group inline-flex items-center gap-4 rounded-full bg-accent px-8 py-4 text-sm uppercase tracking-[0.2em] text-brand transition-colors hover:text-accent duration-300 hover:bg-cream"
+            className="group inline-flex items-center gap-4 rounded-full bg-accent px-8 py-4 text-sm uppercase tracking-[0.2em] border border-brand text-brand transition-colors hover:text-accent duration-300 hover:bg-cream"
           >
             Browse courses
             <span className="transition-transform duration-300 group-hover:translate-x-1">
