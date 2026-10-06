@@ -86,7 +86,7 @@ function Portfolio() {
               Gallery
             </p>
             <h2 className="font-serif text-[clamp(2.75rem,8vw,6rem)] italic leading-[0.95] tracking-[-0.05em]">
-              Selected <span>Works</span>
+              A few of our artistic <span>works</span>
             </h2>
           </div>
 

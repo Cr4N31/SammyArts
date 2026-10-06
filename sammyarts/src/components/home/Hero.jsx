@@ -175,7 +175,7 @@ function Hero() {
           </div>
 
           <Item progress={smoothProgress} speed={30} delay={0.4}>
-            <h1 className="font-serif text-[17vw] leading-[0.9] tracking-tight text-white md:text-[12vw]">
+            <h1 className="font-serif text-[17vw] leading-[0.9] italic tracking-tight text-white md:text-[12vw]">
               Sammy<em className="italic text-accent">Arts</em>
             </h1>
           </Item>
