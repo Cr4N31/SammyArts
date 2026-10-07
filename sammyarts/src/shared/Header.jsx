@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import logo from "/img/Light.png";
+import { Link, useLocation } from "react-router-dom";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionDiv = motion.div;
@@ -15,24 +16,18 @@ const navlinks = [
   { item: "Contact", href: "/contact" },
 ];
 
-// Reads the current path. If you use react-router, delete this hook and use:
-// const { pathname } = useLocation();
-function usePathname() {
-  const [path, setPath] = useState(() => window.location.pathname);
-  useEffect(() => {
-    const update = () => setPath(window.location.pathname);
-    window.addEventListener("popstate", update);
-    return () => window.removeEventListener("popstate", update);
-  }, []);
-  return path;
-}
-
+// "/" only matches exactly, other links also match their sub pages
 const isActive = (path, href) =>
   href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const path = usePathname();
+  const { pathname } = useLocation();
+
+  // Close the menu whenever the route changes
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   // Close on Escape
   useEffect(() => {
@@ -49,9 +44,14 @@ function Header() {
         className="flex items-center justify-between px-5 py-3 md:px-10 md:py-6"
       >
         {/* Logo */}
-        <a href="/" onClick={() => setOpen(false)} aria-label="SammyArts home">
-          <img src={logo} alt="SammyArts" className="w-32 h-full" />
-        </a>
+        <Link
+          to="/"
+          onClick={() => setOpen(false)}
+          aria-label="SammyArts home"
+          className="block"
+        >
+          <img src={logo} alt="SammyArts" className="h-auto w-32" />
+        </Link>
 
         {/* Hamburger */}
         <button
@@ -99,10 +99,10 @@ function Header() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ duration: 0.45, ease: EASE }}
-            className="absolute right-4 top-full w-[calc(100%-2rem)] max-w-xs origin-top-right overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:right-16 md:max-w-sm"
+            className="absolute right-4 top-full w-[calc(100%-2rem)] max-w-xs origin-top-right overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:right-10 md:max-w-sm"
           >
             {navlinks.map((link, i) => {
-              const active = isActive(path, link.href);
+              const active = isActive(pathname, link.href);
               return (
                 <MotionLi
                   key={link.href}
@@ -114,11 +114,11 @@ function Header() {
                     ease: EASE,
                   }}
                 >
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     onClick={() => setOpen(false)}
                     aria-current={active ? "page" : undefined}
-                    className={`flex items-center justify-between rounded-xl px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
+                    className={`flex w-full items-center justify-between rounded-xl px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
                       active ? "bg-raised text-accent" : "text-muted"
                     }`}
                   >
@@ -134,7 +134,7 @@ function Header() {
                     <span className="font-sans text-[0.65rem] not-italic tracking-[0.2em] text-muted/70">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                  </a>
+                  </Link>
                 </MotionLi>
               );
             })}
