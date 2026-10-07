@@ -91,7 +91,7 @@ function About() {
             {...fadeUp}
             transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
             href="#gallery"
-            className="mt-10 inline-flex items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[0.2em]"
+            className="mt-10 inline-flex hover:text-accent duration-250 transition-all items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[0.2em]"
           >
             View the gallery
           </MotionA>

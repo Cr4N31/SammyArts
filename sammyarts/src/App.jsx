@@ -1,5 +1,7 @@
+import { Routes, Route } from "react-router-dom";
 import Header from "./shared/Header";
 import Home from "./page/Home";
+import Gallery from "./page/Gallery";
 import Footer from "./shared/Footer";
 // in App.jsx
 import { useEffect } from "react";
@@ -22,7 +24,11 @@ function App() {
   return (
     <div className="page-flow min-h-screen text-text">
       <Header />
-      <Home />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/gallery" element={<Gallery />} />
+      </Routes>
+
       <Footer />
     </div>
   );

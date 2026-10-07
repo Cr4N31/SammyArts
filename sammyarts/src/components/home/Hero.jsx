@@ -212,7 +212,7 @@ function Hero() {
             <Item progress={smoothProgress} speed={65} delay={0.4}>
               <a
                 href="#gallery"
-                className="inline-flex w-fit items-center gap-3 rounded-full bg-accent px-6 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-brand transition-colors duration-300 hover:bg-accent-hover"
+                className="inline-flex w-fit items-center gap-3 rounded-full bg-accent px-6 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-brand transition-colors duration-300 hover:bg-bg hover:border-accent hover:border hover:text-accent"
               >
                 View Gallery
                 <span aria-hidden="true">&rarr;</span>
