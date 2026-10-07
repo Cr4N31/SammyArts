@@ -87,7 +87,7 @@ function Hero() {
   return (
     <section
       ref={ref}
-      className="relative p-6 isolate min-h-screen overflow-hidden bg-brand text-cream"
+      className="relative isolate min-h-screen overflow-hidden bg-brand text-cream md:p-6"
     >
       {/* Background */}
       <img
@@ -181,7 +181,7 @@ function Hero() {
             delay={0.4}
             className="w-full text-center md:w-auto md:text-right"
           >
-            <h1 className="font-serif text-[17vw] leading-[0.9] italic tracking-tight text-white md:text-[12vw]">
+            <h1 className="font-serif text-[15vw] leading-[0.9] italic tracking-tight whitespace-nowrap text-white md:text-[12vw]">
               Sammy<em className="italic text-accent">Arts</em>
             </h1>
           </Item>
