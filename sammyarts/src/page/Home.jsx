@@ -4,11 +4,11 @@ import Portfolio from "../components/home/Portfolio";
 import CoursesMentor from "../components/home/CoursesMentor";
 import Confessions from "../components/home/Confessions";
 
-function Home({ aboutRef }) {
+function Home() {
   return (
     <main>
       <Hero />
-      <About sectionRef={aboutRef} />
+      <About />
       <Portfolio />
       <CoursesMentor />
       <Confessions />

@@ -33,7 +33,7 @@ const NavButton = ({ side, onClick, label }) => (
     type="button"
     onClick={onClick}
     aria-label={label}
-    className={`absolute top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-xl border border-accent/40 bg-brand/60 text-accent backdrop-blur transition-colors hover:bg-accent hover:text-brand md:h-14 md:w-14 ${
+    className={`absolute top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-xl border border-border bg-bg/80 text-accent backdrop-blur transition-colors hover:bg-accent-hover hover:text-brand active:bg-accent-pressed md:h-14 md:w-14 ${
       side === "left" ? "left-3 md:left-5" : "right-3 md:right-5"
     }`}
   >
@@ -76,13 +76,13 @@ function Portfolio() {
   return (
     <section
       id="gallery"
-      className="relative overflow-hidden bg-accent py-20 text-brand md:py-32"
+      className="relative overflow-hidden py-20 text-text md:py-32"
     >
       <div className="">
         {/* Header */}
         <div className="mb-10 flex px-5 md:px-10 items-end justify-between gap-6 md:mb-14">
           <div>
-            <p className="mb-4 text-xs uppercase tracking-[0.3em] opacity-60">
+            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-muted">
               Gallery
             </p>
             <h2 className="font-serif text-[clamp(2.75rem,8vw,6rem)] italic leading-[0.95] tracking-[-0.05em]">
@@ -90,7 +90,7 @@ function Portfolio() {
             </h2>
           </div>
 
-          <p className="font-serif text-sm tabular-nums opacity-70 md:text-base">
+          <p className="font-serif text-sm tabular-nums text-muted md:text-base">
             <span>{String(index + 1).padStart(2, "0")}</span> /{" "}
             {String(total).padStart(2, "0")}
           </p>
@@ -106,7 +106,7 @@ function Portfolio() {
           onFocus={() => setPaused(true)}
           onBlur={() => setPaused(false)}
         >
-          <div className="relative aspect-[4/3] overflow-hidden bg-brand/10 ring-1 ring-current/10 md:aspect-[16/9]">
+          <div className="relative aspect-[4/3] overflow-hidden bg-raised ring-1 ring-border md:aspect-[16/9]">
             <AnimatePresence initial={false} custom={direction}>
               <MotionDiv
                 key={item.id}
@@ -136,11 +136,11 @@ function Portfolio() {
                 />
 
                 {/* Readability gradient behind the tag */}
-                <div className="absolute inset-0 bg-linear-to-t from-brand/80 via-brand/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-bg/80 via-bg/10 to-transparent" />
 
                 {/* Title tag */}
                 <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8">
-                  <span className="inline-flex items-center gap-2.5 border border-accent/50 bg-brand/60 px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.2em] text-accent backdrop-blur-sm md:px-4 md:py-2 md:text-xs">
+                  <span className="inline-flex items-center gap-2.5 border border-border bg-bg/80 px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.2em] text-accent backdrop-blur-sm md:px-4 md:py-2 md:text-xs">
                     <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                     {item.title}
                   </span>
@@ -174,10 +174,9 @@ function Portfolio() {
                 <span
                   className={`block h-px transition-all duration-500 ${
                     i === index
-                      ? "w-10"
-                      : "w-5 opacity-30 group-hover:opacity-60"
+                      ? "w-10 bg-accent"
+                      : "w-5 bg-muted/30 group-hover:bg-muted/60"
                   }`}
-                  style={{ backgroundColor: "currentColor" }}
                 />
               </button>
             ))}
@@ -187,7 +186,7 @@ function Portfolio() {
       <div className="flex justify-center mt-6 items-center flex-row">
         <a
           href="/gallery"
-          className="text-lg font-medium border-b border-brand text-brand"
+          className="text-lg font-medium border-b border-accent text-accent transition-colors hover:text-accent-hover hover:border-accent-hover"
         >
           View more projects &rarr;
         </a>

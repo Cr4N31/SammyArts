@@ -11,6 +11,9 @@ import {
 const EASE = [0.16, 1, 0.3, 1];
 const AUTO_SPEED = 50; // px per second, drift when idle
 const SCROLL_SMOOTHING_MS = 100; // higher = softer response to scroll
+const MotionP = motion.p;
+const MotionH2 = motion.h2;
+const MotionDiv = motion.div;
 
 // Placeholder copy. Keep an EVEN number of cards so the colors keep
 // alternating across the loop seam.
@@ -76,8 +79,8 @@ const ConfessionCard = ({ item, index }) => {
 
   return (
     <li
-      className={`relative shrink-0 rounded-sm px-8 pb-12 pt-14 text-center shadow-lg ${item.width} ${
-        dark ? "bg-brand text-accent" : "bg-white text-brand"
+      className={`relative shrink-0 rounded-sm border border-border px-8 pb-12 pt-14 text-center shadow-lg ${item.width} ${
+        dark ? "bg-surface text-text" : "bg-raised text-text"
       }`}
       style={{
         transform: `rotate(${item.rotate}deg)`,
@@ -97,7 +100,7 @@ const ConfessionCard = ({ item, index }) => {
 
       <div className="mt-8">
         <p className="text-xs font-bold">{item.name}</p>
-        <p className="mt-1 text-xs opacity-70">{item.role}</p>
+        <p className="mt-1 text-xs text-muted">{item.role}</p>
       </div>
     </li>
   );
@@ -179,20 +182,20 @@ function Confessions() {
     <section
       ref={sectionRef}
       id="confessions"
-      className="relative overflow-hidden bg-accent py-24 text-brand md:py-32"
+      className="relative overflow-hidden py-24 text-text md:py-32"
     >
       {/* Header */}
       <div className="mx-auto mb-14 max-w-6xl px-5 md:mb-20 md:px-10">
-        <motion.p
+        <MotionP
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 1, ease: EASE }}
-          className="mb-4 text-xs uppercase tracking-[0.3em] opacity-60"
+          className="mb-4 text-xs uppercase tracking-[0.3em] text-muted"
         >
           Confessions
-        </motion.p>
-        <motion.h2
+        </MotionP>
+        <MotionH2
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -200,7 +203,7 @@ function Confessions() {
           className="font-serif text-[clamp(2.75rem,8vw,6rem)] italic leading-[0.95] tracking-[-0.05em]"
         >
           Words from the people we have worked with
-        </motion.h2>
+        </MotionH2>
       </div>
 
       {/* Carousel */}
@@ -209,7 +212,7 @@ function Confessions() {
         onMouseEnter={() => (hoveredRef.current = true)}
         onMouseLeave={() => (hoveredRef.current = false)}
       >
-        <motion.div
+        <MotionDiv
           ref={trackRef}
           style={reduce ? undefined : { x: wrappedX }}
           className="flex w-max pb-16 will-change-transform"
@@ -225,7 +228,7 @@ function Confessions() {
               ))}
             </ul>
           ))}
-        </motion.div>
+        </MotionDiv>
       </div>
     </section>
   );

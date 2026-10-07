@@ -2,12 +2,10 @@ import Header from "./shared/Header";
 import Home from "./page/Home";
 import Footer from "./shared/Footer";
 // in App.jsx
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Lenis from "lenis";
 
 function App() {
-  const aboutRef = useRef(null);
-
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.1 });
     let id;
@@ -22,11 +20,11 @@ function App() {
     };
   }, []);
   return (
-    <main className="min-h-screen bg-accent">
-      <Header aboutRef={aboutRef} />
-      <Home aboutRef={aboutRef} />
+    <div className="page-flow min-h-screen text-text">
+      <Header />
+      <Home />
       <Footer />
-    </main>
+    </div>
   );
 }
 

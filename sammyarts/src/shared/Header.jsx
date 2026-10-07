@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-} from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionSpan = motion.span;
@@ -43,7 +38,9 @@ const NavLink = ({ href, active, children }) => (
   <a
     href={href}
     aria-current={active ? "page" : undefined}
-    className="group relative block py-2 text-[0.7rem] uppercase tracking-[0.25em]"
+    className={`group relative block py-2 text-[0.7rem] uppercase tracking-[0.25em] transition-colors duration-300 ${
+      active ? "text-accent" : "text-muted hover:text-accent-hover"
+    }`}
   >
     {children}
     {active ? (
@@ -62,19 +59,9 @@ const NavLink = ({ href, active, children }) => (
   </a>
 );
 
-function Header({ aboutRef }) {
-  const [hasLeftHero, setHasLeftHero] = useState(false);
+function Header() {
   const [open, setOpen] = useState(false);
   const path = usePathname();
-
-  const { scrollYProgress } = useScroll({
-    target: aboutRef,
-    offset: ["start start", "end start"],
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    setHasLeftHero(progress > 0);
-  });
 
   // Close on Escape
   useEffect(() => {
@@ -84,12 +71,8 @@ function Header({ aboutRef }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const textColor = hasLeftHero ? "text-brand" : "text-accent";
-
   return (
-    <header
-      className={`fixed left-0 top-0 z-50 w-full bg-transparent transition-colors duration-300 ${textColor}`}
-    >
+    <header className="fixed left-0 top-0 z-50 w-full text-text">
       <nav
         aria-label="Primary"
         className="flex items-center justify-between px-5 py-3 md:px-16 md:py-6"
@@ -122,7 +105,7 @@ function Header({ aboutRef }) {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="flex items-center gap-3 py-2 text-[0.7rem] uppercase tracking-[0.25em]"
+            className="flex items-center gap-3 py-2 text-[0.7rem] uppercase tracking-[0.25em] text-muted transition-colors hover:text-accent-hover focus-visible:text-accent-hover"
           >
             {open ? "Close" : "Menu"}
             <span className="relative block h-2 w-5" aria-hidden="true">
@@ -163,7 +146,7 @@ function Header({ aboutRef }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ duration: 0.45, ease: EASE }}
-            className="absolute inset-x-4 top-full origin-top overflow-hidden rounded-2xl border border-accent/30 bg-brand/95 p-2 backdrop-blur-md md:hidden"
+            className="absolute inset-x-4 top-full origin-top overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:hidden"
           >
             {allNavlinks.map((link, i) => {
               const active = isActive(path, link.href);
@@ -182,8 +165,8 @@ function Header({ aboutRef }) {
                     href={link.href}
                     onClick={() => setOpen(false)}
                     aria-current={active ? "page" : undefined}
-                    className={`flex items-center justify-between px-4 py-3.5 font-serif text-2xl italic text-accent transition-all duration-250 hover:bg-accent hover:text-brand ${
-                      active ? "bg-accent/10" : ""
+                    className={`flex items-center justify-between px-4 py-3.5 font-serif text-2xl italic transition-colors duration-250 hover:bg-raised hover:text-accent-hover ${
+                      active ? "bg-raised text-accent" : "text-muted"
                     }`}
                   >
                     <span className="flex items-center gap-3">
@@ -195,7 +178,7 @@ function Header({ aboutRef }) {
                       />
                       {link.item}
                     </span>
-                    <span className="font-sans text-[0.65rem] not-italic tracking-[0.2em] opacity-60">
+                    <span className="font-sans text-[0.65rem] not-italic tracking-[0.2em] text-muted/70">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </a>

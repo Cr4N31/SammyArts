@@ -29,7 +29,7 @@ const ArrowDown = ({ className = "w-4 h-4" }) => (
 // Swap this for an <img className="w-full h-full object-cover" /> when you have the images
 const ImagePlaceholder = ({ label, className = "" }) => (
   <div
-    className={`grid place-items-center border border-dashed border-accent/40 bg-accent/10 text-xs text-accent/70 ${className}`}
+    className={`grid place-items-center border border-dashed border-border bg-surface/70 text-xs text-muted ${className}`}
   >
     {label}
   </div>
@@ -87,7 +87,7 @@ function Hero() {
   return (
     <section
       ref={ref}
-      className="relative isolate min-h-screen overflow-hidden bg-brand text-cream md:p-6"
+      className="relative isolate min-h-screen overflow-hidden bg-bg text-text md:p-6"
     >
       {/* Background */}
       <img
@@ -95,7 +95,7 @@ function Hero() {
         alt=""
         className="absolute inset-0 -z-10 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 -z-10 bg-brand/85" />
+      <div className="absolute inset-0 -z-10 bg-bg/85" />
       {/* Soft accent glow */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_100%,rgba(247,142,72,0.18),transparent)]" />
 
@@ -124,7 +124,7 @@ function Hero() {
               />
             </Item>
             <Item progress={smoothProgress} speed={110} delay={0.3}>
-              <p className="mt-4 text-left text-xs leading-relaxed text-white/70">
+              <p className="mt-4 text-left text-xs leading-relaxed text-muted">
                 Discover exclusive, hand-crafted pieces shaped from raw
                 materials and deep intention only at SammyArts' annual showcase.
               </p>
@@ -152,7 +152,7 @@ function Hero() {
         <div className="relative z-20 flex flex-col gap-6 md:-mt-24 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-6 md:gap-10">
             <Item progress={smoothProgress} speed={70} delay={0.35}>
-              <span className="font-serif text-4xl text-white md:text-5xl">
+              <span className="font-serif text-4xl text-text md:text-5xl">
                 Discover
               </span>
             </Item>
@@ -165,9 +165,9 @@ function Hero() {
             >
               <a
                 href="#gallery"
-                className="group flex w-fit items-center gap-3 text-xs text-white/70 transition-colors hover:text-accent"
+                className="group flex w-fit items-center gap-3 text-xs text-muted transition-colors hover:text-accent-hover"
               >
-                <span className="grid h-12 w-12 place-items-center rounded-xl border border-accent/40 text-accent transition-colors group-hover:bg-accent group-hover:text-brand">
+                <span className="grid h-12 w-12 place-items-center rounded-xl border border-border text-accent transition-colors group-hover:bg-accent-hover group-hover:text-brand">
                   <ArrowDown />
                 </span>
                 View Gallery
@@ -181,7 +181,7 @@ function Hero() {
             delay={0.4}
             className="w-full text-center md:w-auto md:text-right"
           >
-            <h1 className="font-serif text-[15vw] leading-[0.9] italic tracking-tight whitespace-nowrap text-white md:text-[12vw]">
+            <h1 className="font-serif text-[15vw] leading-[0.9] italic tracking-tight whitespace-nowrap text-text md:text-[12vw]">
               Sammy<em className="italic text-accent">Arts</em>
             </h1>
           </Item>
@@ -195,9 +195,9 @@ function Hero() {
           >
             <a
               href="#gallery"
-              className="group flex w-fit items-center gap-3 text-xs text-accent/70 transition-colors hover:text-accent"
+              className="group flex w-fit items-center gap-3 text-xs text-accent/70 transition-colors hover:text-accent-hover"
             >
-              <span className="grid h-10 w-10 place-items-center rounded-xl border border-accent/40 text-accent transition-colors group-hover:bg-accent group-hover:text-brand">
+              <span className="grid h-10 w-10 place-items-center rounded-xl border border-border text-accent transition-colors group-hover:bg-accent-hover group-hover:text-brand">
                 <ArrowDown />
               </span>
               View Gallery

@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import { motion } from "motion/react";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionSection = motion.section;
@@ -38,51 +37,17 @@ const offers = [
 const facts = ["Beginner friendly", "Online and in person", "Limited seats"];
 
 function CoursesMentor() {
-  const ref = useRef(null);
-
-  // Animate the background as the section scrolls into view.
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "start 30%"],
-  });
-
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.4,
-  });
-
-  // Slides the tall gradient: solid orange -> soft blend -> solid dark
-  const backgroundPositionY = useTransform(progress, [0, 1], ["0%", "100%"]);
-  const textColor = useTransform(
-    progress,
-    [0.35, 0.85],
-    ["#f6ede6", "#120d0d"],
-  );
-  const headingColor = useTransform(
-    progress,
-    [0.35, 0.85],
-    ["#f6ede6", "#120d0d"],
-  );
-
   return (
     <MotionSection
-      ref={ref}
       id="courses"
-      style={{
-        backgroundColor: "#f78e48",
-        backgroundSize: "100% 400%",
-        backgroundPositionY,
-        color: textColor,
-      }}
-      className="relative overflow-hidden px-5 py-24 md:px-10 md:py-36"
+      className="relative overflow-hidden px-5 py-24 text-text md:px-10 md:py-36"
     >
       <div className="mx-auto max-w-6xl">
         {/* Eyebrow */}
         <MotionP
           {...fadeUp}
           transition={{ duration: 1, ease: EASE }}
-          className="mb-6 text-xs uppercase tracking-[0.3em] opacity-70"
+          className="mb-6 text-xs uppercase tracking-[0.3em] text-muted"
         >
           Courses and Mentorship
         </MotionP>
@@ -95,15 +60,13 @@ function CoursesMentor() {
         >
           Learn the craft.
           <br />
-          <MotionSpan style={{ color: headingColor }}>
-            Make it yours.
-          </MotionSpan>
+          Make it <MotionSpan className="text-accent">yours.</MotionSpan>
         </MotionH2>
 
         <MotionP
           {...fadeUp}
           transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-          className="mt-8 max-w-xl text-sm leading-relaxed opacity-80 md:text-base"
+          className="mt-8 max-w-xl text-sm leading-relaxed text-muted md:text-base"
         >
           We teach artistic courses and run mentorship programs for people who
           want real skill, not just inspiration. Pick a path and start making.
@@ -116,27 +79,27 @@ function CoursesMentor() {
               key={offer.no}
               {...fadeUp}
               transition={{ duration: 1, delay: i * 0.08, ease: EASE }}
-              className="group grid gap-4 border-t border-current/30 py-8 md:grid-cols-12 md:items-start md:gap-8 md:py-10"
+              className="group grid gap-4 border-t border-border py-8 md:grid-cols-12 md:items-start md:gap-8 md:py-10"
             >
-              <span className="text-xs tracking-[0.2em] opacity-60 md:col-span-1 md:pt-3">
+              <span className="text-xs tracking-[0.2em] text-muted md:col-span-1 md:pt-3">
                 {offer.no}
               </span>
               <h3 className="font-serif text-4xl italic leading-none tracking-[-0.04em] transition-transform duration-500 group-hover:translate-x-2 md:col-span-5 md:text-6xl">
                 {offer.title}
               </h3>
-              <p className="max-w-md text-sm leading-relaxed opacity-80 md:col-span-6 md:pt-2 md:text-base">
+              <p className="max-w-md text-sm leading-relaxed text-muted md:col-span-6 md:pt-2 md:text-base">
                 {offer.desc}
               </p>
             </MotionDiv>
           ))}
-          <div className="border-t border-current/30" />
+          <div className="border-t border-border" />
         </div>
 
         {/* Facts */}
         <MotionUl
           {...fadeUp}
           transition={{ duration: 1, ease: EASE }}
-          className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-xs uppercase tracking-[0.2em] opacity-70"
+          className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-xs uppercase tracking-[0.2em] text-muted"
         >
           {facts.map((fact) => (
             <li key={fact} className="flex items-center gap-3">
@@ -158,7 +121,7 @@ function CoursesMentor() {
 
           <a
             href="/courses"
-            className="group inline-flex items-center gap-4 rounded-full bg-accent px-8 py-4 text-sm uppercase tracking-[0.2em] border border-brand text-brand transition-colors hover:text-accent duration-300 hover:bg-cream"
+            className="group inline-flex items-center gap-4 rounded-full bg-accent px-8 py-4 text-sm uppercase tracking-[0.2em] text-brand transition-colors duration-300 hover:bg-accent-hover active:bg-accent-pressed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             Browse courses
             <span className="transition-transform duration-300 group-hover:translate-x-1">

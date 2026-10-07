@@ -1,7 +1,25 @@
 @import "tailwindcss";
 
 @theme {
+  --color-bg: #120d0d;
   --color-brand: #120d0d;
+  --color-surface: #181212;
+  --color-raised: #221918;
+  --color-border: #3a2d2b;
+  --color-text: #f5ede6;
+  --color-muted: #b8aaa0;
   --color-accent: #f78e48;
-  --color-cream: #181212;
+  --color-accent-hover: #ff9f60;
+  --color-accent-pressed: #e0793a;
+}
+
+.page-flow {
+  background: linear-gradient(
+    180deg,
+    var(--color-bg) 0%,
+    var(--color-surface) 28%,
+    var(--color-bg) 55%,
+    var(--color-surface) 78%,
+    var(--color-bg) 100%
+  );
 }
