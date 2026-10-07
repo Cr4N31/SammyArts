@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useScroll,
@@ -6,12 +6,11 @@ import {
   useTransform,
   useReducedMotion,
 } from "motion/react";
-import heroImage from "/img/hero-bg.jpg";
 
 const EASE = [0.16, 1, 0.3, 1]; // easeOutExpo, long soft landing
 const MotionDiv = motion.div;
 
-const ArrowDown = ({ className = "w-4 h-4" }) => (
+const ArrowUpRight = ({ className = "w-3 h-3" }) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -22,18 +21,37 @@ const ArrowDown = ({ className = "w-4 h-4" }) => (
     className={className}
     aria-hidden="true"
   >
-    <path d="M12 5v14M6 13l6 6 6-6" />
+    <path d="M7 17L17 7M8 7h9v9" />
   </svg>
 );
 
-// Swap this for an <img className="w-full h-full object-cover" /> when you have the images
-const ImagePlaceholder = ({ label, className = "" }) => (
-  <div
-    className={`grid place-items-center border border-dashed border-border bg-surface/70 text-xs text-muted ${className}`}
-  >
-    {label}
-  </div>
-);
+// Shows the image when `src` is set. Falls back to a labelled box if there is
+// no src or the image fails to load.
+const ImageCell = ({ label, src, className = "" }) => {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <div
+        className={`grid h-full w-full place-items-center border border-dashed border-border bg-surface/70 text-xs text-muted ${className}`}
+      >
+        {label}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={label}
+      loading="eager"
+      decoding="async"
+      draggable={false}
+      onError={() => setFailed(true)}
+      className={`block h-full w-full select-none object-cover ${className}`}
+    />
+  );
+};
 
 /**
  * Wraps any asset with:
@@ -56,6 +74,7 @@ const Item = ({
       className={`transform-gpu ${className}`}
     >
       <MotionDiv
+        className="h-full"
         initial={{ opacity: 0, y: reduce ? 0 : 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -68,6 +87,88 @@ const Item = ({
     </MotionDiv>
   );
 };
+
+// Placeholder copy, replace with the real lines
+const tagline = [
+  "Hand finished.",
+  "Raw materials.",
+  "Honest craft.",
+  "Quiet depth.",
+];
+
+// One sample photo for now. Give each cell its own src when you have the images.
+const SAMPLE =
+  "https://images.unsplash.com/photo-1790014415640-b937789152ce?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8";
+
+// Five columns, each bottom aligned. `basis` is the share of the column
+// height an image takes, which is what creates the ragged tops.
+const columns = [
+  [
+    {
+      label: "Image 1",
+      src: "https://images.unsplash.com/photo-1791152933480-aa6e16d4786e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+      basis: "basis-[32%]",
+      speed: 40,
+    },
+  ],
+  [
+    {
+      label: "Image 2",
+      src: "https://images.unsplash.com/photo-1790014415640-b937789152ce?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8",
+      basis: "basis-[32%]",
+      speed: 70,
+    },
+    {
+      label: "Image 3",
+      src: "https://images.unsplash.com/photo-1790520781274-5b9f020f05c8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzMXx8fGVufDB8fHx8fA%3D%3D",
+      basis: "basis-[20%]",
+      speed: 70,
+    },
+  ],
+  [
+    {
+      label: "Image 4",
+      src: "https://images.unsplash.com/photo-1583258298678-04b638193ec4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOHx8fGVufDB8fHx8fA%3D%3D",
+      basis: "basis-[32%]",
+      speed: 100,
+    },
+    {
+      label: "Image 5",
+      src: "https://images.unsplash.com/photo-1777236912013-3cfe7328c776?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D",
+      basis: "basis-[32%]",
+      speed: 100,
+    },
+  ],
+  [
+    { list: true, speed: 120 },
+    {
+      label: "Image 6",
+      src: "https://images.unsplash.com/photo-1788067093758-ab07a386b2bd?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw1Mnx8fGVufDB8fHx8fA%3D%3D",
+      basis: "basis-[46%]",
+      speed: 120,
+    },
+  ],
+  [
+    {
+      label: "Image 7",
+      src: "https://images.unsplash.com/photo-1790619719523-43ba16a2303e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D",
+      basis: "basis-[24%]",
+      speed: 150,
+    },
+    {
+      label: "Image 8",
+      src: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YXJ0fGVufDB8fDB8fHww",
+      basis: "basis-[50%]",
+      speed: 150,
+    },
+    {
+      label: "Image 9",
+      src: "https://images.unsplash.com/photo-1579541814924-49fef17c5be5?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGFydHxlbnwwfHwwfHx8MA%3D%3D",
+      basis: "basis-[22%]",
+      speed: 150,
+    },
+  ],
+];
 
 function Hero() {
   const ref = useRef(null);
@@ -87,122 +188,78 @@ function Hero() {
   return (
     <section
       ref={ref}
-      className="relative isolate min-h-screen overflow-hidden bg-bg text-text md:p-6"
+      className="relative isolate min-h-screen overflow-hidden bg-brand text-text"
     >
-      {/* Background */}
-      <img
-        src={heroImage}
-        alt=""
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-      />
-      <div className="absolute inset-0 -z-10 bg-bg/85" />
-      {/* Soft accent glow */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_100%,rgba(247,142,72,0.18),transparent)]" />
-
-      <div className="relative z-10 flex min-h-screen flex-col justify-between gap-10 px-5 py-6 md:px-10 md:py-10">
-        {/* Top row: images */}
-        <div className="grid grid-cols-2 items-start gap-4 md:grid-cols-3 md:gap-6">
-          {/* Center image (first on mobile) */}
-          <Item
-            progress={smoothProgress}
-            speed={50}
-            delay={0.1}
-            className="order-1 col-span-2 mx-auto w-full max-w-sm md:order-2 md:col-span-1 md:max-w-md"
-          >
-            <ImagePlaceholder
-              label="Main image"
-              className="aspect-[4/5] w-full"
-            />
-          </Item>
-
-          {/* Left image + blurb */}
-          <div className="order-2 md:order-1 md:max-w-[240px]">
-            <Item progress={smoothProgress} speed={90} delay={0.2}>
-              <ImagePlaceholder
-                label="Image 2"
-                className="aspect-[4/3] w-full"
-              />
+      <div className="relative z-10 flex min-h-screen flex-col px-5 pb-6 pt-24 md:px-10 md:pb-10 md:pt-28">
+        <div className="flex flex-1 flex-col justify-between gap-10 md:relative md:block md:min-h-[720px]">
+          {/* Text block */}
+          <div className="flex flex-col gap-5 md:absolute md:left-0 md:top-0 md:z-10 md:max-w-[40%] md:gap-6">
+            <Item progress={smoothProgress} speed={40} delay={0.2}>
+              <h1 className="font-serif text-4xl leading-[0.98] tracking-[-0.03em] text-text md:text-[clamp(2.25rem,4.6vw,4.25rem)]">
+                Raw Materials.
+                <br />
+                <em className="italic text-accent">Pure Intention.</em>
+              </h1>
             </Item>
-            <Item progress={smoothProgress} speed={110} delay={0.3}>
-              <p className="mt-4 text-left text-xs leading-relaxed text-muted">
+
+            <Item progress={smoothProgress} speed={55} delay={0.3}>
+              <p className="max-w-xs text-xs leading-relaxed text-muted md:text-sm">
                 Discover exclusive, hand-crafted pieces shaped from raw
                 materials and deep intention only at SammyArts' annual showcase.
               </p>
             </Item>
-          </div>
 
-          {/* Right image + scroll hint */}
-          <div className="order-3 flex flex-col md:items-end md:justify-between md:gap-24">
-            <Item progress={smoothProgress} speed={130} delay={0.25}>
-              <ImagePlaceholder
-                label="Image 3"
-                className="aspect-[4/3] w-full md:aspect-square md:w-48"
-              />
-            </Item>
-            <Item
-              progress={smoothProgress}
-              speed={80}
-              delay={0.45}
-              className="hidden md:block"
-            ></Item>
-          </div>
-        </div>
-
-        {/* Bottom row: title */}
-        <div className="relative z-20 flex flex-col gap-6 md:-mt-24 md:flex-row md:items-end md:justify-between">
-          <div className="flex flex-col gap-6 md:gap-10">
-            <Item progress={smoothProgress} speed={70} delay={0.35}>
-              <span className="font-serif text-4xl text-text md:text-5xl">
-                Discover
-              </span>
-            </Item>
-
-            <Item
-              progress={smoothProgress}
-              speed={55}
-              delay={0.5}
-              className="hidden md:block"
-            >
+            <Item progress={smoothProgress} speed={65} delay={0.4}>
               <a
                 href="#gallery"
-                className="group flex w-fit items-center gap-3 text-xs text-muted transition-colors hover:text-accent-hover"
+                className="inline-flex w-fit items-center gap-3 rounded-full bg-accent px-6 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-brand transition-colors duration-300 hover:bg-accent-hover"
               >
-                <span className="grid h-12 w-12 place-items-center rounded-xl border border-border text-accent transition-colors group-hover:bg-accent-hover group-hover:text-brand">
-                  <ArrowDown />
-                </span>
                 View Gallery
+                <span aria-hidden="true">&rarr;</span>
               </a>
             </Item>
           </div>
 
-          <Item
-            progress={smoothProgress}
-            speed={30}
-            delay={0.4}
-            className="w-full text-center md:w-auto md:text-right"
-          >
-            <h1 className="font-serif text-[15vw] leading-[0.9] italic tracking-tight whitespace-nowrap text-text md:text-[12vw]">
-              Sammy<em className="italic text-accent">Arts</em>
-            </h1>
-          </Item>
-
-          {/* Mobile-only gallery button */}
-          <Item
-            progress={smoothProgress}
-            speed={40}
-            delay={0.55}
-            className="md:hidden"
-          >
-            <a
-              href="#gallery"
-              className="group flex w-fit items-center gap-3 text-xs text-accent/70 transition-colors hover:text-accent-hover"
-            >
-              <span className="grid h-10 w-10 place-items-center rounded-xl border border-border text-accent transition-colors group-hover:bg-accent-hover group-hover:text-brand">
-                <ArrowDown />
-              </span>
-              View Gallery
-            </a>
-          </Item>
+          {/* Image columns */}
+          <div className="grid h-[48svh] min-h-[320px] grid-cols-5 gap-2 md:absolute md:inset-0 md:h-auto md:min-h-0 md:gap-3">
+            {columns.map((col, c) => (
+              <div
+                key={c}
+                className="flex h-full min-h-0 flex-col justify-end gap-2 md:gap-3"
+              >
+                {col.map((cell, r) =>
+                  cell.list ? (
+                    <Item
+                      key="tagline"
+                      progress={smoothProgress}
+                      speed={cell.speed}
+                      delay={0.3 + c * 0.1 + r * 0.08}
+                      className="hidden shrink-0 md:block"
+                    >
+                      <ul className="space-y-2 pb-1 text-xs text-muted">
+                        {tagline.map((line) => (
+                          <li key={line} className="flex items-center gap-2">
+                            <ArrowUpRight className="h-3 w-3 shrink-0 text-accent" />
+                            {line}
+                          </li>
+                        ))}
+                      </ul>
+                    </Item>
+                  ) : (
+                    <Item
+                      key={cell.label}
+                      progress={smoothProgress}
+                      speed={cell.speed}
+                      delay={0.3 + c * 0.1 + r * 0.08}
+                      className={`min-h-0 ${cell.basis}`}
+                    >
+                      <ImageCell label={cell.label} src={cell.src} />
+                    </Item>
+                  ),
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

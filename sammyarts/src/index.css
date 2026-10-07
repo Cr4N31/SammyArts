@@ -9,7 +9,7 @@
   --color-text: #f5ede6;
   --color-muted: #b8aaa0;
   --color-accent: #f78e48;
-  --color-accent-hover: #ff9f60;
+  --color-accent-hover: #f08a58;
   --color-accent-pressed: #e0793a;
 }
 
@@ -17,7 +17,7 @@
   background: linear-gradient(
     180deg,
     var(--color-bg) 0%,
-    var(--color-surface) 28%,
+    var(--color-bg) 28%,
     var(--color-bg) 55%,
     var(--color-surface) 78%,
     var(--color-bg) 100%

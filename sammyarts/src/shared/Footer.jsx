@@ -1,3 +1,4 @@
+import logo from "/img/Light.png";
 const footerLinks = [
   { name: "Home", href: "/" },
   { name: "Gallery", href: "/gallery" },
@@ -10,12 +11,10 @@ function Footer() {
   return (
     <footer className="px-5 pb-6 pt-16 text-text md:px-10 md:pt-20">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-16 flex flex-col gap-10 md:mb-24 md:flex-row md:items-start md:justify-between">
-          <div>
-            <p className="mb-4 text-5xl font-serif italic tracking-[-0.07em] text-text">
-              Sammy<span className="text-accent">Arts</span>
-            </p>
-            <p className="max-w-xs text-sm leading-relaxed text-muted">
+        <div className="mb-16 flex flex-col gap-10 md:mb-24 md:items-start md:justify-between">
+          <div className="flex flex-col justify-center items-center">
+            <img src={logo} className="w-full" />
+            <p className="max-w-xs text-sm text-center leading-relaxed text-muted">
               Hand-crafted pieces shaped from raw materials and deep intention.
             </p>
           </div>
