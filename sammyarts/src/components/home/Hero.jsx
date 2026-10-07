@@ -9,6 +9,7 @@ import {
 import heroImage from "/img/hero-bg.jpg";
 
 const EASE = [0.16, 1, 0.3, 1]; // easeOutExpo, long soft landing
+const MotionDiv = motion.div;
 
 const ArrowDown = ({ className = "w-4 h-4" }) => (
   <svg
@@ -50,11 +51,11 @@ const Item = ({
   const y = useTransform(progress, [0, 1], [0, reduce ? 0 : -speed]);
 
   return (
-    <motion.div
+    <MotionDiv
       style={{ y, willChange: "transform" }}
       className={`transform-gpu ${className}`}
     >
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, y: reduce ? 0 : 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -63,8 +64,8 @@ const Item = ({
         }}
       >
         {children}
-      </motion.div>
-    </motion.div>
+      </MotionDiv>
+    </MotionDiv>
   );
 };
 
@@ -174,7 +175,12 @@ function Hero() {
             </Item>
           </div>
 
-          <Item progress={smoothProgress} speed={30} delay={0.4}>
+          <Item
+            progress={smoothProgress}
+            speed={30}
+            delay={0.4}
+            className="w-full text-center md:w-auto md:text-right"
+          >
             <h1 className="font-serif text-[17vw] leading-[0.9] italic tracking-tight text-white md:text-[12vw]">
               Sammy<em className="italic text-accent">Arts</em>
             </h1>
@@ -189,7 +195,7 @@ function Hero() {
           >
             <a
               href="#gallery"
-              className="group flex w-fit items-center gap-3 text-xs text-cream/70 transition-colors hover:text-accent"
+              className="group flex w-fit items-center gap-3 text-xs text-accent/70 transition-colors hover:text-accent"
             >
               <span className="grid h-10 w-10 place-items-center rounded-xl border border-accent/40 text-accent transition-colors group-hover:bg-accent group-hover:text-brand">
                 <ArrowDown />

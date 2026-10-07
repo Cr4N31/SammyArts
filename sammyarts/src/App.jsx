@@ -1,5 +1,6 @@
 import Header from "./shared/Header";
 import Home from "./page/Home";
+import Footer from "./shared/Footer";
 // in App.jsx
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
@@ -24,6 +25,7 @@ function App() {
     <main className="min-h-screen bg-accent">
       <Header aboutRef={aboutRef} />
       <Home aboutRef={aboutRef} />
+      <Footer />
     </main>
   );
 }

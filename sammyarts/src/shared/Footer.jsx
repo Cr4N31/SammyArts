@@ -1,0 +1,58 @@
+const footerLinks = [
+  { name: "Home", href: "/" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "Atelier", href: "/atelier" },
+  { name: "Blog", href: "/blog" },
+  { name: "Contact", href: "/contact" },
+];
+
+function Footer() {
+  return (
+    <footer className="bg-accent py-24 px-5 pb-6 pt-16 text-cream md:px-10 md:pt-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-16 flex flex-col gap-10 md:mb-24 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="mb-4 text-5xl font-serif italic tracking-[-0.07em] text-brand">
+              SammyArts
+            </p>
+            <p className="max-w-xs text-sm leading-relaxed text-cream/60">
+              Hand-crafted pieces shaped from raw materials and deep intention.
+            </p>
+          </div>
+
+          <nav aria-label="Footer navigation">
+            <h2 className="mb-4 text-2xl font-serif italic tracking-[-0.07em] text-brand">
+              Explore
+            </h2>
+            <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm sm:grid-cols-3 md:flex md:gap-8">
+              {footerLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className="inline-block text-cream/80 transition-transform duration-200 hover:scale-105 focus-visible:scale-105"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <div className="mt-10 flex flex-col gap-3 border-t border-cream/15 pt-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {new Date().getFullYear()} SammyArts. All rights reserved.
+          </p>
+          <a
+            href="/"
+            className="w-fit transition-colors hover:text-accent focus-visible:text-accent"
+          >
+            Back to home
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default Footer;
