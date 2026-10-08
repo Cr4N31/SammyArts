@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { portfolioData } from "../../data/portfolio";
+import { galleryWorks } from "../../data/galleryData";
 
 const EASE = [0.16, 1, 0.3, 1];
 const AUTOPLAY_MS = 5000;
@@ -43,7 +43,7 @@ const NavButton = ({ side, onClick, label }) => (
 
 function Portfolio() {
   const reduce = useReducedMotion();
-  const total = portfolioData.length;
+  const total = galleryWorks.length;
 
   // [currentIndex, direction]: 1 = moving forward, -1 = moving back
   const [[index, direction], setPage] = useState([0, 0]);
@@ -71,7 +71,7 @@ function Portfolio() {
     exit: (dir) => ({ x: dir >= 0 ? -offset : offset, opacity: 0 }),
   };
 
-  const item = portfolioData[index];
+  const item = galleryWorks[index];
 
   return (
     <section
@@ -162,7 +162,7 @@ function Portfolio() {
 
           {/* Indicators */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            {portfolioData.map((p, i) => (
+            {galleryWorks.map((p, i) => (
               <button
                 key={p.id}
                 type="button"

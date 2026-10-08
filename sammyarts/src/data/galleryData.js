@@ -1,8 +1,14 @@
-// Placeholder images. Replace each `img` with a real file or URL.
-// The grid crops every image to its slot with object-cover, so any
-// shape works. Export around 1200px wide for sharp results.
-const art = (w, h, bg, fg, text) =>
-  `https://placehold.co/${w}x${h}/${bg}/${fg}?text=${encodeURIComponent(text)}`;
+const galleryImages = [
+  "https://images.unsplash.com/photo-1791152933480-aa6e16d4786e?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1790014415640-b937789152ce?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1790520781274-5b9f020f05c8?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1583258298678-04b638193ec4?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1777236912013-3cfe7328c776?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1788067093758-ab07a386b2bd?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1790619719523-43ba16a2303e?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1578301978018-3005759f48f7?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1579541814924-49fef17c5be5?auto=format&fit=crop&w=1200&q=80",
+];
 
 export const galleryWorks = [
   {
@@ -10,83 +16,83 @@ export const galleryWorks = [
     title: "Untitled study",
     medium: "Clay",
     year: 2026,
-    img: art(900, 1000, "3b2a22", "c9733a", "Untitled study"),
+    img: galleryImages[0],
   },
   {
     id: 2,
     title: "Vessel",
     medium: "Stoneware",
     year: 2026,
-    img: art(900, 840, "8a5a3a", "f6ede6", "Vessel"),
+    img: galleryImages[1],
   },
   {
     id: 3,
     title: "Ember",
     medium: "Oak",
     year: 2025,
-    img: art(900, 680, "2a1f1b", "f78e48", "Ember"),
+    img: galleryImages[2],
   },
   {
     id: 4,
     title: "Slow river",
     medium: "Pigment on linen",
     year: 2025,
-    img: art(900, 680, "5a3b2a", "e8b48a", "Slow river"),
+    img: galleryImages[3],
   },
   {
     id: 5,
     title: "Horizon line",
     medium: "Oil on panel",
     year: 2026,
-    img: art(900, 840, "c9733a", "120d0d", "Horizon line"),
+    img: galleryImages[4],
   },
   {
     id: 6,
     title: "Low tide",
     medium: "Oil on linen",
     year: 2026,
-    img: art(900, 1000, "1c1512", "e8b48a", "Low tide"),
+    img: galleryImages[5],
   },
   {
     id: 7,
     title: "Salt",
     medium: "Plaster",
     year: 2025,
-    img: art(900, 1000, "3b2a22", "f6ede6", "Salt"),
+    img: galleryImages[6],
   },
   {
     id: 8,
     title: "Dusk, field",
     medium: "Pigment",
     year: 2026,
-    img: art(900, 840, "5a3b2a", "f78e48", "Dusk, field"),
+    img: galleryImages[7],
   },
   {
     id: 9,
     title: "Threshold",
     medium: "Charcoal",
     year: 2025,
-    img: art(900, 680, "2a1f1b", "c9733a", "Threshold"),
+    img: galleryImages[8],
   },
   {
     id: 10,
     title: "Long afternoon",
     medium: "Oil on panel",
     year: 2026,
-    img: art(900, 680, "8a5a3a", "120d0d", "Long afternoon"),
+    img: galleryImages[0],
   },
   {
     id: 11,
     title: "Kiln, first light",
     medium: "Raku",
     year: 2026,
-    img: art(900, 840, "2a1f1b", "f78e48", "Kiln, first light"),
+    img: galleryImages[1],
   },
   {
     id: 12,
     title: "Last firing",
     medium: "Stoneware",
     year: 2025,
-    img: art(900, 1000, "c9733a", "120d0d", "Last firing"),
+    img: galleryImages[2],
   },
 ];

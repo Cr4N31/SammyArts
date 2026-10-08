@@ -7,14 +7,8 @@ import Viewer from "../components/gallery/Viewer";
 
 const MotionMain = motion.main;
 
-// Works shown before "View all work" is pressed.
-// Set this to galleryWorks.length to show everything and hide the button.
-const INITIAL_COUNT = 6;
-
 function Gallery() {
   const reduceMotion = useReducedMotion();
-  const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? galleryWorks : galleryWorks.slice(0, INITIAL_COUNT);
 
   // `open` is separate from `index` so the viewer can fade out on close
   const [viewer, setViewer] = useState({ open: false, index: 0 });
@@ -31,9 +25,9 @@ function Gallery() {
     (dir) =>
       setViewer((v) => ({
         ...v,
-        index: (v.index + dir + visible.length) % visible.length,
+      index: (v.index + dir + galleryWorks.length) % galleryWorks.length,
       })),
-    [visible.length],
+    [],
   );
 
   return (
@@ -46,11 +40,11 @@ function Gallery() {
       <GalleryIntro workCount={galleryWorks.length} />
 
       <section aria-label="Works" className="px-5 pb-24 md:px-10 md:pb-32">
-        <WorkGrid works={visible} onOpen={openViewer} />
+        <WorkGrid works={galleryWorks} onOpen={openViewer} />
       </section>
 
       <Viewer
-        works={visible}
+        works={galleryWorks}
         open={viewer.open}
         index={viewer.index}
         onClose={closeViewer}
