@@ -35,9 +35,13 @@ function WorkCard({ work, shape, onOpen }) {
       <span className="mt-3 block text-xs font-medium text-accent">
         {work.title}
       </span>
-      <span className="mt-0.5 block text-[0.7rem] leading-snug text-cream/60">
-        {work.medium}, {work.year}
-      </span>
+      {work.medium || work.year || work.desc ? (
+        <span className="mt-0.5 block text-[0.7rem] leading-snug text-cream/60">
+          {work.medium || work.year
+            ? [work.medium, work.year].filter(Boolean).join(", ")
+            : work.desc}
+        </span>
+      ) : null}
     </button>
   );
 }

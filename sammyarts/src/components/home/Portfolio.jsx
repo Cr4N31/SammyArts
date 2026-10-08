@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-<<<<<<< HEAD
-import { galleryWorks } from "../../data/galleryData";
 import { Link } from "react-router-dom";
-=======
 import { useContent } from "../../data/content";
->>>>>>> 7fe4b3d (Add an admin panel for uploading projects and site photos)
 
 const EASE = [0.16, 1, 0.3, 1];
 const AUTOPLAY_MS = 5000;
@@ -48,12 +44,9 @@ const NavButton = ({ side, onClick, label }) => (
 );
 
 function Portfolio() {
-  const { works } = useContent();
+  const { works: allWorks } = useContent();
+  const works = allWorks.slice(0, FEATURED_WORKS_LIMIT);
   const reduce = useReducedMotion();
-<<<<<<< HEAD
-  const works = galleryWorks.slice(0, FEATURED_WORKS_LIMIT);
-=======
->>>>>>> 7fe4b3d (Add an admin panel for uploading projects and site photos)
   const total = works.length;
 
   // [currentIndex, direction]: 1 = moving forward, -1 = moving back
@@ -85,9 +78,6 @@ function Portfolio() {
     exit: (dir) => ({ x: dir >= 0 ? -offset : offset, opacity: 0 }),
   };
 
-<<<<<<< HEAD
-  const item = works[index];
-=======
   const safeIndex = total ? Math.min(index, total - 1) : 0;
   const item = works[safeIndex];
 
@@ -104,7 +94,6 @@ function Portfolio() {
       </section>
     );
   }
->>>>>>> 7fe4b3d (Add an admin panel for uploading projects and site photos)
 
   return (
     <section
@@ -217,10 +206,11 @@ function Portfolio() {
         </div>
       </div>
       <div className="flex justify-center mt-6 items-center flex-row">
-        <Link to="/gallery">
-          <a className="text-lg font-medium border-b border-accent text-accent transition-colors hover:text-accent-hover hover:border-accent-hover">
-            View more projects &rarr;
-          </a>
+        <Link
+          to="/gallery"
+          className="text-lg font-medium border-b border-accent text-accent transition-colors hover:text-accent-hover hover:border-accent-hover"
+        >
+          View more projects &rarr;
         </Link>
       </div>
     </section>
