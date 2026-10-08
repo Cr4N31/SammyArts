@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { portfolioData } from "./portfolio";
-import siteData from "./site.json";
 import { ContentContext } from "./content";
 import { ADMIN_PASSWORD } from "../admin/gate";
 
@@ -21,20 +20,14 @@ async function putJson(url, body) {
 
 export function ContentProvider({ children }) {
   const [works, setWorks] = useState(portfolioData);
-  const [site, setSite] = useState(siteData);
 
   async function saveWorks(next) {
     await putJson("/api/works", next);
     setWorks(next);
   }
 
-  async function saveSite(next) {
-    await putJson("/api/site", next);
-    setSite(next);
-  }
-
   return (
-    <ContentContext.Provider value={{ works, saveWorks, site, saveSite }}>
+    <ContentContext.Provider value={{ works, saveWorks }}>
       {children}
     </ContentContext.Provider>
   );

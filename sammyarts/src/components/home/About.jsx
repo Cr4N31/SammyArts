@@ -1,5 +1,4 @@
 import { motion } from "motion/react";
-import { useContent } from "../../data/content";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionSection = motion.section;
@@ -14,7 +13,6 @@ const fadeUp = {
   viewport: { once: true, margin: "-80px" },
 };
 
-// Swap for <img className="h-full w-full object-cover" /> when you have the headshot
 const ImagePlaceholder = ({ label, className = "" }) => (
   <div
     className={`grid place-items-center border border-dashed border-border bg-raised text-xs text-muted ${className}`}
@@ -24,8 +22,6 @@ const ImagePlaceholder = ({ label, className = "" }) => (
 );
 
 function About() {
-  const { site } = useContent();
-
   return (
     <MotionSection
       id="about"
@@ -39,18 +35,10 @@ function About() {
           className="mx-auto w-full max-w-sm md:col-span-5 md:max-w-none"
         >
           <div className="relative">
-            {site.ceo ? (
-              <img
-                src={site.ceo}
-                alt="Sammy, founder and CEO"
-                className="aspect-[4/5] w-full object-cover"
-              />
-            ) : (
-              <ImagePlaceholder
-                label="CEO headshot"
-                className="aspect-[4/5] w-full"
-              />
-            )}
+            <ImagePlaceholder
+              label="CEO headshot"
+              className="aspect-[4/5] w-full"
+            />
             {/* Offset frame detail */}
             <div className="pointer-events-none absolute -bottom-3 -right-3 -z-10 h-full w-full border border-border" />
           </div>

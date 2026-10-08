@@ -9,20 +9,7 @@ import { ADMIN_PASSWORD } from "./src/admin/gate.js";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const worksFile = path.join(root, "src/data/works.json");
-const siteFile = path.join(root, "src/data/site.json");
 const uploadDir = path.join(root, "public/uploads");
-
-const heroKeys = [
-  "Image 1",
-  "Image 2",
-  "Image 3",
-  "Image 4",
-  "Image 5",
-  "Image 6",
-  "Image 7",
-  "Image 8",
-  "Image 9",
-];
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -89,38 +76,6 @@ function worksApi() {
             }));
 
             fs.writeFileSync(worksFile, `${JSON.stringify(works, null, 2)}\n`);
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify({ ok: true }));
-          })
-          .catch(() => {
-            res.statusCode = 400;
-            res.end("Bad JSON");
-          });
-      });
-
-      server.middlewares.use("/api/site", (req, res, next) => {
-        if (req.method !== "PUT") {
-          next();
-          return;
-        }
-        if (req.headers["x-admin-key"] !== ADMIN_PASSWORD) {
-          res.statusCode = 401;
-          res.end("Unauthorized");
-          return;
-        }
-
-        readBody(req)
-          .then((buf) => {
-            const data = JSON.parse(buf.toString("utf8"));
-            const hero = {};
-            for (const key of heroKeys) {
-              hero[key] = String(data?.hero?.[key] ?? "").slice(0, 2000);
-            }
-            const site = {
-              ceo: String(data?.ceo ?? "").slice(0, 2000),
-              hero,
-            };
-            fs.writeFileSync(siteFile, `${JSON.stringify(site, null, 2)}\n`);
             res.setHeader("Content-Type", "application/json");
             res.end(JSON.stringify({ ok: true }));
           })

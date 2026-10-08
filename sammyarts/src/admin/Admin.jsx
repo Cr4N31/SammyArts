@@ -3,7 +3,6 @@ import { Link, Outlet, Route, Routes, useNavigate, useParams } from "react-route
 import { useContent } from "../data/content";
 import { isAuthed, login, logout } from "./gate";
 import { uploadImage } from "./upload";
-import Photos from "./Photos";
 
 const blank = { id: null, title: "", desc: "", img: "" };
 
@@ -193,9 +192,6 @@ function Frame({ onLogout }) {
         <div className="flex flex-wrap items-center gap-x-6">
           <Link to="/admin" className={textLinkClass}>
             Projects
-          </Link>
-          <Link to="/admin/photos" className={textLinkClass}>
-            Photos
           </Link>
           <Link to="/" className={textLinkClass}>
             View site
@@ -620,7 +616,6 @@ function Admin() {
       >
         <Route index element={<PieceList />} />
         <Route path="new" element={<PiecePage />} />
-        <Route path="photos" element={<Photos />} />
         <Route path=":id" element={<PiecePage />} />
       </Route>
     </Routes>

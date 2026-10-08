@@ -1,15 +1,15 @@
 [
   {
-    "id": 1,
-    "title": "SOME OF OUR ARTS",
-    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "img": "/uploads/1791497116272.jpg"
-  },
-  {
     "id": 2,
     "title": "HOW MUCH WE MADE",
     "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "img": "/uploads/1791497193659.jpg"
+  },
+  {
+    "id": 1,
+    "title": "SOME OF OUR ARTS",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "/uploads/1791497116272.jpg"
   },
   {
     "id": 3,

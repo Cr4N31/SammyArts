@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { useContent } from "../../data/content";
 import {
   motion,
   useScroll,
@@ -26,16 +25,12 @@ const ArrowUpRight = ({ className = "w-3 h-3" }) => (
   </svg>
 );
 
-// Shows the image when `src` is set. Falls back to a labelled box if there is
-// no src or the image fails to load.
-const ImageCell = ({ label, src, className = "" }) => {
+const ImageCell = ({ label, src }) => {
   const [failed, setFailed] = useState(false);
 
   if (!src || failed) {
     return (
-      <div
-        className={`grid h-full w-full place-items-center border border-dashed border-border bg-surface/70 text-xs text-muted ${className}`}
-      >
+      <div className="grid h-full w-full place-items-center border border-dashed border-border bg-surface/70 text-xs text-muted">
         {label}
       </div>
     );
@@ -49,7 +44,7 @@ const ImageCell = ({ label, src, className = "" }) => {
       decoding="async"
       draggable={false}
       onError={() => setFailed(true)}
-      className={`block h-full w-full select-none object-cover ${className}`}
+      className="block h-full w-full select-none object-cover"
     />
   );
 };
@@ -96,10 +91,6 @@ const tagline = [
   "Honest craft.",
   "Quiet depth.",
 ];
-
-// One sample photo for now. Give each cell its own src when you have the images.
-const SAMPLE =
-  "https://images.unsplash.com/photo-1790014415640-b937789152ce?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8";
 
 // Five columns, each bottom aligned. `basis` is the share of the column
 // height an image takes, which is what creates the ragged tops.
@@ -172,7 +163,6 @@ const columns = [
 ];
 
 function Hero() {
-  const { site } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -255,10 +245,7 @@ function Hero() {
                       delay={0.3 + c * 0.1 + r * 0.08}
                       className={`min-h-0 ${cell.basis}`}
                     >
-                      <ImageCell
-                        label={cell.label}
-                        src={site.hero?.[cell.label] || cell.src}
-                      />
+                      <ImageCell label={cell.label} src={cell.src} />
                     </Item>
                   ),
                 )}
