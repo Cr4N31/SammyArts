@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useContent } from "../../data/content";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionSection = motion.section;
@@ -23,6 +24,8 @@ const ImagePlaceholder = ({ label, className = "" }) => (
 );
 
 function About() {
+  const { site } = useContent();
+
   return (
     <MotionSection
       id="about"
@@ -36,10 +39,18 @@ function About() {
           className="mx-auto w-full max-w-sm md:col-span-5 md:max-w-none"
         >
           <div className="relative">
-            <ImagePlaceholder
-              label="CEO headshot"
-              className="aspect-[4/5] w-full"
-            />
+            {site.ceo ? (
+              <img
+                src={site.ceo}
+                alt="Sammy, founder and CEO"
+                className="aspect-[4/5] w-full object-cover"
+              />
+            ) : (
+              <ImagePlaceholder
+                label="CEO headshot"
+                className="aspect-[4/5] w-full"
+              />
+            )}
             {/* Offset frame detail */}
             <div className="pointer-events-none absolute -bottom-3 -right-3 -z-10 h-full w-full border border-border" />
           </div>

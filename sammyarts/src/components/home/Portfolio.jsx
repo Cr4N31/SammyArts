@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+<<<<<<< HEAD
 import { galleryWorks } from "../../data/galleryData";
 import { Link } from "react-router-dom";
+=======
+import { useContent } from "../../data/content";
+>>>>>>> 7fe4b3d (Add an admin panel for uploading projects and site photos)
 
 const EASE = [0.16, 1, 0.3, 1];
 const AUTOPLAY_MS = 5000;
@@ -44,22 +48,29 @@ const NavButton = ({ side, onClick, label }) => (
 );
 
 function Portfolio() {
+  const { works } = useContent();
   const reduce = useReducedMotion();
+<<<<<<< HEAD
   const works = galleryWorks.slice(0, FEATURED_WORKS_LIMIT);
+=======
+>>>>>>> 7fe4b3d (Add an admin panel for uploading projects and site photos)
   const total = works.length;
 
   // [currentIndex, direction]: 1 = moving forward, -1 = moving back
   const [[index, direction], setPage] = useState([0, 0]);
   const [paused, setPaused] = useState(false);
 
-  const paginate = (dir) => setPage(([i]) => [(i + dir + total) % total, dir]);
+  const paginate = (dir) => {
+    if (!total) return;
+    setPage(([i]) => [(i + dir + total) % total, dir]);
+  };
 
   const goTo = (next) =>
     setPage(([i, d]) => (next === i ? [i, d] : [next, next > i ? 1 : -1]));
 
   // Autoplay. Re-arms after every slide change, so a manual click resets the timer
   useEffect(() => {
-    if (paused || reduce) return;
+    if (!total || paused || reduce) return;
     const id = setTimeout(
       () => setPage(([i]) => [(i + 1) % total, 1]),
       AUTOPLAY_MS,
@@ -74,7 +85,26 @@ function Portfolio() {
     exit: (dir) => ({ x: dir >= 0 ? -offset : offset, opacity: 0 }),
   };
 
+<<<<<<< HEAD
   const item = works[index];
+=======
+  const safeIndex = total ? Math.min(index, total - 1) : 0;
+  const item = works[safeIndex];
+
+  if (!item) {
+    return (
+      <section id="gallery" className="px-5 py-20 text-text md:px-10 md:py-32">
+        <p className="mb-4 text-xs uppercase tracking-[0.3em] text-muted">
+          Gallery
+        </p>
+        <h2 className="font-serif text-[clamp(2.75rem,8vw,6rem)] italic leading-[0.95] tracking-[-0.05em]">
+          A few of our artistic works
+        </h2>
+        <p className="mt-6 text-sm text-muted">No pieces yet.</p>
+      </section>
+    );
+  }
+>>>>>>> 7fe4b3d (Add an admin panel for uploading projects and site photos)
 
   return (
     <section
@@ -94,7 +124,7 @@ function Portfolio() {
           </div>
 
           <p className="font-serif text-sm tabular-nums text-muted md:text-base">
-            <span>{String(index + 1).padStart(2, "0")}</span> /{" "}
+            <span>{String(safeIndex + 1).padStart(2, "0")}</span> /{" "}
             {String(total).padStart(2, "0")}
           </p>
         </div>
@@ -171,12 +201,12 @@ function Portfolio() {
                 type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Go to ${p.title}`}
-                aria-current={i === index}
+                aria-current={i === safeIndex}
                 className="group py-3"
               >
                 <span
                   className={`block h-px transition-all duration-500 ${
-                    i === index
+                    i === safeIndex
                       ? "w-10 bg-accent"
                       : "w-5 bg-muted/30 group-hover:bg-muted/60"
                   }`}

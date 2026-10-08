@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "title": "SOME OF OUR ARTS",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "/uploads/1791497116272.jpg"
+  },
+  {
+    "id": 2,
+    "title": "HOW MUCH WE MADE",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "/uploads/1791497193659.jpg"
+  },
+  {
+    "id": 3,
+    "title": "project 3",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "https://via.placeholder.com/300x200"
+  },
+  {
+    "id": 4,
+    "title": "project 4",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "https://via.placeholder.com/300x200"
+  },
+  {
+    "id": 5,
+    "title": "project 5",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "https://via.placeholder.com/300x200"
+  },
+  {
+    "id": 6,
+    "title": "project 6",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "https://via.placeholder.com/300x200"
+  },
+  {
+    "id": 7,
+    "title": "project 7",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "img": "https://via.placeholder.com/300x200"
+  },
+  {
+    "id": 1791494902433,
+    "title": "project 10",
+    "desc": "",
+    "img": ""
+  }
+]

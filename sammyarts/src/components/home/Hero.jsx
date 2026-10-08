@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useContent } from "../../data/content";
 import {
   motion,
   useScroll,
@@ -171,6 +172,7 @@ const columns = [
 ];
 
 function Hero() {
+  const { site } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -253,7 +255,10 @@ function Hero() {
                       delay={0.3 + c * 0.1 + r * 0.08}
                       className={`min-h-0 ${cell.basis}`}
                     >
-                      <ImageCell label={cell.label} src={cell.src} />
+                      <ImageCell
+                        label={cell.label}
+                        src={site.hero?.[cell.label] || cell.src}
+                      />
                     </Item>
                   ),
                 )}
