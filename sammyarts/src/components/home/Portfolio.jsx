@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { galleryWorks } from "../../data/galleryData";
+import { Link } from "react-router-dom";
 
 const EASE = [0.16, 1, 0.3, 1];
 const AUTOPLAY_MS = 5000;
 const SWIPE_THRESHOLD = 80;
+const FEATURED_WORKS_LIMIT = 6;
 const MotionDiv = motion.div;
 
 const Arrow = ({ direction = "right", className = "w-5 h-5" }) => (
@@ -43,7 +45,8 @@ const NavButton = ({ side, onClick, label }) => (
 
 function Portfolio() {
   const reduce = useReducedMotion();
-  const total = galleryWorks.length;
+  const works = galleryWorks.slice(0, FEATURED_WORKS_LIMIT);
+  const total = works.length;
 
   // [currentIndex, direction]: 1 = moving forward, -1 = moving back
   const [[index, direction], setPage] = useState([0, 0]);
@@ -71,7 +74,7 @@ function Portfolio() {
     exit: (dir) => ({ x: dir >= 0 ? -offset : offset, opacity: 0 }),
   };
 
-  const item = galleryWorks[index];
+  const item = works[index];
 
   return (
     <section
@@ -162,7 +165,7 @@ function Portfolio() {
 
           {/* Indicators */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            {galleryWorks.map((p, i) => (
+            {works.map((p, i) => (
               <button
                 key={p.id}
                 type="button"
@@ -184,12 +187,11 @@ function Portfolio() {
         </div>
       </div>
       <div className="flex justify-center mt-6 items-center flex-row">
-        <a
-          href="/gallery"
-          className="text-lg font-medium border-b border-accent text-accent transition-colors hover:text-accent-hover hover:border-accent-hover"
-        >
-          View more projects &rarr;
-        </a>
+        <Link to="/gallery">
+          <a className="text-lg font-medium border-b border-accent text-accent transition-colors hover:text-accent-hover hover:border-accent-hover">
+            View more projects &rarr;
+          </a>
+        </Link>
       </div>
     </section>
   );
