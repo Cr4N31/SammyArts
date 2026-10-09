@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "/img/Light.png";
 const footerLinks = [
   { name: "Home", href: "/" },
@@ -26,12 +27,11 @@ function Footer() {
             <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm sm:grid-cols-3 md:flex md:gap-8">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="inline-block text-muted transition-[color,transform] duration-200 hover:scale-105 hover:text-accent-hover focus-visible:scale-105 focus-visible:text-accent-hover"
-                  >
-                    {link.name}
-                  </a>
+                  <Link to={link.href}>
+                    <span className="inline-block text-muted transition-[color,transform] duration-200 hover:scale-105 hover:text-accent-hover focus-visible:scale-105 focus-visible:text-accent-hover">
+                      {link.name}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
