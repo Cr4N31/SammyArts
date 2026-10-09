@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Outlet, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { useContent } from "../data/content";
-import { isAuthed, login, logout } from "./gate";
+import { firebaseReady, login, logout, watchAuth } from "./gate";
+import { adminEmail } from "../data/firebase";
 import { uploadImage } from "./upload";
+import Photos from "./Photos";
 
 const blank = { id: null, title: "", desc: "", img: "" };
 
@@ -128,13 +130,37 @@ function Problem({ titleError, saveError }) {
 }
 
 function SignIn({ onSuccess }) {
+  const { seedIfNeeded } = useContent();
   const [password, setPassword] = useState("");
-  const [wrong, setWrong] = useState(false);
+  const [wrong, setWrong] = useState("");
+  const [busy, setBusy] = useState(false);
+  const email = adminEmail || "sammyarts@gmail.com";
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
-    if (login(password)) onSuccess();
-    else setWrong(true);
+    setBusy(true);
+    setWrong("");
+    try {
+      if (!firebaseReady()) {
+        throw new Error("Firebase is not set up.");
+      }
+      await login(email, password);
+      await seedIfNeeded();
+      onSuccess();
+    } catch (err) {
+      const code = err?.code || "";
+      if (
+        code.includes("invalid-credential") ||
+        code.includes("wrong-password") ||
+        code.includes("user-not-found")
+      ) {
+        setWrong("That password is wrong.");
+      } else {
+        setWrong(err.message || "Sign in failed.");
+      }
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -154,6 +180,16 @@ function SignIn({ onSuccess }) {
           <h2 className="font-serif text-5xl italic tracking-[-0.04em]">
             Sign in
           </h2>
+          <input
+            type="email"
+            name="username"
+            autoComplete="username"
+            value={email}
+            readOnly
+            tabIndex={-1}
+            aria-hidden="true"
+            className="sr-only"
+          />
           <div className="mt-8">
             <TextField
               id="admin-password"
@@ -163,15 +199,15 @@ function SignIn({ onSuccess }) {
               autoFocus
               announce
               value={password}
-              error={wrong ? "That password is wrong." : ""}
+              error={wrong}
               onChange={(e) => {
                 setPassword(e.target.value);
-                setWrong(false);
+                setWrong("");
               }}
             />
           </div>
-          <button type="submit" className={`${pillClass} mt-8`}>
-            Enter
+          <button type="submit" disabled={busy} className={`${pillClass} mt-8`}>
+            {busy ? "Signing in" : "Enter"}
           </button>
         </form>
       </section>
@@ -192,6 +228,9 @@ function Frame({ onLogout }) {
         <div className="flex flex-wrap items-center gap-x-6">
           <Link to="/admin" className={textLinkClass}>
             Projects
+          </Link>
+          <Link to="/admin/photos" className={textLinkClass}>
+            Photos
           </Link>
           <Link to="/" className={textLinkClass}>
             View site
@@ -598,7 +637,21 @@ function PieceEditor() {
 }
 
 function Admin() {
-  const [authed, setAuthed] = useState(isAuthed);
+  const [authed, setAuthed] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => watchAuth((signedIn) => {
+    setAuthed(signedIn);
+    setChecking(false);
+  }), []);
+
+  if (checking) {
+    return (
+      <main className="grid min-h-screen place-items-center px-5 text-sm text-muted">
+        Checking sign in
+      </main>
+    );
+  }
 
   if (!authed) return <SignIn onSuccess={() => setAuthed(true)} />;
 
@@ -607,8 +660,8 @@ function Admin() {
       <Route
         element={
           <Frame
-            onLogout={() => {
-              logout();
+            onLogout={async () => {
+              await logout();
               setAuthed(false);
             }}
           />
@@ -616,6 +669,7 @@ function Admin() {
       >
         <Route index element={<PieceList />} />
         <Route path="new" element={<PiecePage />} />
+        <Route path="photos" element={<Photos />} />
         <Route path=":id" element={<PiecePage />} />
       </Route>
     </Routes>

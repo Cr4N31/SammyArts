@@ -6,6 +6,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "motion/react";
+import { useContent } from "../../data/content";
 
 const EASE = [0.16, 1, 0.3, 1]; // easeOutExpo, long soft landing
 const MotionDiv = motion.div;
@@ -163,6 +164,7 @@ const columns = [
 ];
 
 function Hero() {
+  const { site } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -245,7 +247,10 @@ function Hero() {
                       delay={0.3 + c * 0.1 + r * 0.08}
                       className={`min-h-0 ${cell.basis}`}
                     >
-                      <ImageCell label={cell.label} src={cell.src} />
+                      <ImageCell
+                        label={cell.label}
+                        src={site.hero?.[cell.label] || cell.src}
+                      />
                     </Item>
                   ),
                 )}
