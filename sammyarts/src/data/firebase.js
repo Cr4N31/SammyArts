@@ -14,10 +14,10 @@ const config = {
 export function firebaseConfigured() {
   return Boolean(
     config.apiKey &&
-      config.authDomain &&
-      config.projectId &&
-      config.messagingSenderId &&
-      config.appId,
+    config.authDomain &&
+    config.projectId &&
+    config.messagingSenderId &&
+    config.appId,
   );
 }
 

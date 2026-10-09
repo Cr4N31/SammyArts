@@ -23,7 +23,9 @@ const ImagePlaceholder = ({ label, className = "" }) => (
 );
 
 function About() {
-  const { site } = useContent();
+  const { site, works } = useContent();
+  const headshot =
+    site.ceo && !works.some((work) => work.img === site.ceo) ? site.ceo : "";
 
   return (
     <MotionSection
@@ -38,9 +40,9 @@ function About() {
           className="mx-auto w-full max-w-sm md:col-span-5 md:max-w-none"
         >
           <div className="relative">
-            {site.ceo ? (
+            {headshot ? (
               <img
-                src={site.ceo}
+                src={headshot}
                 alt="Sammy, founder and CEO"
                 className="aspect-[4/5] w-full object-cover"
               />
