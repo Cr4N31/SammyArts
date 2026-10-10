@@ -23,7 +23,7 @@ function Courses() {
   return (
     <section
       id="courses"
-      className="bg-brand px-6 py-24 text-white md:px-12 md:py-32"
+      className="page-reveal bg-brand px-6 py-24 text-white md:px-12 md:py-32"
     >
       <CoursesHeader />
       <FeaturedCourses items={featured} onBuy={handleBuy} />

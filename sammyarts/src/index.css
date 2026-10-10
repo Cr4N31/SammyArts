@@ -19,7 +19,178 @@
     var(--color-bg) 0%,
     var(--color-bg) 28%,
     var(--color-bg) 55%,
-    var(--color-surface) 78%,
+    var(--color-bg) 78%,
     var(--color-bg) 100%
   );
+}
+
+.page-reveal > * {
+  animation: page-fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.page-reveal > :nth-child(2) {
+  animation-delay: 120ms;
+}
+.page-reveal > :nth-child(3) {
+  animation-delay: 240ms;
+}
+.page-reveal > :nth-child(4) {
+  animation-delay: 360ms;
+}
+
+@keyframes page-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Page transition curtain ---------- */
+
+.page-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.page-curtain__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 25%;
+  background: var(--color-brand);
+  transform: translateY(-101%);
+  transition: transform 560ms cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
+}
+
+.page-curtain__panel:nth-child(1) {
+  left: 0;
+}
+.page-curtain__panel:nth-child(2) {
+  left: 25%;
+}
+.page-curtain__panel:nth-child(3) {
+  left: 50%;
+}
+.page-curtain__panel:nth-child(4) {
+  left: 75%;
+}
+
+/* 1. closing: drop down, staggered left to right */
+.page-curtain--closing .page-curtain__panel {
+  animation: curtain-down 560ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.page-curtain--closing .page-curtain__panel:nth-child(2) {
+  animation-delay: 80ms;
+}
+.page-curtain--closing .page-curtain__panel:nth-child(3) {
+  animation-delay: 160ms;
+}
+.page-curtain--closing .page-curtain__panel:nth-child(4) {
+  animation-delay: 240ms;
+}
+
+/* 2. logo: hold fully covered */
+.page-curtain--logo .page-curtain__panel {
+  transform: translateY(0);
+}
+
+/* 3. opening: no override, so panels transition back up to -101% */
+.page-curtain--opening .page-curtain__panel:nth-child(1) {
+  transition-delay: 240ms;
+}
+.page-curtain--opening .page-curtain__panel:nth-child(2) {
+  transition-delay: 160ms;
+}
+.page-curtain--opening .page-curtain__panel:nth-child(3) {
+  transition-delay: 80ms;
+}
+
+@keyframes curtain-down {
+  from {
+    transform: translateY(-101%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Logo ---------- */
+
+.page-curtain__logo {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(68vw, 380px);
+  transform: translate(-50%, -50%);
+  animation: logo-fade-in 240ms ease-out both;
+}
+
+.page-curtain__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+
+.page-curtain__logo-dim {
+  opacity: 0.24;
+}
+
+.page-curtain__logo-fill {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 100% 0 0);
+  animation: logo-fill 700ms cubic-bezier(0.16, 1, 0.3, 1) 80ms forwards;
+}
+
+.page-curtain--opening .page-curtain__logo {
+  animation: logo-fade-out 300ms ease-in forwards;
+}
+
+@keyframes logo-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes logo-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes logo-fill {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-reveal > * {
+    animation: none;
+  }
+
+  .page-curtain__panel {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms;
+    transition-delay: 0ms !important;
+  }
+
+  .page-curtain__logo,
+  .page-curtain__logo-fill {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
 }

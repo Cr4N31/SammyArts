@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Link } from "react-router-dom";
+import { PageTransitionLink } from "../../shared/PageTransition";
 import { useContent } from "../../data/content";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -206,12 +206,12 @@ function Portfolio() {
         </div>
       </div>
       <div className="flex justify-center mt-6 items-center flex-row">
-        <Link
+        <PageTransitionLink
           to="/gallery"
           className="text-lg font-medium border-b border-accent text-accent transition-colors hover:text-accent-hover hover:border-accent-hover"
         >
           View more projects &rarr;
-        </Link>
+        </PageTransitionLink>
       </div>
     </section>
   );

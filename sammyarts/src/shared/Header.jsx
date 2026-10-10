@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import logo from "/img/Light.png";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { PageTransitionLink } from "./PageTransition";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionDiv = motion.div;
@@ -44,14 +45,14 @@ function Header() {
         className="flex items-center justify-between px-5 py-3 md:px-10 md:py-6"
       >
         {/* Logo */}
-        <Link
+        <PageTransitionLink
           to="/"
           onClick={() => setOpen(false)}
           aria-label="SammyArts home"
           className="block"
         >
           <img src={logo} alt="SammyArts" className="h-auto w-32" />
-        </Link>
+        </PageTransitionLink>
 
         {/* Hamburger */}
         <button
@@ -114,7 +115,7 @@ function Header() {
                     ease: EASE,
                   }}
                 >
-                  <Link
+                  <PageTransitionLink
                     to={link.href}
                     onClick={() => setOpen(false)}
                     aria-current={active ? "page" : undefined}
@@ -134,7 +135,7 @@ function Header() {
                     <span className="font-sans text-[0.65rem] not-italic tracking-[0.2em] text-muted/70">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                  </Link>
+                  </PageTransitionLink>
                 </MotionLi>
               );
             })}

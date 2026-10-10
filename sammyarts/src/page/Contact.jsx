@@ -37,7 +37,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="flex min-h-[50vh] flex-col justify-center gap-16 px-6 py-24 md:px-12 md:py-32"
+      className="page-reveal flex min-h-[50vh] flex-col justify-center gap-16 px-6 py-24 md:px-12 md:py-32"
     >
       <div>
         <h1 className="text-[clamp(3rem,12vw,9rem)] font-semibold italic leading-[0.9] tracking-[-0.05em]">

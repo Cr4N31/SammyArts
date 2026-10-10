@@ -8,6 +8,7 @@ import Footer from "./shared/Footer";
 import Admin from "./admin/Admin";
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { PageTransitionProvider } from "./shared/PageTransition";
 
 function App() {
   const { pathname } = useLocation();
@@ -30,15 +31,17 @@ function App() {
 
   return (
     <div className="page-flow min-h-screen text-text">
-      {!isAdmin && <Header />}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/atelier" element={<Courses />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/admin/*" element={<Admin />} />
-      </Routes>
-      {!isAdmin && <Footer />}
+      <PageTransitionProvider>
+        {!isAdmin && <Header />}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/atelier" element={<Courses />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/admin/*" element={<Admin />} />
+        </Routes>
+        {!isAdmin && <Footer />}
+      </PageTransitionProvider>
     </div>
   );
 }
