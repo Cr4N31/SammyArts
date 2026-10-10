@@ -164,7 +164,7 @@ const columns = [
 ];
 
 function Hero() {
-  const { site } = useContent();
+  const { site, ready } = useContent();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -249,7 +249,10 @@ function Hero() {
                     >
                       <ImageCell
                         label={cell.label}
-                        src={site.hero?.[cell.label] || cell.src}
+                        src={
+                          site.hero?.[cell.label] ||
+                          (ready ? cell.src : "")
+                        }
                       />
                     </Item>
                   ),

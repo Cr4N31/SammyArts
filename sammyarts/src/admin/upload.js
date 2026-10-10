@@ -1,13 +1,15 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../data/firebase";
 
-const MAX_EDGE = 1280;
-const JPEG_QUALITY = 0.72;
-const MAX_DATA_CHARS = 900_000;
+const MAX_EDGE = 960;
+const JPEG_QUALITY = 0.65;
+const MAX_DATA_CHARS = 700_000;
 const PREFIX = "fsimg:";
+const DISK_KEY = "sammyarts-img-v1";
 
 const cache = new Map();
 const dataToRef = new Map();
+const inflight = new Map();
 
 export function isFirestoreImage(value) {
   return typeof value === "string" && value.startsWith(PREFIX);
@@ -15,6 +17,53 @@ export function isFirestoreImage(value) {
 
 function firestoreImageId(value) {
   return isFirestoreImage(value) ? value.slice(PREFIX.length) : "";
+}
+
+function readDisk() {
+  try {
+    return JSON.parse(localStorage.getItem(DISK_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function writeDisk(id, dataUrl) {
+  try {
+    const all = readDisk();
+    all[id] = dataUrl;
+    const keys = Object.keys(all);
+    if (keys.length > 48) {
+      for (const key of keys.slice(0, keys.length - 48)) delete all[key];
+    }
+    localStorage.setItem(DISK_KEY, JSON.stringify(all));
+  } catch {
+    try {
+      localStorage.setItem(DISK_KEY, JSON.stringify({ [id]: dataUrl }));
+    } catch {
+      /* quota full */
+    }
+  }
+}
+
+function remember(id, dataUrl, ref) {
+  cache.set(id, dataUrl);
+  if (ref) dataToRef.set(dataUrl, ref);
+  writeDisk(id, dataUrl);
+}
+
+/** Sync lookup from memory / localStorage. No network. */
+export function peekImage(value) {
+  if (!value) return "";
+  if (!isFirestoreImage(value)) return value;
+  const id = firestoreImageId(value);
+  if (cache.has(id)) return cache.get(id);
+  const disk = readDisk()[id];
+  if (disk) {
+    cache.set(id, disk);
+    dataToRef.set(disk, value);
+    return disk;
+  }
+  return "";
 }
 
 function fileToBitmap(file) {
@@ -68,8 +117,7 @@ async function storeDataUrl(dataUrl) {
   const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   await setDoc(doc(db, "images", id), { data: dataUrl });
   const ref = `${PREFIX}${id}`;
-  cache.set(id, dataUrl);
-  dataToRef.set(dataUrl, ref);
+  remember(id, dataUrl, ref);
   return ref;
 }
 
@@ -101,18 +149,27 @@ export async function resolveImage(value) {
   if (!value) return "";
   if (!isFirestoreImage(value)) return value;
 
+  const peeked = peekImage(value);
+  if (peeked) return peeked;
+
   const id = firestoreImageId(value);
-  if (cache.has(id)) return cache.get(id);
+  if (inflight.has(id)) return inflight.get(id);
 
   if (!db) return "";
-  const snap = await getDoc(doc(db, "images", id));
-  if (!snap.exists()) return "";
-  const dataUrl = String(snap.data()?.data || "");
-  if (dataUrl) {
-    cache.set(id, dataUrl);
-    dataToRef.set(dataUrl, value);
-  }
-  return dataUrl;
+
+  const request = getDoc(doc(db, "images", id))
+    .then((snap) => {
+      if (!snap.exists()) return "";
+      const dataUrl = String(snap.data()?.data || "");
+      if (dataUrl) remember(id, dataUrl, value);
+      return dataUrl;
+    })
+    .finally(() => {
+      inflight.delete(id);
+    });
+
+  inflight.set(id, request);
+  return request;
 }
 
 /** Keep content docs small: store fsimg refs, not huge data URLs. */
@@ -122,4 +179,10 @@ export async function persistImageField(value) {
   if (dataToRef.has(value)) return dataToRef.get(value);
   if (value.startsWith("data:image/")) return storeDataUrl(value);
   return value.slice(0, 2000);
+}
+
+export function displayImage(value) {
+  if (!value) return "";
+  if (!isFirestoreImage(value)) return value;
+  return peekImage(value);
 }

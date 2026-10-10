@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { courses } from "../data/courses";
+import { useContent } from "../data/content";
 import CoursesHeader from "../components/courses/CoursesHeader";
 import FeaturedCourses from "../components/courses/FeaturedCourses";
 import CourseFilter from "../components/courses/CourseFilter";
@@ -8,17 +8,23 @@ import CourseGrid from "../components/courses/CourseGrid";
 
 function Courses() {
   const navigate = useNavigate();
+  const { courses } = useContent();
   const [filter, setFilter] = useState("all");
 
-  const featured = useMemo(() => courses.filter((c) => c.featured), []);
+  const featured = useMemo(
+    () => courses.filter((course) => course.featured),
+    [courses],
+  );
   const visible = useMemo(
     () =>
-      filter === "all" ? courses : courses.filter((c) => c.type === filter),
-    [filter],
+      filter === "all"
+        ? courses
+        : courses.filter((course) => course.type === filter),
+    [courses, filter],
   );
 
-  // Swap for your real checkout (Paystack, Flutterwave, etc.)
-  const handleBuy = (course) => navigate(`/checkout/${course.slug}`);
+  const handleBuy = (course) =>
+    navigate(`/checkout/${course.slug || course.id}`);
 
   return (
     <section

@@ -1,10 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, Outlet, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Link,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useContent } from "../data/content";
 import { firebaseReady, login, logout, watchAuth } from "./gate";
 import { adminEmail } from "../data/firebase";
 import { uploadImage } from "./upload";
 import Photos from "./Photos";
+import Courses from "./Courses";
+import Messages from "./Messages";
 
 const blank = { id: null, title: "", desc: "", img: "" };
 
@@ -229,8 +239,14 @@ function Frame({ onLogout }) {
           <Link to="/admin" className={textLinkClass}>
             Projects
           </Link>
+          <Link to="/admin/courses" className={textLinkClass}>
+            Courses
+          </Link>
           <Link to="/admin/photos" className={textLinkClass}>
             Photos
+          </Link>
+          <Link to="/admin/messages" className={textLinkClass}>
+            Messages
           </Link>
           <Link to="/" className={textLinkClass}>
             View site
@@ -252,12 +268,47 @@ function titleFromFile(name) {
   return base || "Untitled";
 }
 
+function Notice({ message, onClear }) {
+  useEffect(() => {
+    if (!message) return undefined;
+    const id = setTimeout(onClear, 2200);
+    return () => clearTimeout(id);
+  }, [message, onClear]);
+
+  if (!message) return null;
+
+  return (
+    <div
+      role="status"
+      className="fixed bottom-6 left-1/2 z-50 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 border border-border bg-surface px-5 py-4 text-center shadow-[0_12px_40px_rgba(0,0,0,0.45)]"
+    >
+      <p className="font-serif text-2xl italic tracking-[-0.03em] text-accent">
+        Saved
+      </p>
+      <p className="mt-1 text-sm text-muted">{message}</p>
+    </div>
+  );
+}
+
 function PieceList() {
   const { works, saveWorks } = useContent();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [confirmId, setConfirmId] = useState(null);
+  const [notice, setNotice] = useState(() =>
+    typeof location.state?.notice === "string" ? location.state.notice : "",
+  );
+  const clearNotice = useCallback(() => setNotice(""), []);
   const fileRef = useRef(null);
   const uploadTarget = useRef(null);
+
+  useEffect(() => {
+    if (!location.state?.notice) return undefined;
+    navigate(".", { replace: true, state: {} });
+    return undefined;
+  }, [location.state, navigate]);
 
   function chooseFile(id) {
     uploadTarget.current = id;
@@ -312,8 +363,22 @@ function PieceList() {
     }
   }
 
+  async function removeProject(id) {
+    setSaving(true);
+    setSaveError("");
+    try {
+      await saveWorks(works.filter((work) => work.id !== id));
+      setConfirmId(null);
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div>
+      <Notice message={notice} onClear={clearNotice} />
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-muted">Gallery</p>
@@ -413,6 +478,35 @@ function PieceList() {
                 <Link to={`/admin/${work.id}`} className={ghostClass}>
                   Open
                 </Link>
+                {confirmId === work.id ? (
+                  <>
+                    <button
+                      type="button"
+                      className={pillClass}
+                      disabled={saving}
+                      onClick={() => removeProject(work.id)}
+                    >
+                      Delete it
+                    </button>
+                    <button
+                      type="button"
+                      className={ghostClass}
+                      disabled={saving}
+                      onClick={() => setConfirmId(null)}
+                    >
+                      Keep
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className={ghostClass}
+                    disabled={saving}
+                    onClick={() => setConfirmId(work.id)}
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </li>
           ))
@@ -490,11 +584,13 @@ function PieceEditor() {
     setTitleError("");
     try {
       await saveWorks(next);
-      if (isNew) navigate(`/admin/${item.id}`);
-      else setDraft(item);
+      navigate("/admin", {
+        state: {
+          notice: isNew ? "Project added." : "Project saved.",
+        },
+      });
     } catch (err) {
       setSaveError(err.message);
-    } finally {
       setSaving(false);
     }
   }
@@ -669,7 +765,9 @@ function Admin() {
       >
         <Route index element={<PieceList />} />
         <Route path="new" element={<PiecePage />} />
+        <Route path="courses/*" element={<Courses />} />
         <Route path="photos" element={<Photos />} />
+        <Route path="messages" element={<Messages />} />
         <Route path=":id" element={<PiecePage />} />
       </Route>
     </Routes>
