@@ -44,7 +44,7 @@ const NavButton = ({ side, onClick, label }) => (
 );
 
 function Portfolio() {
-  const { works: allWorks } = useContent();
+  const { works: allWorks, ready } = useContent();
   const works = allWorks.slice(0, FEATURED_WORKS_LIMIT);
   const reduce = useReducedMotion();
   const total = works.length;
@@ -90,7 +90,9 @@ function Portfolio() {
         <h2 className="font-serif text-[clamp(2.75rem,8vw,6rem)] italic leading-[0.95] tracking-[-0.05em]">
           A few of our artistic works
         </h2>
-        <p className="mt-6 text-sm text-muted">No pieces yet.</p>
+        {ready ? (
+          <p className="mt-6 text-sm text-muted">No pieces yet.</p>
+        ) : null}
       </section>
     );
   }

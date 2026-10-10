@@ -2,9 +2,11 @@ import { motion } from "motion/react";
 import PriceTag from "./PriceTag";
 import BuyButton from "./BuyButton";
 
+const MotionLi = motion.li;
+
 function CourseCard({ course, onBuy, index = 0 }) {
   return (
-    <motion.li
+    <MotionLi
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -12,12 +14,18 @@ function CourseCard({ course, onBuy, index = 0 }) {
       className="group flex flex-col"
     >
       <div className="aspect-[4/3] w-full overflow-hidden bg-white/5">
-        <img
-          src={course.image}
-          alt={course.title}
-          loading="lazy"
-          className="h-full w-full object-cover grayscale transition duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
-        />
+        {course.img || course.image ? (
+          <img
+            src={course.img || course.image}
+            alt={course.title}
+            loading="lazy"
+            className="h-full w-full object-cover grayscale transition duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
+          />
+        ) : (
+          <div className="grid h-full place-items-center text-xs opacity-50">
+            {course.title}
+          </div>
+        )}
       </div>
 
       <p className="mt-4 text-[0.65rem] uppercase tracking-[0.14em] opacity-60">
@@ -38,7 +46,7 @@ function CourseCard({ course, onBuy, index = 0 }) {
         <PriceTag price={course.price} billing={course.billing} />
         <BuyButton variant="ghost" label="Buy" onClick={() => onBuy(course)} />
       </div>
-    </motion.li>
+    </MotionLi>
   );
 }
 

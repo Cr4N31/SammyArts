@@ -1,4 +1,6 @@
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+import { useContent } from "../../data/content";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionSection = motion.section;
@@ -14,36 +16,68 @@ const fadeUp = {
   viewport: { once: true, margin: "-80px" },
 };
 
-// Placeholder copy, replace with the real offers
-const offers = [
-  {
-    no: "01",
-    title: "Courses",
-    desc: "Structured lessons that take you from your first sketch to a finished piece. Learn at your own pace, with clear projects at every stage.",
-  },
-  {
-    no: "02",
-    title: "Mentorship",
-    desc: "One on one guidance from a working artist. Honest critique, a personal plan, and direct feedback on your portfolio.",
-  },
-  {
-    no: "03",
-    title: "Workshops",
-    desc: "Short, hands-on sessions focused on a single technique. Show up, make something, leave with a finished piece.",
-  },
-];
-
-// Placeholder facts, replace with the real ones
 const facts = ["Beginner friendly", "Online and in person", "Limited seats"];
 
+const money = new Intl.NumberFormat("en-NG", {
+  style: "currency",
+  currency: "NGN",
+  maximumFractionDigits: 0,
+});
+
+function CourseCard({ course, index }) {
+  const price = Number(course.price);
+  return (
+    <MotionDiv
+      {...fadeUp}
+      transition={{ duration: 1, delay: index * 0.08, ease: EASE }}
+      className="group"
+    >
+      <div className="aspect-[4/5] overflow-hidden bg-raised ring-1 ring-border">
+        {course.img ? (
+          <img
+            src={course.img}
+            alt={course.title}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="grid h-full place-items-center border border-dashed border-border text-xs text-muted">
+            {course.title}
+          </div>
+        )}
+      </div>
+      <div className="mt-5">
+        <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted">
+          {course.type === "mentorship" ? "Mentorship" : "Course"}
+          {course.level ? ` · ${course.level}` : ""}
+        </p>
+        <div className="mt-2 flex items-baseline justify-between gap-4">
+          <h3 className="font-serif text-3xl italic tracking-[-0.03em] md:text-4xl">
+            {course.title}
+          </h3>
+          {Number.isFinite(price) && price > 0 ? (
+            <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
+              {money.format(price)}
+            </p>
+          ) : null}
+        </div>
+        {course.desc ? (
+          <p className="mt-3 text-sm leading-relaxed text-muted">{course.desc}</p>
+        ) : null}
+      </div>
+    </MotionDiv>
+  );
+}
+
 function CoursesMentor() {
+  const { courses, ready } = useContent();
+  const preview = courses.slice(0, 3);
+
   return (
     <MotionSection
       id="courses"
       className="relative overflow-hidden px-5 py-24 text-text md:px-10 md:py-36"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Eyebrow */}
         <MotionP
           {...fadeUp}
           transition={{ duration: 1, ease: EASE }}
@@ -52,7 +86,6 @@ function CoursesMentor() {
           Courses and Mentorship
         </MotionP>
 
-        {/* Headline */}
         <MotionH2
           {...fadeUp}
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
@@ -72,30 +105,16 @@ function CoursesMentor() {
           want real skill, not just inspiration. Pick a path and start making.
         </MotionP>
 
-        {/* Offers */}
-        <div className="mt-16 md:mt-24">
-          {offers.map((offer, i) => (
-            <MotionDiv
-              key={offer.no}
-              {...fadeUp}
-              transition={{ duration: 1, delay: i * 0.08, ease: EASE }}
-              className="group grid gap-4 border-t border-border py-8 md:grid-cols-12 md:items-start md:gap-8 md:py-10"
-            >
-              <span className="text-xs tracking-[0.2em] text-muted md:col-span-1 md:pt-3">
-                {offer.no}
-              </span>
-              <h3 className="font-serif text-4xl italic leading-none tracking-[-0.04em] transition-transform duration-500 group-hover:translate-x-2 md:col-span-5 md:text-6xl">
-                {offer.title}
-              </h3>
-              <p className="max-w-md text-sm leading-relaxed text-muted md:col-span-6 md:pt-2 md:text-base">
-                {offer.desc}
-              </p>
-            </MotionDiv>
-          ))}
-          <div className="border-t border-border" />
-        </div>
+        {preview.length > 0 ? (
+          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 md:mt-24">
+            {preview.map((course, i) => (
+              <CourseCard key={course.id} course={course} index={i} />
+            ))}
+          </div>
+        ) : ready ? (
+          <p className="mt-16 text-sm text-muted">No courses yet.</p>
+        ) : null}
 
-        {/* Facts */}
         <MotionUl
           {...fadeUp}
           transition={{ duration: 1, ease: EASE }}
@@ -109,7 +128,6 @@ function CoursesMentor() {
           ))}
         </MotionUl>
 
-        {/* CTA */}
         <MotionDiv
           {...fadeUp}
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
@@ -119,15 +137,15 @@ function CoursesMentor() {
             Ready to start?
           </p>
 
-          <a
-            href="/courses"
+          <Link
+            to="/atelier"
             className="group inline-flex items-center gap-4 rounded-full bg-accent px-8 py-4 text-sm uppercase tracking-[0.2em] text-brand transition-colors duration-300 hover:bg-accent-hover active:bg-accent-pressed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             Browse courses
             <span className="transition-transform duration-300 group-hover:translate-x-1">
               &rarr;
             </span>
-          </a>
+          </Link>
         </MotionDiv>
       </div>
     </MotionSection>

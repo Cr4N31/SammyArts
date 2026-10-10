@@ -2,9 +2,11 @@ import { motion } from "motion/react";
 import PriceTag from "./PriceTag";
 import BuyButton from "./BuyButton";
 
+const MotionArticle = motion.article;
+
 function FeaturedCard({ course, large = false, onBuy, index = 0 }) {
   return (
-    <motion.article
+    <MotionArticle
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
@@ -13,12 +15,16 @@ function FeaturedCard({ course, large = false, onBuy, index = 0 }) {
         large ? "lg:col-span-2" : ""
       }`}
     >
-      <img
-        src={course.image}
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-      />
+      {course.img || course.image ? (
+        <img
+          src={course.img || course.image}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 -z-20 bg-raised" />
+      )}
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-brand via-brand/50 to-transparent" />
 
       <div className="flex flex-col gap-5 p-6 md:p-8">
@@ -44,7 +50,7 @@ function FeaturedCard({ course, large = false, onBuy, index = 0 }) {
           <BuyButton onClick={() => onBuy(course)} />
         </div>
       </div>
-    </motion.article>
+    </MotionArticle>
   );
 }
 

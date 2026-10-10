@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { sendContactMessage } from "../data/contact";
 
 const fieldClass =
   "w-full border-b border-accent bg-transparent py-3 text-base outline-none transition-colors placeholder:opacity-30 focus:border-current";
@@ -20,13 +21,7 @@ function Contact() {
     setStatus("sending");
 
     try {
-      // Replace with your endpoint (Formspree, your Express route, etc.)
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) throw new Error("Request failed");
+      await sendContactMessage(values);
       setValues({ name: "", email: "", message: "" });
       setStatus("sent");
     } catch {
@@ -37,7 +32,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="page-reveal flex min-h-[50vh] flex-col justify-center gap-16 px-6 py-24 md:px-12 md:py-32"
+      className="page-reveal flex min-h-[50vh] flex-col justify-center gap-16 px-6 py-24 text-text md:px-12 md:py-32"
     >
       <div>
         <h1 className="text-[clamp(3rem,12vw,9rem)] font-semibold italic leading-[0.9] tracking-[-0.05em]">
@@ -118,7 +113,7 @@ function Contact() {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="group text-sm uppercase text-accent hover:bg-accent hover:text-brand px-4 py-2 rounded-full duration-250 transition-all tracking-[0.14em] transition-opacity disabled:opacity-40"
+            className="group rounded-full px-4 py-2 text-sm uppercase tracking-[0.14em] text-accent transition-all duration-250 hover:bg-accent hover:text-brand disabled:opacity-40"
           >
             {status === "sending" ? "Sending" : "Send"}
             <span
