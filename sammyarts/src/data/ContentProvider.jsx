@@ -4,6 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { portfolioData } from "./portfolio";
 import siteData from "./site.json";
 import coursesData from "./courses.json";
+import { blogPosts as blogSeed } from "./blogData";
 import { ContentContext } from "./content";
 import { auth, db, firebaseConfigured } from "./firebase";
 import {
@@ -71,6 +72,36 @@ function normalizeCourses(list) {
   });
 }
 
+function normalizeBlog(list) {
+  if (!Array.isArray(list)) return [];
+  const posts = list.map((item, index) => {
+    const title = String(item?.title ?? "").slice(0, 200);
+    return {
+      id: Number(item?.id) || index + 1,
+      slug: String(item?.slug || slugify(title) || `post-${index + 1}`).slice(
+        0,
+        120,
+      ),
+      title,
+      excerpt: String(item?.excerpt ?? "").slice(0, 600),
+      body: String(item?.body ?? "").slice(0, 20000),
+      author: String(item?.author ?? "Sammy").slice(0, 80),
+      date: String(item?.date ?? "").slice(0, 40),
+      img: String(item?.img ?? item?.image ?? ""),
+      featured: Boolean(item?.featured),
+    };
+  });
+
+  // Keep at most one featured post (first wins in list order).
+  let featuredSeen = false;
+  return posts.map((post) => {
+    if (!post.featured) return post;
+    if (featuredSeen) return { ...post, featured: false };
+    featuredSeen = true;
+    return post;
+  });
+}
+
 function normalizeSite(data) {
   const hero = {};
   for (const key of HERO_KEYS) {
@@ -93,6 +124,13 @@ function paintCourses(courses) {
   return courses.map((course) => ({
     ...course,
     img: displayImage(course.img),
+  }));
+}
+
+function paintBlog(posts) {
+  return posts.map((post) => ({
+    ...post,
+    img: displayImage(post.img),
   }));
 }
 
@@ -133,6 +171,22 @@ async function fillCourses(raw, setCourses, cancelled) {
       setCourses((prev) =>
         prev.map((item) =>
           item.id === course.id ? { ...item, img: url } : item,
+        ),
+      );
+    }),
+  );
+}
+
+async function fillBlog(raw, setBlogPosts, cancelled) {
+  await Promise.all(
+    raw.map(async (post) => {
+      if (!isFirestoreImage(post.img)) return;
+      if (displayImage(post.img)) return;
+      const url = await resolveImage(post.img);
+      if (cancelled() || !url) return;
+      setBlogPosts((prev) =>
+        prev.map((item) =>
+          item.id === post.id ? { ...item, img: url } : item,
         ),
       );
     }),
@@ -182,6 +236,15 @@ async function hydrateCourses(courses) {
     courses.map(async (course) => ({
       ...course,
       img: (await resolveImage(course.img)) || displayImage(course.img) || "",
+    })),
+  );
+}
+
+async function hydrateBlog(posts) {
+  return Promise.all(
+    posts.map(async (post) => ({
+      ...post,
+      img: (await resolveImage(post.img)) || displayImage(post.img) || "",
     })),
   );
 }
@@ -248,6 +311,17 @@ async function packCoursesForCloud(courses) {
   return items;
 }
 
+async function packBlogForCloud(posts) {
+  const items = [];
+  for (const post of posts) {
+    items.push({
+      ...post,
+      img: await persistImageField(post.img),
+    });
+  }
+  return items;
+}
+
 async function packSiteForCloud(site) {
   const hero = {};
   for (const key of HERO_KEYS) {
@@ -260,12 +334,13 @@ async function packSiteForCloud(site) {
 }
 
 async function readCloud() {
-  const [worksSnap, siteSnap, coursesSnap] = await Promise.all([
+  const [worksSnap, siteSnap, coursesSnap, blogSnap] = await Promise.all([
     getDoc(doc(db, "content", "works")),
     getDoc(doc(db, "content", "site")),
     getDoc(doc(db, "content", "courses")),
+    getDoc(doc(db, "content", "blog")),
   ]);
-  return { worksSnap, siteSnap, coursesSnap };
+  return { worksSnap, siteSnap, coursesSnap, blogSnap };
 }
 
 const emptySite = () => normalizeSite({ ceo: "", hero: {} });
@@ -277,6 +352,9 @@ export function ContentProvider({ children }) {
   );
   const [courses, setCourses] = useState(() =>
     cloud ? [] : normalizeCourses(coursesData),
+  );
+  const [blogPosts, setBlogPosts] = useState(() =>
+    cloud ? [] : normalizeBlog(blogSeed),
   );
   const [site, setSite] = useState(() =>
     cloud ? emptySite() : normalizeSite(siteData),
@@ -291,7 +369,7 @@ export function ContentProvider({ children }) {
 
     async function load() {
       try {
-        const { worksSnap, siteSnap, coursesSnap } = await readCloud();
+        const { worksSnap, siteSnap, coursesSnap, blogSnap } = await readCloud();
         if (cancelled) return;
 
         const rawWorks = worksSnap.exists()
@@ -303,16 +381,23 @@ export function ContentProvider({ children }) {
         const rawCourses = coursesSnap.exists()
           ? normalizeCourses(coursesSnap.data().items)
           : normalizeCourses(coursesData);
+        const cloudBlog = blogSnap.exists() ? blogSnap.data().items : null;
+        const rawBlog =
+          Array.isArray(cloudBlog) && cloudBlog.length
+            ? normalizeBlog(cloudBlog)
+            : normalizeBlog(blogSeed);
 
         setWorks(paintWorks(rawWorks));
         setSite(paintSite(rawSite));
         setCourses(paintCourses(rawCourses));
+        setBlogPosts(paintBlog(rawBlog));
         setReady(true);
 
         await Promise.all([
           fillWorks(rawWorks, setWorks, isCancelled),
           fillSite(rawSite, setSite, isCancelled),
           fillCourses(rawCourses, setCourses, isCancelled),
+          fillBlog(rawBlog, setBlogPosts, isCancelled),
         ]);
       } catch (err) {
         console.error(err);
@@ -320,6 +405,7 @@ export function ContentProvider({ children }) {
           setWorks(normalizeWorks(portfolioData));
           setSite(normalizeSite(siteData));
           setCourses(normalizeCourses(coursesData));
+          setBlogPosts(normalizeBlog(blogSeed));
           setReady(true);
         }
       }
@@ -347,6 +433,14 @@ export function ContentProvider({ children }) {
     setCourses(await hydrateCourses(packed));
   }
 
+  async function saveBlogPosts(next) {
+    if (!db) throw new Error("Firebase is not set up.");
+    if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
+    const packed = await packBlogForCloud(normalizeBlog(next));
+    await setDoc(doc(db, "content", "blog"), { items: packed });
+    setBlogPosts(await hydrateBlog(packed));
+  }
+
   async function saveSite(next) {
     if (!db) throw new Error("Firebase is not set up.");
     if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
@@ -358,7 +452,18 @@ export function ContentProvider({ children }) {
   async function seedIfNeeded() {
     if (!db || !auth?.currentUser) return;
 
-    const { worksSnap, siteSnap, coursesSnap } = await readCloud();
+    const { worksSnap, siteSnap, coursesSnap, blogSnap } = await readCloud();
+
+    const cloudBlog = blogSnap.exists() ? blogSnap.data().items : null;
+    if (!Array.isArray(cloudBlog) || cloudBlog.length === 0) {
+      const packedBlog = await packBlogForCloud(normalizeBlog(blogSeed));
+      await setDoc(doc(db, "content", "blog"), { items: packedBlog });
+      setBlogPosts(await hydrateBlog(packedBlog));
+    } else {
+      const rawBlog = normalizeBlog(cloudBlog);
+      setBlogPosts(paintBlog(rawBlog));
+      await fillBlog(rawBlog, setBlogPosts, () => false);
+    }
 
     if (!coursesSnap.exists()) {
       const packedCourses = await packCoursesForCloud(
@@ -416,6 +521,8 @@ export function ContentProvider({ children }) {
         saveWorks,
         courses,
         saveCourses,
+        blogPosts,
+        saveBlogPosts,
         site,
         saveSite,
         ready,

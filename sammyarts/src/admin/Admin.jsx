@@ -14,6 +14,7 @@ import { adminEmail } from "../data/firebase";
 import { uploadImage } from "./upload";
 import Photos from "./Photos";
 import Courses from "./Courses";
+import Blog from "./Blog";
 import Messages from "./Messages";
 
 const blank = { id: null, title: "", desc: "", img: "" };
@@ -241,6 +242,9 @@ function Frame({ onLogout }) {
           </Link>
           <Link to="/admin/courses" className={textLinkClass}>
             Courses
+          </Link>
+          <Link to="/admin/blog" className={textLinkClass}>
+            Blog
           </Link>
           <Link to="/admin/photos" className={textLinkClass}>
             Photos
@@ -766,6 +770,7 @@ function Admin() {
         <Route index element={<PieceList />} />
         <Route path="new" element={<PiecePage />} />
         <Route path="courses/*" element={<Courses />} />
+        <Route path="blog/*" element={<Blog />} />
         <Route path="photos" element={<Photos />} />
         <Route path="messages" element={<Messages />} />
         <Route path=":id" element={<PiecePage />} />
