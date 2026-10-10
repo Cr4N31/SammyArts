@@ -6,6 +6,8 @@ import Courses from "./page/Courses";
 import Blog from "./page/Blog";
 import BlogPost from "./page/BlogPost";
 import Contact from "./page/Contact";
+import Checkout from "./page/Checkout";
+import CheckoutResult from "./page/CheckoutResult";
 import Footer from "./shared/Footer";
 import Admin from "./admin/Admin";
 import { useEffect } from "react";
@@ -43,6 +45,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/atelier" element={<Courses />} />
+          <Route path="/checkout/success" element={<CheckoutResult />} />
+          <Route path="/checkout/:slug" element={<Checkout />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />

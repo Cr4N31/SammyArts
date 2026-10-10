@@ -16,6 +16,7 @@ import Photos from "./Photos";
 import Courses from "./Courses";
 import Blog from "./Blog";
 import Messages from "./Messages";
+import Orders from "./Orders";
 
 const blank = { id: null, title: "", desc: "", img: "" };
 
@@ -248,6 +249,9 @@ function Frame({ onLogout }) {
           </Link>
           <Link to="/admin/photos" className={textLinkClass}>
             Photos
+          </Link>
+          <Link to="/admin/orders" className={textLinkClass}>
+            Buyers
           </Link>
           <Link to="/admin/messages" className={textLinkClass}>
             Messages
@@ -772,6 +776,7 @@ function Admin() {
         <Route path="courses/*" element={<Courses />} />
         <Route path="blog/*" element={<Blog />} />
         <Route path="photos" element={<Photos />} />
+        <Route path="orders" element={<Orders />} />
         <Route path="messages" element={<Messages />} />
         <Route path=":id" element={<PiecePage />} />
       </Route>

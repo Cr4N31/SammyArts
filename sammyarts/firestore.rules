@@ -25,5 +25,19 @@ service cloud.firestore {
       allow read, delete: if request.auth != null;
       allow update: if false;
     }
+    match /orders/{orderId} {
+      allow create, update: if request.resource.data.checkoutId == orderId
+        && request.resource.data.status == 'paid'
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 160
+        && request.resource.data.courseTitle is string
+        && request.resource.data.courseTitle.size() <= 120
+        && request.resource.data.courseType in ['course', 'mentorship']
+        && request.resource.data.amount is string
+        && request.resource.data.currency is string;
+      allow read, delete: if request.auth != null;
+    }
   }
 }
