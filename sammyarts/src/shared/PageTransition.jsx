@@ -19,16 +19,35 @@ const logo = "/img/Light.png";
 
 function Curtain({ phase }) {
   return (
-    <div aria-hidden="true" className={`page-curtain page-curtain--${phase}`}>
+    <div
+      role="status"
+      aria-live="polite"
+      className={`page-curtain page-curtain--${phase}`}
+    >
+      <span className="page-curtain__sr-only">Loading page</span>
       {[0, 1, 2, 3].map((panel) => (
-        <div className="page-curtain__panel" key={panel} />
+        <div aria-hidden="true" className="page-curtain__panel" key={panel} />
       ))}
       {(phase === "logo" || phase === "opening") && (
-        <div className="page-curtain__logo">
+        <div aria-hidden="true" className="page-curtain__logo">
           <img src={logo} alt="" className="page-curtain__logo-dim" />
           <img src={logo} alt="" className="page-curtain__logo-fill" />
+          <span className="page-curtain__activity" />
+          <span className="page-curtain__label">Loading page</span>
         </div>
       )}
+    </div>
+  );
+}
+
+export function PageLoader() {
+  return (
+    <div className="site-loader" role="status" aria-live="polite">
+      <div className="site-loader__content">
+        <img src={logo} alt="" className="site-loader__logo" />
+        <span aria-hidden="true" className="site-loader__activity" />
+        <span className="site-loader__label">Loading SammyArts</span>
+      </div>
     </div>
   );
 }

@@ -5,9 +5,69 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>sammyarts</title>
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: #120d0d;
+      }
+
+      .boot-loader {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #b8aaa0;
+        font: 0.7rem system-ui, sans-serif;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .boot-loader__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .boot-loader img {
+        width: min(68vw, 380px);
+        height: auto;
+      }
+
+      .boot-loader__activity {
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 2px solid rgb(245 237 230 / 25%);
+        border-top-color: #f78e48;
+        border-radius: 50%;
+        animation: boot-loader-spin 800ms linear infinite;
+      }
+
+      @keyframes boot-loader-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .boot-loader__activity {
+          animation-duration: 1ms;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot-loader" role="status">
+        <div class="boot-loader__content">
+          <img src="/img/Light.png" alt="" />
+          <span class="boot-loader__activity" aria-hidden="true"></span>
+          <span>Loading SammyArts</span>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/src/main.jsx"></script>
   </body>
