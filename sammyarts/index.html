@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="./public/img/Light.png"
+      sizes="16x16"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>sammyarts</title>
     <style>
@@ -13,59 +18,73 @@
         background: #120d0d;
       }
 
-      .boot-loader {
+      .page-curtain {
         position: fixed;
         inset: 0;
-        display: grid;
-        place-items: center;
-        color: #b8aaa0;
-        font: 0.7rem system-ui, sans-serif;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+        z-index: 100;
+        overflow: hidden;
+        pointer-events: all;
       }
 
-      .boot-loader__content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1.25rem;
+      .page-curtain__panel {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 25%;
+        background: #120d0d;
+        transform: translateY(-101%);
+        transition: transform 570ms cubic-bezier(0.76, 0, 0.24, 1);
+        will-change: transform;
       }
 
-      .boot-loader img {
-        width: min(68vw, 380px);
-        height: auto;
+      .page-curtain__panel:nth-child(1) {
+        left: 0;
       }
-
-      .boot-loader__activity {
-        width: 1.5rem;
-        height: 1.5rem;
-        border: 2px solid rgb(245 237 230 / 25%);
-        border-top-color: #f78e48;
-        border-radius: 50%;
-        animation: boot-loader-spin 800ms linear infinite;
+      .page-curtain__panel:nth-child(2) {
+        left: 25%;
       }
-
-      @keyframes boot-loader-spin {
+      .page-curtain__panel:nth-child(3) {
+        left: 50%;
+      }
+      .page-curtain__panel:nth-child(4) {
+        left: 75%;
+      }
+      .page-curtain--closing .page-curtain__panel {
+        animation: curtain-down 570ms cubic-bezier(0.76, 0, 0.24, 1) both;
+      }
+      .page-curtain--closing .page-curtain__panel:nth-child(2) {
+        animation-delay: 80ms;
+      }
+      .page-curtain--closing .page-curtain__panel:nth-child(3) {
+        animation-delay: 160ms;
+      }
+      .page-curtain--closing .page-curtain__panel:nth-child(4) {
+        animation-delay: 240ms;
+      }
+      @keyframes curtain-down {
+        from {
+          transform: translateY(-101%);
+        }
         to {
-          transform: rotate(360deg);
+          transform: translateY(0);
         }
       }
-
       @media (prefers-reduced-motion: reduce) {
-        .boot-loader__activity {
-          animation-duration: 1ms;
+        .page-curtain__panel {
+          animation-duration: 1ms !important;
+          animation-delay: 0ms !important;
+          transition-duration: 1ms;
         }
       }
     </style>
   </head>
   <body>
     <div id="root">
-      <div class="boot-loader" role="status">
-        <div class="boot-loader__content">
-          <img src="/img/Light.png" alt="" />
-          <span class="boot-loader__activity" aria-hidden="true"></span>
-          <span>Loading SammyArts</span>
-        </div>
+      <div class="page-curtain page-curtain--closing" aria-hidden="true">
+        <div class="page-curtain__panel"></div>
+        <div class="page-curtain__panel"></div>
+        <div class="page-curtain__panel"></div>
+        <div class="page-curtain__panel"></div>
       </div>
     </div>
 

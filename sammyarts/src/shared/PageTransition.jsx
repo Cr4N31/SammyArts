@@ -15,41 +15,22 @@ import {
 import { useReducedMotion } from "motion/react";
 
 const TransitionContext = createContext(null);
-const logo = "/img/Light.png";
 
 function Curtain({ phase }) {
   return (
     <div
-      role="status"
-      aria-live="polite"
+      aria-hidden="true"
       className={`page-curtain page-curtain--${phase}`}
     >
-      <span className="page-curtain__sr-only">Loading page</span>
       {[0, 1, 2, 3].map((panel) => (
-        <div aria-hidden="true" className="page-curtain__panel" key={panel} />
+        <div className="page-curtain__panel" key={panel} />
       ))}
-      {(phase === "logo" || phase === "opening") && (
-        <div aria-hidden="true" className="page-curtain__logo">
-          <img src={logo} alt="" className="page-curtain__logo-dim" />
-          <img src={logo} alt="" className="page-curtain__logo-fill" />
-          <span className="page-curtain__activity" />
-          <span className="page-curtain__label">Loading page</span>
-        </div>
-      )}
     </div>
   );
 }
 
 export function PageLoader() {
-  return (
-    <div className="site-loader" role="status" aria-live="polite">
-      <div className="site-loader__content">
-        <img src={logo} alt="" className="site-loader__logo" />
-        <span aria-hidden="true" className="site-loader__activity" />
-        <span className="site-loader__label">Loading SammyArts</span>
-      </div>
-    </div>
-  );
+  return <Curtain phase="covered" />;
 }
 
 export function PageTransitionProvider({ children }) {
@@ -68,9 +49,9 @@ export function PageTransitionProvider({ children }) {
   useEffect(() => {
     if (!transition) return undefined;
 
-    const closeDuration = reduceMotion ? 1 : 800;
-    const logoDuration = reduceMotion ? 1 : 830;
-    const openDuration = reduceMotion ? 1 : 800;
+    const closeDuration = reduceMotion ? 1 : 810;
+    const coveredDuration = reduceMotion ? 1 : 830;
+    const openDuration = reduceMotion ? 1 : 810;
     let timer;
 
     if (transition.phase === "closing") {
@@ -78,12 +59,12 @@ export function PageTransitionProvider({ children }) {
         // Screen is fully covered now, so swap the page underneath
         navigate(transition.to);
         window.scrollTo(0, 0);
-        setTransition((current) => ({ ...current, phase: "logo" }));
+        setTransition((current) => ({ ...current, phase: "covered" }));
       }, closeDuration);
-    } else if (transition.phase === "logo") {
+    } else if (transition.phase === "covered") {
       timer = window.setTimeout(
         () => setTransition((current) => ({ ...current, phase: "opening" })),
-        logoDuration,
+        coveredDuration,
       );
     } else {
       timer = window.setTimeout(() => {
