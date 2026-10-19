@@ -6,7 +6,7 @@ function CourseGrid({ items, onBuy }) {
   }
 
   return (
-    <ul className="grid grid-cols-1 gap-x-4 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="mx-auto grid max-w-5xl grid-cols-1">
       {items.map((course, i) => (
         <CourseCard key={course.id} course={course} onBuy={onBuy} index={i} />
       ))}

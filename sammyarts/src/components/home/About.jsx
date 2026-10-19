@@ -42,7 +42,7 @@ function About() {
           <div className="relative">
             {headshot ? (
               <img
-                src={headshot}
+                src="/img/ceo.png"
                 alt="Sammy, founder and CEO"
                 className="aspect-[4/5] w-full object-cover"
               />
@@ -87,15 +87,24 @@ function About() {
             className="mt-8 max-w-xl space-y-6 text-sm leading-relaxed text-muted md:text-base"
           >
             <p>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Non
-              quidem quasi nostrum rerum ab excepturi quaerat possimus voluptate
-              explicabo minus dignissimos, dolor repellat. Aliquid at molestiae,
-              error totam ea nobis nulla harum vel!
+              Samuel Olusola (Sammyarts) is an Artist, Brand Designer, and
+              Creative Director focused on helping mid stage founders/brands
+              communicate their message and improve the visual experience around
+              their products, service or events, establishing distinctive visual
+              identities through creative direction and visual storytelling.
+              Over the years, he has collaborated with local and international
+              brands across diverse industries.
             </p>
             <p>
-              A praesentium non fugiat quisquam quas nemo modi, excepturi
-              cupiditate sunt sequi sit eos perspiciatis illum magni tenetur
-              error repudiandae debitis.
+              His work is recognized for its original concepts, refined
+              presentation, and ability to communicate complex brand messages
+              through compelling visual design. His creative approach has
+              influenced emerging design trends, inspiring a generation of
+              designers across Africa through his distinctive style and
+              transparent creative process. Committed to pushing the boundaries
+              of excellence, Samuel continues to champion a design philosophy,
+              believing that exceptional design should not only solve problems
+              but also leave a lasting impression.
             </p>
           </MotionDiv>
 

@@ -93,20 +93,9 @@ function Checkout() {
           <h1 className="mt-4 font-serif text-[clamp(2.5rem,6vw,4.5rem)] italic leading-[0.95] tracking-[-0.04em]">
             {course.title}
           </h1>
-          <p className="mt-3 text-sm text-cream/60">
-            {course.type === "mentorship" ? "Mentorship" : "Course"}
-            {course.billing === "per month" ? " · billed monthly" : ""}
-          </p>
-
           {cancelled ? (
             <p className="mt-6 text-sm text-accent" role="status">
               Payment was cancelled. You can try again below.
-            </p>
-          ) : null}
-
-          {course.desc ? (
-            <p className="mt-6 max-w-xl text-sm leading-relaxed text-cream/70">
-              {course.desc}
             </p>
           ) : null}
 
@@ -165,13 +154,6 @@ function Checkout() {
         </form>
 
         <aside className="border border-cream/10 bg-surface/40 p-6">
-          {course.img ? (
-            <img
-              src={course.img}
-              alt=""
-              className="aspect-[4/3] w-full object-cover"
-            />
-          ) : null}
           <p className="mt-6 text-xs uppercase tracking-[0.2em] text-cream/50">
             Total
           </p>

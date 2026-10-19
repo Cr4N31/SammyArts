@@ -10,7 +10,6 @@
     "price": 45000,
     "billing": "one-time",
     "desc": "",
-    "img": "/images/courses/portrait.jpg",
     "featured": true
   },
   {
@@ -24,7 +23,6 @@
     "price": 30000,
     "billing": "one-time",
     "desc": "",
-    "img": "/images/courses/color.jpg",
     "featured": true
   },
   {
@@ -38,7 +36,6 @@
     "price": 80000,
     "billing": "per month",
     "desc": "",
-    "img": "/images/courses/mentorship.jpg",
     "featured": true
   },
   {
@@ -52,7 +49,6 @@
     "price": 25000,
     "billing": "one-time",
     "desc": "",
-    "img": "/images/courses/charcoal.jpg",
     "featured": false
   },
   {
@@ -66,7 +62,6 @@
     "price": 120000,
     "billing": "one-time",
     "desc": "",
-    "img": "/images/courses/portfolio.jpg",
     "featured": false
   },
   {
@@ -80,7 +75,6 @@
     "price": 38000,
     "billing": "one-time",
     "desc": "",
-    "img": "/images/courses/figure.jpg",
     "featured": false
   }
 ]

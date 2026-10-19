@@ -17,8 +17,17 @@ import Courses from "./Courses";
 import Blog from "./Blog";
 import Messages from "./Messages";
 import Orders from "./Orders";
+import { workCategories } from "../data/workCategories";
 
-const blank = { id: null, title: "", desc: "", img: "" };
+const blank = {
+  id: null,
+  title: "",
+  desc: "",
+  img: "",
+  category: "",
+  year: "",
+  caseStudyImages: [],
+};
 
 const labelClass = "mb-2 block text-xs uppercase tracking-[0.2em] text-muted";
 
@@ -341,6 +350,7 @@ function PieceList() {
                 title: titleFromFile(file.name),
                 desc: "",
                 img: url,
+                category: "",
               },
             ]
           : works.map((work) =>
@@ -543,8 +553,10 @@ function PieceEditor() {
   const [saving, setSaving] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingCaseStudy, setUploadingCaseStudy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const fileRef = useRef(null);
+  const caseStudyFileRef = useRef(null);
 
   async function onFile(e) {
     const file = e.target.files?.[0];
@@ -560,6 +572,25 @@ function PieceEditor() {
       setSaveError(err.message);
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function onCaseStudyFiles(e) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+    setUploadingCaseStudy(true);
+    setSaveError("");
+    try {
+      const images = await Promise.all(files.map(uploadImage));
+      setDraft((current) => ({
+        ...current,
+        caseStudyImages: [...(current.caseStudyImages || []), ...images],
+      }));
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setUploadingCaseStudy(false);
     }
   }
 
@@ -582,6 +613,10 @@ function PieceEditor() {
       title,
       desc: draft.desc.trim(),
       img: draft.img.trim(),
+      category: draft.category,
+      year: String(draft.year || "").trim(),
+      medium: draft.medium || existing?.medium || "",
+      caseStudyImages: draft.caseStudyImages || [],
     };
     const next = isNew
       ? [...works, item]
@@ -686,8 +721,86 @@ function PieceEditor() {
             value={draft.desc}
             onChange={(e) => updateDraft("desc", e.target.value)}
           />
+          <div>
+            <label htmlFor="work-category" className={labelClass}>
+              Category
+            </label>
+            <select
+              id="work-category"
+              value={draft.category || ""}
+              onChange={(e) => updateDraft("category", e.target.value)}
+              className={fieldClass}
+            >
+              <option value="">Uncategorized</option>
+              {workCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+          <TextField
+            id="work-year"
+            label="Year"
+            value={draft.year || ""}
+            onChange={(e) => updateDraft("year", e.target.value)}
+          />
+          <div>
+            <p className={labelClass}>Case study images</p>
+            <p className="mb-3 text-sm text-muted">
+              Add images to build the scrollable project story. The main image
+              is included automatically.
+            </p>
+            <input
+              ref={caseStudyFileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              className="sr-only"
+              onChange={onCaseStudyFiles}
+            />
+            <button
+              type="button"
+              className={ghostClass}
+              disabled={uploadingCaseStudy || saving}
+              onClick={() => caseStudyFileRef.current?.click()}
+            >
+              {uploadingCaseStudy ? "Uploading images" : "Add case study images"}
+            </button>
+            {draft.caseStudyImages?.length ? (
+              <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {draft.caseStudyImages.map((src, imageIndex) => (
+                  <li key={`${src}-${imageIndex}`} className="relative">
+                    <img
+                      src={src}
+                      alt={`Case study image ${imageIndex + 1}`}
+                      className="aspect-[4/3] w-full border border-border object-cover"
+                    />
+                    <button
+                      type="button"
+                      className="mt-2 text-xs text-muted underline underline-offset-4 hover:text-accent"
+                      onClick={() =>
+                        updateDraft(
+                          "caseStudyImages",
+                          draft.caseStudyImages.filter(
+                            (_, index) => index !== imageIndex,
+                          ),
+                        )
+                      }
+                    >
+                      Remove image {imageIndex + 1}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
           <div className="flex flex-wrap items-center gap-4">
-            <button type="submit" disabled={saving || uploading} className={pillClass}>
+            <button
+              type="submit"
+              disabled={saving || uploading || uploadingCaseStudy}
+              className={pillClass}
+            >
               {saving ? "Saving" : "Save project"}
             </button>
             {!isNew && !confirmRemove ? (

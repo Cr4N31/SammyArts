@@ -1,6 +1,237 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Prestij";
+  src: url("/fonts/Prestij_Light_Demo.otf") format("opentype");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Prestij";
+  src: url("/fonts/Prestij_Regular_Demo.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Prestij";
+  src: url("/fonts/Prestij_Bold_Demo.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Prestij";
+  src: url("/fonts/Prestij_Italic_Demo.otf") format("opentype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Prestij";
+  src: url("/fonts/Prestij_Light_Italic_Demo.otf") format("opentype");
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Prestij";
+  src: url("/fonts/Prestij_Bold_Italic_Demo.otf") format("opentype");
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Prestij Numerals";
+  src: url("/fonts/Prestij_Light_Demo.otf") format("opentype");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "Prestij Numerals";
+  src: url("/fonts/Prestij_Regular_Demo.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "Prestij Numerals";
+  src: url("/fonts/Prestij_Bold_Demo.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "Prestij Numerals";
+  src: url("/fonts/Prestij_Italic_Demo.otf") format("opentype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Thin.otf") format("opentype");
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-ExtraLight.otf") format("opentype");
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Light.otf") format("opentype");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Medium.otf") format("opentype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-ThinItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-ExtraLightItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-LightItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-SemiBold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-ExtraBoldItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-ExtraBold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Black.otf") format("opentype");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-Italic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-MediumItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-SemiBoldItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-BoldItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-BlackItalic.otf") format("opentype");
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+}
+
 @theme {
+  --font-sans: "Prestij Numerals", "Montserrat", sans-serif;
+  --font-serif: "Prestij", serif;
+
   --color-bg: #120d0d;
   --color-brand: #120d0d;
   --color-surface: #181212;
@@ -13,6 +244,22 @@
   --color-accent-pressed: #e0793a;
 }
 
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  [class~="tabular-nums"] {
+    font-family: var(--font-serif);
+  }
+}
+
 .page-flow {
   background: linear-gradient(
     180deg,
@@ -22,6 +269,37 @@
     var(--color-bg) 78%,
     var(--color-bg) 100%
   );
+}
+
+.service-orbit {
+  animation: service-orbit var(--orbit-duration) linear infinite;
+}
+
+.service-orbit__counter {
+  animation: service-counter-orbit var(--orbit-duration) linear infinite;
+}
+
+.service-orbit__upright {
+  transform: rotateY(var(--counter-angle));
+}
+
+.service-orbit-stage:hover .service-orbit,
+.service-orbit-stage:hover .service-orbit__counter,
+.service-orbit-stage:focus-within .service-orbit,
+.service-orbit-stage:focus-within .service-orbit__counter {
+  animation-play-state: paused;
+}
+
+@keyframes service-orbit {
+  to {
+    transform: rotateY(-360deg);
+  }
+}
+
+@keyframes service-counter-orbit {
+  to {
+    transform: rotateY(360deg);
+  }
 }
 
 .page-reveal > * {
@@ -122,6 +400,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .service-orbit,
+  .service-orbit__counter {
+    animation: none;
+  }
+
   .page-reveal > * {
     animation: none;
   }

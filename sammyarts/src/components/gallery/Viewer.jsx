@@ -2,39 +2,13 @@ import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 const MotionDiv = motion.div;
-const MotionImg = motion.img;
-const SWIPE = 80;
+const iconButtonClass =
+  "grid h-11 w-11 shrink-0 place-items-center border border-border text-text transition-colors duration-200 hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40";
 
-const Arrow = ({ direction }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-5 w-5"
-    aria-hidden="true"
-  >
-    <path
-      d={
-        direction === "right"
-          ? "M5 12h14M13 6l6 6-6 6"
-          : "M19 12H5M11 6l-6 6 6 6"
-      }
-    />
-  </svg>
-);
-
-const stepButton =
-  "grid h-11 w-11 shrink-0 place-items-center rounded-full border border-accent/40 text-accent transition-colors duration-300 hover:bg-accent hover:text-brand";
-
-// Full screen viewer. Arrow keys and swipe move between works, Escape closes.
 function Viewer({ works, open, index, onClose, onStep }) {
   const closeRef = useRef(null);
   const work = works[index];
 
-  // Lock page scroll, move focus in, and give it back on close
   useEffect(() => {
     if (!open) return;
     const prevFocus = document.activeElement;
@@ -51,12 +25,16 @@ function Viewer({ works, open, index, onClose, onStep }) {
     if (!open) return;
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") onStep(1);
-      else if (e.key === "ArrowLeft") onStep(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose, onStep]);
+  }, [open, onClose]);
+
+  if (!work) return null;
+
+  const images = [...new Set([work.img, ...(work.caseStudyImages || [])])].filter(
+    Boolean,
+  );
 
   return (
     <AnimatePresence>
@@ -69,78 +47,135 @@ function Viewer({ works, open, index, onClose, onStep }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[60] flex flex-col bg-brand/95 text-cream backdrop-blur-sm"
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-[60] grid h-dvh grid-rows-[minmax(0,1fr)_auto] overflow-hidden bg-brand text-cream md:grid-cols-[minmax(0,1fr)_minmax(20rem,32rem)] md:grid-rows-1"
         >
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-5 py-4 md:px-10 md:py-6">
-            <p className="text-xs text-cream/60">
-              {String(index + 1).padStart(2, "0")} of {works.length}
-            </p>
-            <button
-              ref={closeRef}
-              type="button"
-              onClick={onClose}
-              className="rounded-full border border-accent/40 px-5 py-2 text-xs text-accent transition-colors duration-300 hover:bg-accent hover:text-brand"
-            >
-              Close
-            </button>
-          </div>
+          <section
+            role="region"
+            aria-label={`${work.title} case study images`}
+            className="min-h-0 overflow-y-auto overscroll-contain bg-surface"
+          >
+            <div className="mx-auto flex max-w-5xl flex-col gap-3 p-3 sm:gap-5 sm:p-5 md:gap-6 md:p-8">
+              {images.length ? (
+                images.map((src, imageIndex) => (
+                  <img
+                    key={`${work.id}-${src}`}
+                    src={src}
+                    alt={`${work.title} case study image ${imageIndex + 1}`}
+                    loading={imageIndex === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                    className="block h-auto w-full select-none object-contain"
+                  />
+                ))
+              ) : (
+                <div className="grid min-h-64 place-items-center border border-dashed border-border text-sm text-muted">
+                  No case study images added yet.
+                </div>
+              )}
+            </div>
+          </section>
 
-          {/* Work */}
-          <div className="flex min-h-0 flex-1 items-center justify-center px-5 md:px-16">
-            <AnimatePresence mode="wait" initial={false}>
-              <MotionImg
-                key={work.id}
-                src={work.img}
-                alt={work.title}
-                draggable={false}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -SWIPE) onStep(1);
-                  else if (info.offset.x > SWIPE) onStep(-1);
-                }}
-                className="max-h-[68svh] max-w-full cursor-grab select-none object-contain active:cursor-grabbing"
-              />
-            </AnimatePresence>
-          </div>
-
-          {/* Details and controls */}
-          <div className="flex items-center justify-between gap-4 px-5 py-6 md:px-10 md:py-8">
-            <button
-              type="button"
-              onClick={() => onStep(-1)}
-              aria-label="Previous work"
-              className={stepButton}
-            >
-              <Arrow direction="left" />
-            </button>
-
-            <div className="text-center">
-              <p className="font-serif text-2xl italic leading-tight tracking-[-0.02em] md:text-3xl">
-                {work.title}
+          <aside className="relative z-10 flex max-h-[50svh] min-h-0 flex-col border-t border-border bg-bg px-5 py-4 sm:px-8 md:h-dvh md:max-h-none md:border-l md:border-t-0 md:px-10 md:py-8">
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                Project {String(index + 1).padStart(2, "0")} /{" "}
+                {String(works.length).padStart(2, "0")}
               </p>
-              <p className="mt-1 text-xs text-cream/60">
-                {work.medium}, {work.year}
-                {work.room ? `, ${work.room}` : ""}
-              </p>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                aria-label="Close project case study"
+                className={iconButtonClass}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path d="m6 6 12 12M18 6 6 18" />
+                </svg>
+              </button>
             </div>
 
-            <button
-              type="button"
-              onClick={() => onStep(1)}
-              aria-label="Next work"
-              className={stepButton}
-            >
-              <Arrow direction="right" />
-            </button>
-          </div>
+            <div className="min-h-0 flex-1 overflow-y-auto py-6 md:py-12">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent">
+                Case study
+              </p>
+              <h2 className="mt-4 break-words font-serif text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.95] tracking-[-0.04em]">
+                {work.title}
+              </h2>
+              <p className="mt-6 whitespace-pre-line text-sm leading-relaxed text-muted">
+                {work.desc || "More details about this project are coming soon."}
+              </p>
+
+              <dl className="mt-8 border-t border-border">
+                <div className="flex items-center justify-between gap-4 border-b border-border py-4">
+                  <dt className="text-xs uppercase tracking-[0.16em] text-muted">
+                    Tag
+                  </dt>
+                  <dd className="border border-border px-2.5 py-1 text-right text-xs uppercase tracking-[0.12em] text-accent">
+                    {work.category || "Uncategorized"}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4 border-b border-border py-4">
+                  <dt className="text-xs uppercase tracking-[0.16em] text-muted">
+                    Year
+                  </dt>
+                  <dd className="text-right text-sm">{work.year || "—"}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-t border-border pt-5">
+              <button
+                type="button"
+                onClick={() => onStep(-1)}
+                aria-label="Previous project"
+                className={iconButtonClass}
+                disabled={works.length < 2}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path d="M19 12H5m6 6-6-6 6-6" />
+                </svg>
+              </button>
+              <p className="text-xs text-muted">Browse projects</p>
+              <button
+                type="button"
+                onClick={() => onStep(1)}
+                aria-label="Next project"
+                className={iconButtonClass}
+                disabled={works.length < 2}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14m-6-6 6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+          </aside>
         </MotionDiv>
       )}
     </AnimatePresence>

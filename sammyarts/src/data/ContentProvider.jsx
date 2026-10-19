@@ -5,6 +5,7 @@ import { portfolioData } from "./portfolio";
 import siteData from "./site.json";
 import coursesData from "./courses.json";
 import { blogPosts as blogSeed } from "./blogData";
+import { workCategories } from "./workCategories";
 import { ContentContext } from "./content";
 import { auth, db, firebaseConfigured } from "./firebase";
 import {
@@ -36,6 +37,14 @@ function normalizeWorks(list) {
     img: String(item?.img ?? ""),
     medium: item?.medium ? String(item.medium).slice(0, 80) : "",
     year: item?.year ?? "",
+    category: workCategories.includes(item?.category) ? item.category : "",
+    caseStudyImages: Array.isArray(item?.caseStudyImages)
+      ? item.caseStudyImages
+          .filter((image) => typeof image === "string")
+          .map((image) => image.slice(0, 2000))
+          .filter(Boolean)
+          .slice(0, 40)
+      : [],
   }));
 }
 
@@ -66,7 +75,6 @@ function normalizeCourses(list) {
       price: Number(item?.price) || 0,
       billing: String(item?.billing ?? "one-time").slice(0, 40),
       desc: String(item?.desc ?? "").slice(0, 600),
-      img: String(item?.img ?? item?.image ?? ""),
       featured: Boolean(item?.featured),
     };
   });
@@ -117,13 +125,7 @@ function paintWorks(works) {
   return works.map((work) => ({
     ...work,
     img: displayImage(work.img),
-  }));
-}
-
-function paintCourses(courses) {
-  return courses.map((course) => ({
-    ...course,
-    img: displayImage(course.img),
+    caseStudyImages: work.caseStudyImages.map(displayImage),
   }));
 }
 
@@ -148,29 +150,28 @@ function paintSite(site) {
 async function fillWorks(raw, setWorks, cancelled) {
   await Promise.all(
     raw.map(async (work) => {
-      if (!isFirestoreImage(work.img)) return;
-      if (displayImage(work.img)) return;
-      const url = await resolveImage(work.img);
-      if (cancelled() || !url) return;
-      setWorks((prev) =>
-        prev.map((item) =>
-          item.id === work.id ? { ...item, img: url } : item,
+      const img = isFirestoreImage(work.img) && !displayImage(work.img)
+        ? await resolveImage(work.img)
+        : "";
+      const caseStudyImages = await Promise.all(
+        work.caseStudyImages.map((image) =>
+          isFirestoreImage(image) && !displayImage(image)
+            ? resolveImage(image)
+            : Promise.resolve(""),
         ),
       );
-    }),
-  );
-}
-
-async function fillCourses(raw, setCourses, cancelled) {
-  await Promise.all(
-    raw.map(async (course) => {
-      if (!isFirestoreImage(course.img)) return;
-      if (displayImage(course.img)) return;
-      const url = await resolveImage(course.img);
-      if (cancelled() || !url) return;
-      setCourses((prev) =>
+      if (cancelled()) return;
+      setWorks((prev) =>
         prev.map((item) =>
-          item.id === course.id ? { ...item, img: url } : item,
+          item.id === work.id
+            ? {
+                ...item,
+                ...(img ? { img } : {}),
+                caseStudyImages: item.caseStudyImages.map(
+                  (image, index) => caseStudyImages[index] || image,
+                ),
+              }
+            : item,
         ),
       );
     }),
@@ -227,15 +228,12 @@ async function hydrateWorks(works) {
     works.map(async (work) => ({
       ...work,
       img: (await resolveImage(work.img)) || displayImage(work.img) || "",
-    })),
-  );
-}
-
-async function hydrateCourses(courses) {
-  return Promise.all(
-    courses.map(async (course) => ({
-      ...course,
-      img: (await resolveImage(course.img)) || displayImage(course.img) || "",
+      caseStudyImages: await Promise.all(
+        work.caseStudyImages.map(
+          async (image) =>
+            (await resolveImage(image)) || displayImage(image) || "",
+        ),
+      ),
     })),
   );
 }
@@ -269,6 +267,11 @@ async function migrateLocalImages(works, site) {
       img: work.img?.startsWith("/uploads/")
         ? await uploadLocalPath(work.img)
         : work.img,
+      caseStudyImages: await Promise.all(
+        work.caseStudyImages.map((image) =>
+          image.startsWith("/uploads/") ? uploadLocalPath(image) : image,
+        ),
+      ),
     });
   }
 
@@ -295,17 +298,9 @@ async function packWorksForCloud(works) {
     items.push({
       ...work,
       img: await persistImageField(work.img),
-    });
-  }
-  return items;
-}
-
-async function packCoursesForCloud(courses) {
-  const items = [];
-  for (const course of courses) {
-    items.push({
-      ...course,
-      img: await persistImageField(course.img),
+      caseStudyImages: await Promise.all(
+        work.caseStudyImages.map(persistImageField),
+      ),
     });
   }
   return items;
@@ -389,14 +384,13 @@ export function ContentProvider({ children }) {
 
         setWorks(paintWorks(rawWorks));
         setSite(paintSite(rawSite));
-        setCourses(paintCourses(rawCourses));
+        setCourses(rawCourses);
         setBlogPosts(paintBlog(rawBlog));
         setReady(true);
 
         await Promise.all([
           fillWorks(rawWorks, setWorks, isCancelled),
           fillSite(rawSite, setSite, isCancelled),
-          fillCourses(rawCourses, setCourses, isCancelled),
           fillBlog(rawBlog, setBlogPosts, isCancelled),
         ]);
       } catch (err) {
@@ -428,9 +422,9 @@ export function ContentProvider({ children }) {
   async function saveCourses(next) {
     if (!db) throw new Error("Firebase is not set up.");
     if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
-    const packed = await packCoursesForCloud(normalizeCourses(next));
+    const packed = normalizeCourses(next);
     await setDoc(doc(db, "content", "courses"), { items: packed });
-    setCourses(await hydrateCourses(packed));
+    setCourses(packed);
   }
 
   async function saveBlogPosts(next) {
@@ -466,15 +460,12 @@ export function ContentProvider({ children }) {
     }
 
     if (!coursesSnap.exists()) {
-      const packedCourses = await packCoursesForCloud(
-        normalizeCourses(coursesData),
-      );
+      const packedCourses = normalizeCourses(coursesData);
       await setDoc(doc(db, "content", "courses"), { items: packedCourses });
-      setCourses(await hydrateCourses(packedCourses));
+      setCourses(packedCourses);
     } else {
       const rawCourses = normalizeCourses(coursesSnap.data().items);
-      setCourses(paintCourses(rawCourses));
-      await fillCourses(rawCourses, setCourses, () => false);
+      setCourses(rawCourses);
     }
 
     if (worksSnap.exists() && siteSnap.exists()) {

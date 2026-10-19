@@ -6,7 +6,6 @@ const EASE = [0.16, 1, 0.3, 1];
 const MotionSection = motion.section;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
-const MotionSpan = motion.span;
 const MotionDiv = motion.div;
 const MotionUl = motion.ul;
 
@@ -30,39 +29,21 @@ function CourseCard({ course, index }) {
     <MotionDiv
       {...fadeUp}
       transition={{ duration: 1, delay: index * 0.08, ease: EASE }}
-      className="group"
+      className="border-t border-border py-5"
     >
-      <div className="aspect-[4/5] overflow-hidden bg-raised ring-1 ring-border">
-        {course.img ? (
-          <img
-            src={course.img}
-            alt={course.title}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="grid h-full place-items-center border border-dashed border-border text-xs text-muted">
-            {course.title}
-          </div>
-        )}
-      </div>
-      <div className="mt-5">
-        <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted">
-          {course.type === "mentorship" ? "Mentorship" : "Course"}
-          {course.level ? ` · ${course.level}` : ""}
-        </p>
-        <div className="mt-2 flex items-baseline justify-between gap-4">
-          <h3 className="font-serif text-3xl italic tracking-[-0.03em] md:text-4xl">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-baseline">
+          <h3 className="font-serif text-2xl italic tracking-[-0.03em] md:text-3xl">
             {course.title}
           </h3>
           {Number.isFinite(price) && price > 0 ? (
             <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
               {money.format(price)}
             </p>
-          ) : null}
-        </div>
-        {course.desc ? (
-          <p className="mt-3 text-sm leading-relaxed text-muted">{course.desc}</p>
-        ) : null}
+          ) : (
+            <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
+              Free
+            </p>
+          )}
       </div>
     </MotionDiv>
   );
@@ -93,7 +74,7 @@ function CoursesMentor() {
         >
           Learn the craft.
           <br />
-          Make it <MotionSpan className="text-accent">yours.</MotionSpan>
+          Make it <span className="text-accent">yours.</span>
         </MotionH2>
 
         <MotionP
@@ -106,7 +87,7 @@ function CoursesMentor() {
         </MotionP>
 
         {preview.length > 0 ? (
-          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 md:mt-24">
+          <div className="mt-16 border-b border-border md:mt-24">
             {preview.map((course, i) => (
               <CourseCard key={course.id} course={course} index={i} />
             ))}

@@ -20,6 +20,14 @@ const shapes = [
 function WorkGrid({ works, onOpen }) {
   const reduceMotion = useReducedMotion();
 
+  if (works.length === 0) {
+    return (
+      <p className="mx-auto max-w-5xl border-t border-border py-8 text-sm text-muted">
+        No works in this category yet.
+      </p>
+    );
+  }
+
   return (
     <ul className="mx-auto grid max-w-5xl grid-cols-1 items-start gap-x-2 gap-y-12 md:grid-cols-3 md:gap-x-3 md:gap-y-16">
       {works.map((work, i) => (
