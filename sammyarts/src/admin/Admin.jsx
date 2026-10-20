@@ -307,6 +307,28 @@ function Notice({ message, onClear }) {
   );
 }
 
+function TagPicker({ value, onChange, disabled }) {
+  return (
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Tag">
+      {workCategories.map((category) => {
+        const active = value === category;
+        return (
+          <button
+            key={category}
+            type="button"
+            disabled={disabled}
+            aria-pressed={active}
+            onClick={() => onChange(category)}
+            className={active ? pillClass : ghostClass}
+          >
+            {category}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function PieceList() {
   const { works, saveWorks } = useContent();
   const location = useLocation();
@@ -314,6 +336,7 @@ function PieceList() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [confirmId, setConfirmId] = useState(null);
+  const [uploadTag, setUploadTag] = useState("");
   const [notice, setNotice] = useState(() =>
     typeof location.state?.notice === "string" ? location.state.notice : "",
   );
@@ -332,11 +355,24 @@ function PieceList() {
     fileRef.current?.click();
   }
 
+  function startUpload() {
+    if (!uploadTag) {
+      setSaveError("Pick a tag first.");
+      return;
+    }
+    setSaveError("");
+    chooseFile(null);
+  }
+
   async function onFile(e) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
     const target = uploadTarget.current;
+    if (target == null && !uploadTag) {
+      setSaveError("Pick a tag first.");
+      return;
+    }
     setSaving(true);
     setSaveError("");
     try {
@@ -350,7 +386,7 @@ function PieceList() {
                 title: titleFromFile(file.name),
                 desc: "",
                 img: url,
-                category: "",
+                category: uploadTag,
               },
             ]
           : works.map((work) =>
@@ -374,6 +410,20 @@ function PieceList() {
     setSaveError("");
     try {
       await saveWorks(next);
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function setCategory(id, category) {
+    setSaving(true);
+    setSaveError("");
+    try {
+      await saveWorks(
+        works.map((work) => (work.id === id ? { ...work, category } : work)),
+      );
     } catch (err) {
       setSaveError(err.message);
     } finally {
@@ -416,7 +466,7 @@ function PieceList() {
             type="button"
             className={pillClass}
             disabled={saving}
-            onClick={() => chooseFile(null)}
+            onClick={startUpload}
           >
             {saving ? "Uploading" : "Upload project"}
           </button>
@@ -424,6 +474,15 @@ function PieceList() {
             New project
           </Link>
         </div>
+      </div>
+
+      <div className="mt-8">
+        <p className={labelClass}>Tag this upload</p>
+        <TagPicker
+          value={uploadTag}
+          disabled={saving}
+          onChange={setUploadTag}
+        />
       </div>
 
       <p className="mt-6 text-sm text-muted" aria-live="polite">
@@ -453,6 +512,7 @@ function PieceList() {
               <div className="min-w-0">
                 <p className="text-xs tracking-[0.2em] text-muted">
                   {String(index + 1).padStart(2, "0")}
+                  {work.category ? ` · ${work.category}` : " · No tag"}
                 </p>
                 <h2 className="mt-1 font-serif text-3xl italic tracking-[-0.03em] break-words">
                   <Link
@@ -467,6 +527,13 @@ function PieceList() {
                     {work.desc}
                   </p>
                 ) : null}
+                <div className="mt-3">
+                  <TagPicker
+                    value={work.category}
+                    disabled={saving}
+                    onChange={(category) => setCategory(work.id, category)}
+                  />
+                </div>
               </div>
               <div className="flex flex-wrap gap-2 md:justify-end">
                 <button
@@ -607,6 +674,11 @@ function PieceEditor() {
       setSaveError("");
       return;
     }
+    if (!workCategories.includes(draft.category)) {
+      setSaveError("Pick a tag.");
+      setTitleError("");
+      return;
+    }
 
     const item = {
       id: draft.id ?? Date.now(),
@@ -722,22 +794,12 @@ function PieceEditor() {
             onChange={(e) => updateDraft("desc", e.target.value)}
           />
           <div>
-            <label htmlFor="work-category" className={labelClass}>
-              Category
-            </label>
-            <select
-              id="work-category"
-              value={draft.category || ""}
-              onChange={(e) => updateDraft("category", e.target.value)}
-              className={fieldClass}
-            >
-              <option value="">Uncategorized</option>
-              {workCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+            <p className={labelClass}>Tag</p>
+            <TagPicker
+              value={draft.category}
+              disabled={saving}
+              onChange={(category) => updateDraft("category", category)}
+            />
           </div>
           <TextField
             id="work-year"

@@ -46,6 +46,7 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/atelier" element={<Courses />} />
           <Route path="/checkout/success" element={<CheckoutResult />} />
+          <Route path="/success" element={<CheckoutResult />} />
           <Route path="/checkout/:slug" element={<Checkout />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
