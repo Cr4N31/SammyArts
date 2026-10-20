@@ -2,9 +2,9 @@ import { defineConfig, loadEnv } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 
-function bachsApiPlugin(env) {
+function paymentsApiPlugin(env) {
   return {
-    name: "bachs-api",
+    name: "payments-api",
     configureServer(server) {
       // Mirror Vercel /api routes so local Pay works when PUBLIC_SITE_URL is set.
       for (const [key, value] of Object.entries(env)) {
@@ -57,10 +57,9 @@ function bachsApiPlugin(env) {
             return;
           }
 
-          const checkoutId = new URL(url, "http://localhost").searchParams.get(
-            "checkout_id",
-          );
-          const result = await confirmCheckout(checkoutId);
+          const params = new URL(url, "http://localhost").searchParams;
+          const reference = params.get("reference") || params.get("trxref");
+          const result = await confirmCheckout(reference);
           res.statusCode = 200;
           res.end(JSON.stringify(result));
         } catch (err) {
@@ -75,6 +74,6 @@ function bachsApiPlugin(env) {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
-    plugins: [react(), tailwindcss(), bachsApiPlugin(env)],
+    plugins: [react(), tailwindcss(), paymentsApiPlugin(env)],
   };
 });

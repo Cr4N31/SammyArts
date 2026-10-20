@@ -35,21 +35,21 @@ function CheckMark({ reduce }) {
 
 function CheckoutResult() {
   const [params] = useSearchParams();
-  const checkoutId = params.get("checkout_id") || "";
+  const reference = params.get("reference") || params.get("trxref") || "";
   const course = params.get("course") || "";
-  const [status, setStatus] = useState(checkoutId ? "checking" : "completed");
+  const [status, setStatus] = useState(reference ? "checking" : "completed");
   const [detail, setDetail] = useState("");
   const [email, setEmail] = useState("");
   const reduce = useReducedMotion();
 
   useEffect(() => {
-    if (!checkoutId) return undefined;
+    if (!reference) return undefined;
     let cancelled = false;
 
     async function confirm() {
       try {
         const res = await fetch(
-          `/api/confirm-checkout?checkout_id=${encodeURIComponent(checkoutId)}`,
+          `/api/confirm-checkout?reference=${encodeURIComponent(reference)}`,
         );
         const data = await res.json().catch(() => ({}));
         if (cancelled) return;
@@ -68,10 +68,11 @@ function CheckoutResult() {
     return () => {
       cancelled = true;
     };
-  }, [checkoutId]);
+  }, [reference]);
 
   const paid =
-    !checkoutId ||
+    !reference ||
+    status === "success" ||
     status === "completed" ||
     status === "paid" ||
     status === "succeeded";
