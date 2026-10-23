@@ -87,10 +87,10 @@ const Item = ({
 
 // Placeholder copy, replace with the real lines
 const tagline = [
-  "Hand finished.",
-  "Raw materials.",
-  "Honest craft.",
-  "Quiet depth.",
+  "Form follows feeling.",
+  "Type with character.",
+  "Color with purpose.",
+  "Space to breathe.",
 ];
 
 // Five columns, each bottom aligned. `basis` is the share of the column
