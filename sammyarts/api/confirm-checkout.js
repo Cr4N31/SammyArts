@@ -16,10 +16,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const checkoutId =
-      req.query?.checkout_id ||
-      new URL(req.url, "http://localhost").searchParams.get("checkout_id");
-    const result = await confirmCheckout(checkoutId);
+    const params = new URL(req.url || "/", "http://localhost").searchParams;
+    const reference =
+      req.query?.reference ||
+      params.get("reference") ||
+      req.query?.trxref ||
+      params.get("trxref");
+    const result = await confirmCheckout(reference);
     res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ error: err.message || "Confirm failed" });
