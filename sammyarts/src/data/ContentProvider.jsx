@@ -40,9 +40,12 @@ function normalizeWorks(list) {
     category: workCategories.includes(item?.category) ? item.category : "",
     caseStudyImages: Array.isArray(item?.caseStudyImages)
       ? item.caseStudyImages
-          .filter((image) => typeof image === "string")
-          .map((image) => image.slice(0, 2000))
-          .filter(Boolean)
+          .filter((image) => typeof image === "string" && image.length > 0)
+          .map((image) =>
+            image.startsWith("data:image/") || image.startsWith("fsimg:")
+              ? image
+              : image.slice(0, 2000),
+          )
           .slice(0, 40)
       : [],
   }));
