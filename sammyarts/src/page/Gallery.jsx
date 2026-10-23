@@ -12,7 +12,7 @@ function GalleryFilters({ activeCategory, onChange }) {
     <div
       role="group"
       aria-label="Filter works by category"
-      className="mx-auto mb-12 grid max-w-5xl grid-cols-2 gap-1 rounded-md border border-border bg-surface p-1 md:grid-cols-3"
+      className="mb-12 grid grid-cols-2 gap-1 rounded-md border border-border bg-surface p-1 md:grid-cols-3"
     >
       {filters.map((category) => {
         const active = category === activeCategory;

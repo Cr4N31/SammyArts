@@ -33,7 +33,7 @@ function Blog() {
 
   return (
     <main className="bg-brand px-5 pb-24 pt-24 text-cream md:px-10 md:pb-32 md:pt-28">
-      <div className="mx-auto max-w-6xl">
+      <div className="">
         {featured ? <BlogFeatured post={featured} /> : null}
 
         <section
