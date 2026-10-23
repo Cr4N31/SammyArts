@@ -50,7 +50,7 @@ function writeDisk(id, dataUrl) {
 function remember(id, dataUrl, ref) {
   cache.set(id, dataUrl);
   if (ref) dataToRef.set(dataUrl, ref);
-  writeDisk(id, dataUrl);
+  if (dataUrl.length < 180_000) writeDisk(id, dataUrl);
 }
 
 /** Sync lookup from memory / localStorage. No network. */
@@ -68,64 +68,53 @@ export function peekImage(value) {
   return "";
 }
 
-function fileToBitmap(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(img);
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("Could not read that image."));
-    };
-    img.src = url;
-  });
-}
-
-function drawJpeg(img, edge, quality) {
-  const scale = Math.min(1, edge / Math.max(img.width, img.height));
-  const width = Math.max(1, Math.round(img.width * scale));
-  const height = Math.max(1, Math.round(img.height * scale));
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Could not process that image.");
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(img, 0, 0, width, height);
-  return canvas.toDataURL("image/jpeg", quality);
-}
-
-function fileToDataUrl(file) {
+function readAsDataUrl(source) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result || ""));
     reader.onerror = () => reject(new Error("Could not read that image."));
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(source);
   });
 }
 
+async function encodeJpeg(source, width, height, quality) {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d", { alpha: false });
+  if (!ctx) throw new Error("Could not process that image.");
+  ctx.drawImage(source, 0, 0, width, height);
+  const blob = await new Promise((resolve) => {
+    canvas.toBlob(resolve, "image/jpeg", quality);
+  });
+  if (!blob) throw new Error("Could not process that image.");
+  return blob;
+}
+
 async function compressToDataUrl(file) {
-  if (file.size <= MAX_DATA_CHARS) {
-    const original = await fileToDataUrl(file);
+  if (file.size <= 650_000) {
+    const original = await readAsDataUrl(file);
     if (original.length <= MAX_DATA_CHARS) return original;
   }
 
-  const img = await fileToBitmap(file);
-  let edge = Math.min(MAX_EDGE, Math.max(img.width, img.height));
-  const quality = JPEG_QUALITY;
+  const decoded = await createImageBitmap(file);
+  const longest = Math.max(decoded.width, decoded.height);
+  let edge = Math.min(MAX_EDGE, longest);
+  let quality = JPEG_QUALITY;
 
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    const dataUrl = drawJpeg(img, edge, quality);
-    if (dataUrl.length <= MAX_DATA_CHARS) return dataUrl;
-    edge = Math.round(edge * 0.85);
+  try {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const scale = Math.min(1, edge / longest);
+      const width = Math.max(1, Math.round(decoded.width * scale));
+      const height = Math.max(1, Math.round(decoded.height * scale));
+      const blob = await encodeJpeg(decoded, width, height, quality);
+      if (blob.size <= 850_000) return readAsDataUrl(blob);
+      edge = Math.round(edge * 0.8);
+      quality = MIN_QUALITY;
+    }
+  } finally {
+    decoded.close();
   }
-
-  const fallback = drawJpeg(img, edge, MIN_QUALITY);
-  if (fallback.length <= MAX_DATA_CHARS) return fallback;
 
   throw new Error(
     "That image is still too large after compressing. Try a smaller file.",

@@ -293,17 +293,15 @@ async function migrateLocalImages(works, site) {
 }
 
 async function packWorksForCloud(works) {
-  const items = [];
-  for (const work of works) {
-    items.push({
+  return Promise.all(
+    works.map(async (work) => ({
       ...work,
       img: await persistImageField(work.img),
       caseStudyImages: await Promise.all(
         work.caseStudyImages.map(persistImageField),
       ),
-    });
-  }
-  return items;
+    })),
+  );
 }
 
 async function packBlogForCloud(posts) {
@@ -416,7 +414,8 @@ export function ContentProvider({ children }) {
     if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
     const packed = await packWorksForCloud(normalizeWorks(next));
     await setDoc(doc(db, "content", "works"), { items: packed });
-    setWorks(await hydrateWorks(packed));
+    setWorks(paintWorks(packed));
+    fillWorks(packed, setWorks, () => false).catch(console.error);
   }
 
   async function saveCourses(next) {
