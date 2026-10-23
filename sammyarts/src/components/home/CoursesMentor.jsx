@@ -32,18 +32,18 @@ function CourseCard({ course, index }) {
       className="border-t border-border py-5"
     >
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-baseline">
-          <h3 className="font-serif text-2xl italic tracking-[-0.03em] md:text-3xl">
-            {course.title}
-          </h3>
-          {Number.isFinite(price) && price > 0 ? (
-            <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
-              {money.format(price)}
-            </p>
-          ) : (
-            <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
-              Free
-            </p>
-          )}
+        <h3 className="font-serif text-2xl italic tracking-[-0.03em] md:text-3xl">
+          {course.title}
+        </h3>
+        {Number.isFinite(price) && price > 0 ? (
+          <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
+            {money.format(price)}
+          </p>
+        ) : (
+          <p className="shrink-0 text-sm uppercase tracking-[0.15em] text-accent">
+            Free
+          </p>
+        )}
       </div>
     </MotionDiv>
   );
@@ -72,9 +72,9 @@ function CoursesMentor() {
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
           className="text-[clamp(3rem,10vw,9rem)] italic leading-[0.92] tracking-[-0.05em]"
         >
-          Learn the craft.
+          Learn the craft
           <br />
-          Make it <span className="text-accent">yours.</span>
+          Make it <span className="text-accent">yours</span>
         </MotionH2>
 
         <MotionP

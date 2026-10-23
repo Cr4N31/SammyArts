@@ -190,9 +190,9 @@ function Hero() {
           <div className="flex flex-col gap-5 md:absolute md:left-0 md:top-0 md:z-10 md:max-w-[40%] md:gap-6">
             <Item progress={smoothProgress} speed={40} delay={0.2}>
               <h1 className="font-serif text-4xl leading-[0.98] tracking-[-0.03em] text-text md:text-[clamp(2.25rem,4.6vw,4.25rem)]">
-                Raw Materials.
+                Raw Materials
                 <br />
-                <em className="italic text-accent">Pure Intention.</em>
+                <em className="italic text-accent">Pure Intention</em>
               </h1>
             </Item>
 
@@ -249,10 +249,7 @@ function Hero() {
                     >
                       <ImageCell
                         label={cell.label}
-                        src={
-                          site.hero?.[cell.label] ||
-                          (ready ? cell.src : "")
-                        }
+                        src={site.hero?.[cell.label] || (ready ? cell.src : "")}
                       />
                     </Item>
                   ),
