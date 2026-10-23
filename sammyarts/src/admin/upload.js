@@ -108,7 +108,8 @@ async function compressToDataUrl(file) {
       const width = Math.max(1, Math.round(decoded.width * scale));
       const height = Math.max(1, Math.round(decoded.height * scale));
       const blob = await encodeJpeg(decoded, width, height, quality);
-      if (blob.size <= 850_000) return readAsDataUrl(blob);
+      const dataUrl = await readAsDataUrl(blob);
+      if (dataUrl.length < 900_000) return dataUrl;
       edge = Math.round(edge * 0.8);
       quality = MIN_QUALITY;
     }
