@@ -4,6 +4,7 @@ import { auth, db } from "../data/firebase";
 const MAX_EDGE = 960;
 const JPEG_QUALITY = 0.65;
 const MAX_DATA_CHARS = 700_000;
+const MAX_FILE_BYTES = 40 * 1024 * 1024;
 const PREFIX = "fsimg:";
 const DISK_KEY = "sammyarts-img-v1";
 
@@ -84,28 +85,32 @@ function fileToBitmap(file) {
 
 async function compressToDataUrl(file) {
   const img = await fileToBitmap(file);
-  const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
-  const width = Math.max(1, Math.round(img.width * scale));
-  const height = Math.max(1, Math.round(img.height * scale));
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Could not process that image.");
-  ctx.drawImage(img, 0, 0, width, height);
+  let edge = MAX_EDGE;
 
-  let quality = JPEG_QUALITY;
-  let dataUrl = canvas.toDataURL("image/jpeg", quality);
-  while (dataUrl.length > MAX_DATA_CHARS && quality > 0.4) {
-    quality -= 0.08;
-    dataUrl = canvas.toDataURL("image/jpeg", quality);
+  for (let pass = 0; pass < 5; pass += 1) {
+    const scale = Math.min(1, edge / Math.max(img.width, img.height));
+    const width = Math.max(1, Math.round(img.width * scale));
+    const height = Math.max(1, Math.round(img.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Could not process that image.");
+    ctx.drawImage(img, 0, 0, width, height);
+
+    let quality = JPEG_QUALITY;
+    let dataUrl = canvas.toDataURL("image/jpeg", quality);
+    while (dataUrl.length > MAX_DATA_CHARS && quality > 0.4) {
+      quality -= 0.08;
+      dataUrl = canvas.toDataURL("image/jpeg", quality);
+    }
+    if (dataUrl.length <= MAX_DATA_CHARS) return dataUrl;
+    edge = Math.round(edge * 0.75);
   }
-  if (dataUrl.length > MAX_DATA_CHARS) {
-    throw new Error(
-      "That image is still too large after compressing. Try a smaller file.",
-    );
-  }
-  return dataUrl;
+
+  throw new Error(
+    "That image is still too large after compressing. Try a smaller file.",
+  );
 }
 
 async function storeDataUrl(dataUrl) {
@@ -125,8 +130,8 @@ export async function uploadImage(file) {
   if (!file?.type?.startsWith("image/")) {
     throw new Error("Use a JPG, PNG, WEBP, or GIF.");
   }
-  if (file.size > 8 * 1024 * 1024) {
-    throw new Error("That image is larger than 8 MB.");
+  if (file.size > MAX_FILE_BYTES) {
+    throw new Error("That image is larger than 40 MB.");
   }
   const dataUrl = await compressToDataUrl(file);
   await storeDataUrl(dataUrl);
