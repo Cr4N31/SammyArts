@@ -1,5 +1,33 @@
 import { useState } from "react";
 import { sendContactMessage } from "../data/contact";
+import {
+  FaBehance,
+  FaWhatsapp,
+  FaInstagram,
+  FaPinterest,
+} from "react-icons/fa";
+
+import { FaXTwitter } from "react-icons/fa6";
+
+const contacts = [
+  {
+    name: "WhatsApp",
+    icon: FaWhatsapp,
+    href: "https://wa.me/message/URTQO34LCW5KP1",
+  },
+  {
+    name: "Instagram",
+    icon: FaInstagram,
+    href: "https://www.instagram.com/_sammyarts",
+  },
+  {
+    name: "X",
+    icon: FaXTwitter,
+    href: "https://x.com/_SAMMYARTS?t=kieEXkx49s6OJ30A7F-y7Q&s=09",
+  },
+  { name: "Behance", icon: FaBehance, href: "https://www.behance.net/smllsl" },
+  { name: "Pinterest", icon: FaPinterest, href: "https://pin.it/3ucODLwzR" },
+];
 
 const fieldClass =
   "w-full border-b border-accent bg-transparent py-3 text-base outline-none transition-colors placeholder:opacity-30 focus:border-current";
@@ -125,6 +153,28 @@ function Contact() {
           </button>
         </div>
       </form>
+      <span className="text-center text-accent uppercase">Or</span>
+      <div className="flex flex-col items-center gap-6">
+        <h2 className="text-sm uppercase tracking-[0.14em] opacity-70">
+          Reach out to us on our other platforms
+        </h2>
+
+        <ul className="flex items-center gap-6">
+          {contacts.map(({ name, icon: Icon, href }) => (
+            <li key={name}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={name}
+                className="text-accent transition-all duration-250 hover:-translate-y-1 hover:opacity-70"
+              >
+                <Icon size={24} aria-hidden />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }
