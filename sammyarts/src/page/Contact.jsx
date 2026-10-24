@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { sendContactMessage } from "../data/contact";
 import {
   FaBehance,
   FaWhatsapp,
@@ -34,6 +33,8 @@ const fieldClass =
 
 const labelClass = "text-xs uppercase tracking-[0.14em] opacity-60";
 
+const whatsappLink = contacts.find((c) => c.name === "WhatsApp").href;
+
 function Contact() {
   const [values, setValues] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
@@ -43,18 +44,21 @@ function Contact() {
     setValues((v) => ({ ...v, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (status === "sending") return;
-    setStatus("sending");
 
-    try {
-      await sendContactMessage(values);
-      setValues({ name: "", email: "", message: "" });
-      setStatus("sent");
-    } catch {
-      setStatus("error");
-    }
+    const text = [
+      `Hello, my name is ${values.name.trim()}.`,
+      `Email: ${values.email.trim()}`,
+      "",
+      values.message.trim(),
+    ].join("\n");
+
+    const url = `${whatsappLink}?text=${encodeURIComponent(text)}`;
+
+    window.open(url, "_blank", "noopener,noreferrer");
+    setValues({ name: "", email: "", message: "" });
+    setStatus("sent");
   };
 
   return (
@@ -67,8 +71,8 @@ function Contact() {
           Need some help?
         </h1>
         <p className="mt-6 max-w-md text-sm tracking-[-0.02em] opacity-70">
-          Send us an email and our team will reach out to sort whatever issues
-          or enquiries you may have.
+          Fill in the form and we will continue the conversation with you on
+          WhatsApp.
         </p>
       </div>
 
@@ -134,16 +138,15 @@ function Contact() {
             aria-live="polite"
             className="text-xs tracking-[-0.01em] opacity-70"
           >
-            {status === "sent" && "Message sent. We will be in touch."}
-            {status === "error" && "Something went wrong. Please try again."}
+            {status === "sent" &&
+              "Opening WhatsApp. Send the message there to reach us."}
           </p>
 
           <button
             type="submit"
-            disabled={status === "sending"}
-            className="group rounded-full px-4 py-2 text-sm uppercase tracking-[0.14em] text-accent transition-all duration-250 hover:bg-accent hover:text-brand disabled:opacity-40"
+            className="group rounded-full px-4 py-2 text-sm uppercase tracking-[0.14em] text-accent transition-all duration-250 hover:bg-accent hover:text-brand"
           >
-            {status === "sending" ? "Sending" : "Send"}
+            Send
             <span
               aria-hidden
               className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1"
