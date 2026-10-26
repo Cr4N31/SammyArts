@@ -72,9 +72,9 @@ function CoursesMentor() {
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
           className="text-[clamp(3rem,10vw,9rem)] italic leading-[0.92] tracking-[-0.05em]"
         >
-          Learn the craft
+          Learn the principles
           <br />
-          Make it <span className="text-accent">yours</span>
+          Build your <span className="text-accent">style</span>
         </MotionH2>
 
         <MotionP
@@ -82,8 +82,9 @@ function CoursesMentor() {
           transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
           className="mt-8 max-w-xl text-sm leading-relaxed text-muted md:text-base"
         >
-          We teach artistic courses and run mentorship programs for people who
-          want real skill, not just inspiration. Pick a path and start making.
+          Develop your creative skills through practical courses and mentorship
+          designed to help you master your craft, refine your visual thinking,
+          and turn your creative potential into purposeful work.
         </MotionP>
 
         {preview.length > 0 ? (

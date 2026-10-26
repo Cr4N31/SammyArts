@@ -16,7 +16,7 @@ function Footer() {
           <div className="flex flex-col justify-center items-center">
             <img src={logo} className="w-[400px]" />
             <p className="max-w-xs text-sm text-center leading-relaxed text-muted">
-              Hand-crafted pieces shaped from raw materials and deep intention.
+              Strategic design systems built to drive sales + leads.
             </p>
           </div>
 
