@@ -58,7 +58,7 @@ function CoursesMentor() {
       id="courses"
       className="relative overflow-hidden px-5 py-24 text-text md:px-10 md:py-36"
     >
-      <div className="mx-auto max-w-6xl">
+      <div className="">
         <MotionP
           {...fadeUp}
           transition={{ duration: 1, ease: EASE }}
@@ -70,7 +70,7 @@ function CoursesMentor() {
         <MotionH2
           {...fadeUp}
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
-          className="text-[clamp(3rem,10vw,9rem)] italic leading-[0.92] tracking-[-0.05em]"
+          className="text-[clamp(3rem,10vw,9rem)] leading-[0.92] tracking-[-0.05em]"
         >
           Learn the principles
           <br />

@@ -42,12 +42,6 @@ function Footer() {
           <p>
             &copy; {new Date().getFullYear()} SammyArts. All rights reserved.
           </p>
-          <PageTransitionLink
-            to="/"
-            className="w-fit transition-colors hover:text-accent-hover focus-visible:text-accent-hover"
-          >
-            Back to home
-          </PageTransitionLink>
         </div>
       </div>
     </footer>

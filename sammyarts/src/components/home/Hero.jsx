@@ -1,17 +1,14 @@
-import { useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useReducedMotion,
-} from "motion/react";
-import { useContent } from "../../data/content";
+import { useLayoutEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { Link } from "react-router-dom";
 
 const EASE = [0.16, 1, 0.3, 1]; // easeOutExpo, long soft landing
 const MotionDiv = motion.div;
+const MotionSpan = motion.span;
 
-const ArrowUpRight = ({ className = "w-3 h-3" }) => (
+const WORD = "Sammyarts";
+
+const ArrowRight = ({ className = "h-4 w-4" }) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -22,243 +19,135 @@ const ArrowUpRight = ({ className = "w-3 h-3" }) => (
     className={className}
     aria-hidden="true"
   >
-    <path d="M7 17L17 7M8 7h9v9" />
+    <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
 
-const ImageCell = ({ label, src }) => {
-  const [failed, setFailed] = useState(false);
-
-  if (!src || failed) {
-    return (
-      <div className="grid h-full w-full place-items-center border border-dashed border-border bg-surface/70 text-xs text-muted">
-        {label}
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={src}
-      alt={label}
-      loading="eager"
-      decoding="async"
-      draggable={false}
-      onError={() => setFailed(true)}
-      className="block h-full w-full select-none object-cover"
-    />
-  );
-};
-
 /**
- * Wraps any asset with:
- *  - outer layer: moves up as you scroll (speed = how many px it travels)
- *  - inner layer: fades up on load (delay = stagger)
+ * Full-width wordmark. Measures itself and scales the font size so the word
+ * always spans the container exactly, on any screen width.
+ * Letters rise out of a clipped line on load (the one orchestrated moment).
  */
-const Item = ({
-  children,
-  progress,
-  speed = 80,
-  delay = 0,
-  className = "",
-}) => {
+const Wordmark = () => {
   const reduce = useReducedMotion();
-  const y = useTransform(progress, [0, 1], [0, reduce ? 0 : -speed]);
+  const boxRef = useRef(null);
+  const textRef = useRef(null);
+  const [size, setSize] = useState(100);
+  const [ready, setReady] = useState(false);
+
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    const el = textRef.current;
+    if (!box || !el) return;
+
+    const fit = () => {
+      const current = parseFloat(getComputedStyle(el).fontSize);
+      const width = el.getBoundingClientRect().width;
+      if (!width || !box.clientWidth) return;
+      const next = (current * box.clientWidth) / width;
+      if (Math.abs(next - current) > 0.5) setSize(next);
+      setReady(true);
+    };
+
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(box);
+    // Re-measure once the serif font has actually loaded
+    document.fonts?.ready.then(fit);
+    return () => ro.disconnect();
+  }, []);
 
   return (
-    <MotionDiv
-      style={{ y, willChange: "transform" }}
-      className={`transform-gpu ${className}`}
+    <div
+      ref={boxRef}
+      className="w-full"
+      style={{ visibility: ready ? "visible" : "hidden" }}
     >
-      <MotionDiv
-        className="h-full"
-        initial={{ opacity: 0, y: reduce ? 0 : 28 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          opacity: { duration: 0.8, delay, ease: "easeOut" },
-          y: { duration: 1.4, delay, ease: EASE },
-        }}
+      <p
+        ref={textRef}
+        aria-label={WORD}
+        className="flex w-max select-none overflow-hidden whitespace-nowrap pb-[0.2em] font-serif leading-[0.9] tracking-[-0.04em] text-text"
+        style={{ fontSize: size }}
       >
-        {children}
-      </MotionDiv>
-    </MotionDiv>
+        {WORD.split("").map((ch, i) => (
+          <MotionSpan
+            key={i}
+            aria-hidden="true"
+            className="inline-block"
+            initial={{ y: reduce ? 0 : "130%" }}
+            animate={{ y: ready || reduce ? 0 : "130%" }}
+            transition={{ duration: 1.3, delay: 0.7 + i * 0.05, ease: EASE }}
+          >
+            {ch}
+          </MotionSpan>
+        ))}
+      </p>
+    </div>
   );
 };
-
-// Placeholder copy, replace with the real lines
-const tagline = [
-  "Form follows feeling.",
-  "Type with character.",
-  "Color with purpose.",
-  "Space to breathe.",
-];
-
-// Five columns, each bottom aligned. `basis` is the share of the column
-// height an image takes, which is what creates the ragged tops.
-const columns = [
-  [
-    {
-      label: "Image 1",
-      src: "https://images.unsplash.com/photo-1791152933480-aa6e16d4786e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
-      basis: "basis-[32%]",
-      speed: 40,
-    },
-  ],
-  [
-    {
-      label: "Image 2",
-      src: "https://images.unsplash.com/photo-1790014415640-b937789152ce?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8",
-      basis: "basis-[32%]",
-      speed: 70,
-    },
-    {
-      label: "Image 3",
-      src: "https://images.unsplash.com/photo-1790520781274-5b9f020f05c8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzMXx8fGVufDB8fHx8fA%3D%3D",
-      basis: "basis-[20%]",
-      speed: 70,
-    },
-  ],
-  [
-    {
-      label: "Image 4",
-      src: "https://images.unsplash.com/photo-1583258298678-04b638193ec4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOHx8fGVufDB8fHx8fA%3D%3D",
-      basis: "basis-[32%]",
-      speed: 100,
-    },
-    {
-      label: "Image 5",
-      src: "https://images.unsplash.com/photo-1777236912013-3cfe7328c776?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D",
-      basis: "basis-[32%]",
-      speed: 100,
-    },
-  ],
-  [
-    { list: true, speed: 120 },
-    {
-      label: "Image 6",
-      src: "https://images.unsplash.com/photo-1788067093758-ab07a386b2bd?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw1Mnx8fGVufDB8fHx8fA%3D%3D",
-      basis: "basis-[46%]",
-      speed: 120,
-    },
-  ],
-  [
-    {
-      label: "Image 7",
-      src: "https://images.unsplash.com/photo-1790619719523-43ba16a2303e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D",
-      basis: "basis-[24%]",
-      speed: 150,
-    },
-    {
-      label: "Image 8",
-      src: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YXJ0fGVufDB8fDB8fHww",
-      basis: "basis-[50%]",
-      speed: 150,
-    },
-    {
-      label: "Image 9",
-      src: "https://images.unsplash.com/photo-1579541814924-49fef17c5be5?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGFydHxlbnwwfHwwfHx8MA%3D%3D",
-      basis: "basis-[22%]",
-      speed: 150,
-    },
-  ],
-];
 
 function Hero() {
-  const { site, ready } = useContent();
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
+  const reduce = useReducedMotion();
 
-  // Smooths out wheel steps and fast flicks on touch
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.4,
-    restDelta: 0.0005,
+  // Supporting content simply fades in after the wordmark has landed
+  const fade = (delay) => ({
+    initial: { opacity: reduce ? 1 : 0 },
+    animate: { opacity: 1 },
+    transition: { duration: 0.9, delay: reduce ? 0 : delay, ease: "easeOut" },
   });
 
   return (
-    <section
-      ref={ref}
-      className="relative isolate min-h-screen overflow-hidden bg-brand text-text"
-    >
-      <div className="relative z-10 flex min-h-screen flex-col px-5 pb-6 pt-24 md:px-10 md:pb-10 md:pt-28">
-        <div className="flex flex-1 flex-col justify-between gap-10 md:relative md:block md:min-h-[720px]">
-          {/* Text block */}
-          <div className="flex flex-col gap-5 md:absolute md:left-0 md:top-0 md:z-10 md:max-w-[40%] md:gap-6">
-            <Item progress={smoothProgress} speed={40} delay={0.2}>
-              <h1 className="font-serif text-4xl leading-[0.98] tracking-[-0.03em] text-text md:text-[clamp(2.25rem,4.6vw,4.25rem)]">
-                Ideas into identities
-                <br />
-                <em className="italic text-accent">Brands into experiences</em>
-              </h1>
-            </Item>
+    <section className="relative isolate flex min-h-svh flex-col overflow-hidden bg-brand pb-12 text-text">
+      {/* Portrait: centered, anchored to the bottom, sits behind all text */}
+      <MotionDiv
+        aria-hidden="true"
+        className="pointer-events-none top-10 absolute inset-x-0 bottom-0 z-0 flex justify-center"
+        style={{ transformOrigin: "50% 100%" }}
+        initial={{ opacity: reduce ? 1 : 0, scale: reduce ? 1 : 1.04 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.8, ease: EASE }}
+      >
+        <picture>
+          <source srcSet="/img/ceo-cutout.webp" type="image/webp" />
+          <img
+            src="/img/ceo-cutout.png"
+            alt=""
+            width="1024"
+            height="1536"
+            decoding="async"
+            fetchPriority="high"
+            draggable={false}
+            className="h-[78svh] w-auto max-w-none select-none object-contain md:h-[130svh]"
+          />
+        </picture>
+      </MotionDiv>
 
-            <Item progress={smoothProgress} speed={55} delay={0.3}>
-              <p className="max-w-xs text-xs leading-relaxed text-muted md:text-sm">
-                Helping ambitious founders and brands build distinctive visual
-                identities through art direction, strategic design, and visual
-                storytelling.
-              </p>
-            </Item>
+      <div className="relative z-10 flex flex-1 flex-col justify-end gap-10 px-5 pb-4 pt-28 md:gap-14 md:px-10 md:pb-6">
+        {/* Headline + CTA row */}
+        <div className="flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
+          <MotionDiv
+            {...fade(1.7)}
+            className="flex flex-col items-start gap-5 md:max-w-[44%]"
+          >
+            <h1 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-text md:text-[clamp(2.25rem,4vw,3.75rem)]">
+              Brand &amp; UI/UX Designer based in Nigeria
+            </h1>
+          </MotionDiv>
 
-            <Item progress={smoothProgress} speed={65} delay={0.4}>
-              <a
-                href="#gallery"
-                className="inline-flex w-fit items-center gap-3 rounded-full bg-accent px-6 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-brand transition-colors duration-300 hover:bg-bg hover:border-accent hover:border hover:text-accent"
-              >
-                View Gallery
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-            </Item>
-          </div>
-
-          {/* Image columns */}
-          <div className="grid h-[48svh] min-h-[320px] grid-cols-5 gap-2 md:absolute md:inset-0 md:h-auto md:min-h-0 md:gap-3">
-            {columns.map((col, c) => (
-              <div
-                key={c}
-                className="flex h-full min-h-0 flex-col justify-end gap-2 md:gap-3"
-              >
-                {col.map((cell, r) =>
-                  cell.list ? (
-                    <Item
-                      key="tagline"
-                      progress={smoothProgress}
-                      speed={cell.speed}
-                      delay={0.3 + c * 0.1 + r * 0.08}
-                      className="hidden shrink-0 md:block"
-                    >
-                      <ul className="space-y-2 pb-1 text-xs text-muted">
-                        {tagline.map((line) => (
-                          <li key={line} className="flex items-center gap-2">
-                            <ArrowUpRight className="h-3 w-3 shrink-0 text-accent" />
-                            {line}
-                          </li>
-                        ))}
-                      </ul>
-                    </Item>
-                  ) : (
-                    <Item
-                      key={cell.label}
-                      progress={smoothProgress}
-                      speed={cell.speed}
-                      delay={0.3 + c * 0.1 + r * 0.08}
-                      className={`min-h-0 ${cell.basis}`}
-                    >
-                      <ImageCell
-                        label={cell.label}
-                        src={site.hero?.[cell.label] || (ready ? cell.src : "")}
-                      />
-                    </Item>
-                  ),
-                )}
-              </div>
-            ))}
-          </div>
+          <MotionDiv {...fade(1.9)}>
+            <Link
+              to="/gallery"
+              className="group inline-flex items-center gap-4 rounded-full bg-accent p-1.5 pr-7 text-sm text-brand transition-colors duration-300 hover:bg-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
+              <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-text text-brand transition-colors duration-300 group-hover:bg-accent">
+                <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5" />
+              </span>
+              View gallery
+            </Link>
+          </MotionDiv>
         </div>
+
+        <Wordmark />
       </div>
     </section>
   );

@@ -185,7 +185,7 @@ function Confessions() {
       className="relative overflow-hidden py-24 text-text md:py-32"
     >
       {/* Header */}
-      <div className="mx-auto mb-14 max-w-6xl px-5 md:mb-20 md:px-10">
+      <div className="mb-14 px-5 md:mb-20 md:px-10">
         <MotionP
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}

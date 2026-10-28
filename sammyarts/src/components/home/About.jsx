@@ -32,51 +32,20 @@ function About() {
       id="about"
       className="relative overflow-hidden px-6 py-24 text-text md:px-10 md:py-32"
     >
-      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-12 md:gap-16">
-        {/* Headshot */}
-        <MotionDiv
-          {...fadeUp}
-          transition={{ duration: 1.2, ease: EASE }}
-          className="mx-auto w-full max-w-sm md:col-span-5 md:max-w-none"
-        >
-          <div className="relative">
-            {headshot ? (
-              <img
-                src="/img/ceo.png"
-                alt="Sammy, founder and CEO"
-                className="aspect-[4/5] w-full object-cover"
-              />
-            ) : (
-              <ImagePlaceholder
-                label="CEO headshot"
-                className="aspect-[4/5] w-full"
-              />
-            )}
-            {/* Offset frame detail */}
-            <div className="pointer-events-none absolute -bottom-3 -right-3 -z-10 h-full w-full border border-border" />
-          </div>
-          <div className="mt-6 text-sm">
-            <p className="font-serif text-xl italic">Sammy</p>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted">
-              Founder and CEO
-            </p>
-          </div>
-        </MotionDiv>
-
+      <MotionP
+        {...fadeUp}
+        transition={{ duration: 1, ease: EASE }}
+        className="mb-6 text-xs uppercase tracking-[0.3em] text-muted"
+      >
+        About
+      </MotionP>
+      <div className="items-center gap-12">
         {/* Copy */}
         <div className="md:col-span-7">
-          <MotionP
-            {...fadeUp}
-            transition={{ duration: 1, ease: EASE }}
-            className="mb-6 text-xs uppercase tracking-[0.3em] text-muted"
-          >
-            About
-          </MotionP>
-
           <MotionH2
             {...fadeUp}
             transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
-            className="font-serif text-[clamp(3rem,9vw,7rem)] italic leading-[0.95] tracking-[-0.05em]"
+            className="font-serif text-[clamp(3rem,9vw,7rem)] leading-[0.95] tracking-[-0.05em]"
           >
             Who is Sammy<span className="text-accent">Arts</span>?
           </MotionH2>
@@ -84,7 +53,7 @@ function About() {
           <MotionDiv
             {...fadeUp}
             transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-            className="mt-8 max-w-xl space-y-6 text-sm leading-relaxed text-muted md:text-base"
+            className="mt-8 space-y-6 text-sm leading-relaxed text-muted md:text-base"
           >
             <p>
               Samuel Olusola (Sammyarts) is an Artist, Brand Designer, and
@@ -107,15 +76,6 @@ function About() {
               but also leave a lasting impression.
             </p>
           </MotionDiv>
-
-          <MotionA
-            {...fadeUp}
-            transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
-            href="#gallery"
-            className="mt-10 inline-flex hover:text-accent duration-250 transition-all items-center gap-3 border-b border-current pb-1 text-xs uppercase tracking-[0.2em]"
-          >
-            View the gallery
-          </MotionA>
         </div>
       </div>
     </MotionSection>
