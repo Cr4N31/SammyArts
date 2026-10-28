@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-// One work: the image, then its title and details underneath.
-// `shape` is an aspect-ratio class, which is what makes the tops ragged.
 function WorkCard({ work, shape, onOpen }) {
   const [failed, setFailed] = useState(false);
 
@@ -35,6 +33,7 @@ function WorkCard({ work, shape, onOpen }) {
       <span className="mt-3 block text-xs font-medium text-accent">
         {work.title}
       </span>
+
       {work.medium || work.year || work.desc ? (
         <span className="mt-0.5 block text-[0.7rem] leading-snug text-cream/60">
           {work.medium || work.year

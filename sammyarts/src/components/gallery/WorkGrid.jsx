@@ -1,12 +1,9 @@
 import { motion, useReducedMotion } from "motion/react";
 import WorkCard from "./WorkCard";
 
-const MotionLi = motion.li;
 const EASE = [0.16, 1, 0.3, 1];
+const MotionLi = motion.li;
 
-// Image heights repeat every six works and mirror from row to row:
-// tall, medium, wide, then wide, medium, tall. Items are top aligned,
-// which leaves the uneven gaps under the shorter ones.
 const shapes = [
   "aspect-[9/10]",
   "aspect-[15/14]",
@@ -16,7 +13,6 @@ const shapes = [
   "aspect-[9/10]",
 ];
 
-// Three columns on tablet and up, two on phones
 function WorkGrid({ works, onOpen }) {
   const reduceMotion = useReducedMotion();
 
@@ -29,7 +25,7 @@ function WorkGrid({ works, onOpen }) {
   }
 
   return (
-    <ul className="grid grid-cols-1 items-start gap-x-2 gap-y-12 md:grid-cols-3 md:gap-x-3 md:gap-y-16">
+    <ul className="grid grid-cols-2 items-start gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-3 md:gap-y-16">
       {works.map((work, i) => (
         <MotionLi
           key={work.id}
@@ -41,7 +37,7 @@ function WorkGrid({ works, onOpen }) {
           <WorkCard
             work={work}
             shape={shapes[i % shapes.length]}
-            onOpen={() => onOpen(i)}
+            onOpen={() => onOpen?.(i)}
           />
         </MotionLi>
       ))}
