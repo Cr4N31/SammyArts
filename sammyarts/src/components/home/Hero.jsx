@@ -130,7 +130,7 @@ function Hero() {
             className="flex flex-col items-start gap-5 md:max-w-[44%]"
           >
             <h1 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-text md:text-[clamp(2.25rem,4vw,3.75rem)]">
-              Brand &amp; UI/UX Designer based in Nigeria
+              Brand Designer &amp; Strategist
             </h1>
           </MotionDiv>
 

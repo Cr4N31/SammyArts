@@ -3,7 +3,6 @@ import About from "../components/home/About";
 import Portfolio from "../components/home/Portfolio";
 import CoursesMentor from "../components/home/CoursesMentor";
 import Confessions from "../components/home/Confessions";
-import ServiceRing from "../components/home/ServiceRing";
 
 function Home() {
   return (
@@ -11,7 +10,6 @@ function Home() {
       <Hero />
       <About />
       <Portfolio />
-      <ServiceRing />
       <CoursesMentor />
       <Confessions />
     </main>

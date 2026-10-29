@@ -1,12 +1,11 @@
 import { motion } from "motion/react";
-import { useContent } from "../../data/content";
+import ServiceRing from "./ServiceRing";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionSection = motion.section;
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
-const MotionA = motion.a;
 
 const fadeUp = {
   initial: { opacity: 0, y: 28 },
@@ -14,24 +13,13 @@ const fadeUp = {
   viewport: { once: true, margin: "-80px" },
 };
 
-const ImagePlaceholder = ({ label, className = "" }) => (
-  <div
-    className={`grid place-items-center border border-dashed border-border bg-raised text-xs text-muted ${className}`}
-  >
-    {label}
-  </div>
-);
-
 function About() {
-  const { site, works } = useContent();
-  const headshot =
-    site.ceo && !works.some((work) => work.img === site.ceo) ? site.ceo : "";
-
   return (
     <MotionSection
       id="about"
       className="relative overflow-hidden px-6 py-24 text-text md:px-10 md:py-32"
     >
+      {/* Heading, top left */}
       <MotionP
         {...fadeUp}
         transition={{ duration: 1, ease: EASE }}
@@ -39,44 +27,38 @@ function About() {
       >
         About
       </MotionP>
-      <div className="items-center gap-12">
-        {/* Copy */}
-        <div className="md:col-span-7">
-          <MotionH2
-            {...fadeUp}
-            transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
-            className="font-serif text-[clamp(3rem,9vw,7rem)] leading-[0.95] tracking-[-0.05em]"
-          >
-            Who is Sammy<span className="text-accent">Arts</span>?
-          </MotionH2>
 
-          <MotionDiv
-            {...fadeUp}
-            transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-            className="mt-8 space-y-6 text-sm leading-relaxed text-muted md:text-base"
-          >
-            <p>
-              Samuel Olusola (Sammyarts) is an Artist, Brand Designer, and
-              Creative Director focused on helping mid stage founders/brands
-              communicate their message and improve the visual experience around
-              their products, service or events, establishing distinctive visual
-              identities through creative direction and visual storytelling.
-              Over the years, he has collaborated with local and international
-              brands across diverse industries.
-            </p>
-            <p>
-              His work is recognized for its original concepts, refined
-              presentation, and ability to communicate complex brand messages
-              through compelling visual design. His creative approach has
-              influenced emerging design trends, inspiring a generation of
-              designers across Africa through his distinctive style and
-              transparent creative process. Committed to pushing the boundaries
-              of excellence, Samuel continues to champion a design philosophy,
-              believing that exceptional design should not only solve problems
-              but also leave a lasting impression.
-            </p>
-          </MotionDiv>
-        </div>
+      <MotionH2
+        {...fadeUp}
+        transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
+        className="font-serif text-[clamp(3.5rem,4vw,7rem)] leading-[0.95] tracking-[-0.05em]"
+      >
+        Who is Sammy<span className="text-accent">Arts</span>?
+      </MotionH2>
+
+      {/* Two columns: copy on the left, services carousel on the right */}
+      <div className="mt-10 grid gap-14 md:mt-14 md:grid-cols-12 md:items-start md:gap-x-12">
+        <MotionDiv
+          {...fadeUp}
+          transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
+          className="space-y-6 text-sm leading-relaxed text-muted md:col-span-5 md:text-base lg:col-span-4"
+        >
+          <p>
+            Samuel Olusola (Sammyarts) is an Artist, Brand Designer, and
+            Creative Director focused on helping mid stage founders/brands
+            communicate their message and improve the visual experience around
+            their products, service or events, establishing distinctive visual
+            identities through creative direction and visual storytelling. Over
+            the years, he has collaborated with local and international brands
+            across diverse industries.
+          </p>
+        </MotionDiv>
+
+        {/* Point readMoreHref at your real services route, or drop it to hide the link */}
+        <ServiceRing
+          readMoreHref="/services"
+          className="min-w-0 md:col-span-7 lg:col-span-8"
+        />
       </div>
     </MotionSection>
   );

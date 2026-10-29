@@ -1,6 +1,6 @@
 export const workCategories = [
-  "Ads",
-  "Branding",
   "Campaign design",
+  "Branding",
+  "Ads",
   "Thumbnails",
 ];

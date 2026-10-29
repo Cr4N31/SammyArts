@@ -1,10 +1,10 @@
-import { motion, useReducedMotion } from "motion/react";
+import { useRef } from "react";
+import { useReducedMotion } from "motion/react";
 import { PageTransitionLink } from "../../shared/PageTransition";
+import { useScrollReveal } from "../../shared/useScrollReveal";
 import { useContent } from "../../data/content";
 
-const EASE = [0.16, 1, 0.3, 1];
 const FEATURED_WORKS_LIMIT = 6;
-const MotionArticle = motion.article;
 
 const Arrow = ({ className = "h-4 w-4" }) => (
   <svg
@@ -53,16 +53,10 @@ const TagIcon = () => (
   </svg>
 );
 
-const WorkCard = ({ item, index, reduce }) => (
-  <MotionArticle
-    initial={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : 24 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-60px" }}
-    transition={{
-      duration: 0.9,
-      delay: reduce ? 0 : (index % 3) * 0.08,
-      ease: EASE,
-    }}
+// data-reveal marks the element for useScrollReveal
+const WorkCard = ({ item }) => (
+  <article
+    data-reveal
     className="group relative flex flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-border transition-colors duration-300 hover:ring-accent/40"
   >
     <div className="overflow-hidden bg-raised">
@@ -107,22 +101,32 @@ const WorkCard = ({ item, index, reduce }) => (
         </PageTransitionLink>
       </div>
     </div>
-  </MotionArticle>
+  </article>
 );
 
 function Portfolio() {
   const { works: allWorks, ready } = useContent();
   const reduce = useReducedMotion();
+  const sectionRef = useRef(null);
+
   const works = allWorks.slice(0, FEATURED_WORKS_LIMIT);
+
+  // Must run before the early return below. `watch` re-runs it when the works
+  // finish loading and the cards first appear.
+  useScrollReveal(sectionRef, { enabled: !reduce, watch: works.length });
 
   if (!works.length) {
     return (
-      <section id="gallery" className="px-5 py-20 text-text md:px-10 md:py-32">
+      <section
+        ref={sectionRef}
+        id="gallery"
+        className="px-5 py-20 text-text md:px-10 md:py-32"
+      >
         <p className="mb-4 text-xs uppercase tracking-[0.3em] text-muted">
           Gallery
         </p>
-        <h2 className="font-serif text-[clamp(2.75rem,8vw,6rem)] italic leading-[0.95] tracking-[-0.05em]">
-          A few of our artistic works
+        <h2 className="font-serif text-[clamp(3.5rem,4vw,7rem)] leading-[0.95] tracking-[-0.05em]">
+          A few of our designs
         </h2>
         {ready ? (
           <p className="mt-6 text-sm text-muted">No pieces yet.</p>
@@ -133,28 +137,29 @@ function Portfolio() {
 
   return (
     <section
+      ref={sectionRef}
       id="gallery"
       className="relative overflow-hidden py-20 text-text md:py-32"
     >
       <div className="px-5 md:px-10">
         {/* Header */}
-        <div className="mb-10 md:mb-14">
+        <div data-reveal className="mb-10 md:mb-14">
           <p className="mb-4 text-xs uppercase tracking-[0.3em] text-muted">
             Gallery
           </p>
-          <h2 className="font-serif text-[clamp(2.75rem,8vw,6rem)] leading-[0.95] tracking-[-0.05em]">
+          <h2 className="font-serif text-[clamp(3.5rem,4vw,7rem)] leading-[0.95] tracking-[-0.05em]">
             A few of our <span>designs</span>
           </h2>
         </div>
 
         {/* Grid */}
         <div className="grid gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-          {works.map((item, i) => (
-            <WorkCard key={item.id} item={item} index={i} reduce={reduce} />
+          {works.map((item) => (
+            <WorkCard key={item.id} item={item} />
           ))}
         </div>
 
-        <div className="mt-12 flex items-center justify-center">
+        <div data-reveal className="mt-12 flex items-center justify-center">
           <PageTransitionLink
             to="/gallery"
             className="border-b border-accent text-lg font-medium text-accent transition-colors hover:border-accent-hover hover:text-accent-hover"
