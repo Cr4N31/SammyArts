@@ -93,7 +93,7 @@ const WorkCard = ({ item }) => (
 
         {/* Stretched link: the after: layer makes the whole card clickable */}
         <PageTransitionLink
-          to="/gallery"
+          to={`/gallery?project=${encodeURIComponent(item.id)}`}
           className="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-brand transition-colors duration-300 after:absolute after:inset-0 hover:bg-accent-hover active:bg-accent-pressed"
         >
           <Arrow className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5" />

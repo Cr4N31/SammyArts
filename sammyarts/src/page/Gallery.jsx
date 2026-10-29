@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useContent } from "../data/content";
 import GalleryIntro from "../components/gallery/GalleryIntro";
 import WorkGrid from "../components/gallery/WorkGrid";
@@ -13,12 +13,6 @@ const slugify = (text) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
-/**
- * Groups works by category, in the order defined in workCategories.
- * Works with a missing or unknown category land in a trailing "Other" group.
- * Each group also records `offset`, its starting position in the flat list
- * the viewer steps through.
- */
 function buildGroups(works) {
   const known = new Set(workCategories);
 
@@ -28,9 +22,13 @@ function buildGroups(works) {
   }));
 
   const rest = works.filter((work) => !known.has(work.category));
-  if (rest.length) groups.push({ category: OTHER, works: rest });
+
+  if (rest.length) {
+    groups.push({ category: OTHER, works: rest });
+  }
 
   let offset = 0;
+
   return groups
     .filter((group) => group.works.length > 0)
     .map((group) => {
@@ -51,6 +49,7 @@ function CategoryGroup({ group, number, onOpen }) {
           <span className="font-serif text-sm tabular-nums text-muted">
             {String(number).padStart(2, "0")}
           </span>
+
           <h2
             id={`${id}-title`}
             className="font-serif text-[clamp(1.75rem,4vw,3rem)] leading-none tracking-[-0.03em]"
@@ -76,30 +75,58 @@ function Gallery() {
   const { works } = useContent();
 
   const groups = useMemo(() => buildGroups(works), [works]);
-  // Flat list in display order, so the viewer steps through groups in sequence
-  const ordered = useMemo(() => groups.flatMap((g) => g.works), [groups]);
 
-  // `open` is separate from `index` so the viewer can fade out on close
-  const [viewer, setViewer] = useState({ open: false, index: 0 });
+  // Flat list in display order so viewer navigation crosses categories.
+  const ordered = useMemo(
+    () => groups.flatMap((group) => group.works),
+    [groups],
+  );
+
+  const [viewer, setViewer] = useState({
+    open: false,
+    index: 0,
+  });
+
+  // Track the URL project already opened to avoid reopening it
+  // if the content array changes after loading.
+  const openedProjectRef = useRef(null);
 
   const openViewer = useCallback(
     (index) => setViewer({ open: true, index }),
     [],
   );
+
   const closeViewer = useCallback(
-    () => setViewer((v) => ({ ...v, open: false })),
+    () => setViewer((current) => ({ ...current, open: false })),
     [],
   );
+
   const step = useCallback(
-    (dir) =>
-      setViewer((v) => ({
-        ...v,
+    (direction) =>
+      setViewer((current) => ({
+        ...current,
         index: ordered.length
-          ? (v.index + dir + ordered.length) % ordered.length
+          ? (current.index + direction + ordered.length) % ordered.length
           : 0,
       })),
     [ordered.length],
   );
+
+  // Open a project requested through /gallery?project=PROJECT_ID.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get("project");
+
+    if (!projectId || !ordered.length) return;
+    if (openedProjectRef.current === projectId) return;
+
+    const index = ordered.findIndex((work) => String(work.id) === projectId);
+
+    if (index === -1) return;
+
+    openedProjectRef.current = projectId;
+    openViewer(index);
+  }, [ordered, openViewer]);
 
   return (
     <main className="page-reveal bg-brand text-cream">
@@ -112,11 +139,11 @@ function Gallery() {
           </p>
         ) : (
           <div className="flex flex-col gap-20 md:gap-32">
-            {groups.map((group, i) => (
+            {groups.map((group, index) => (
               <CategoryGroup
                 key={group.category}
                 group={group}
-                number={i + 1}
+                number={index + 1}
                 onOpen={openViewer}
               />
             ))}
