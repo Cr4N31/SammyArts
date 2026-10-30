@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { PageTransitionLink } from "../../shared/PageTransition";
 import { useContent } from "../../data/content";
 
@@ -49,30 +50,31 @@ function deriveStats(works, categories) {
   return stats;
 }
 
-// Seconds the marquee spends on each stat. Lower = faster.
-const SECONDS_PER_STAT = 6;
+// Marquee speed on mobile, in pixels per second. Higher = faster.
+const SPEED_PX_PER_SEC = 40;
 
-// Scoped on purpose, so the animation never depends on Tailwind config.
-// The marquee only runs below md (768px); from md up the track is
-// `display: contents` and the stats sit in the grid exactly as before.
+// After a finger lifts, wait this long before auto-scroll resumes, so a
+// swipe's momentum can finish first.
+const RESUME_DELAY_MS = 1500;
+
+// Scoped on purpose, so the behaviour never depends on Tailwind config.
+// Below md (768px) the viewport becomes a horizontally scrollable strip
+// (swipeable). From md up none of this applies and the stats sit in the grid
+// exactly as before.
 const marqueeCss = `
-@keyframes gs-marquee {
-  to { transform: translateX(-50%); }
-}
 @media (max-width: 767px) {
-  .gs-track {
-    animation: gs-marquee var(--gs-duration, 18s) linear infinite;
-    will-change: transform;
+  .gs-viewport {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
-  .gs-viewport:hover .gs-track,
-  .gs-viewport:focus-within .gs-track,
-  .gs-viewport:active .gs-track {
-    animation-play-state: paused;
-  }
+  .gs-viewport::-webkit-scrollbar { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gs-track { animation: none; }
-  .gs-viewport { overflow-x: auto; }
   .gs-dupe { display: none; }
 }
 `;
@@ -93,12 +95,122 @@ function StatItem({ stat }) {
 
 function GalleryStats({ works, categories, stats: customStats }) {
   const { site } = useContent();
+  const viewportRef = useRef(null);
 
   const stats = customStats ?? deriveStats(works, categories);
 
   // Same guard the About section uses, so a work image is never shown as a face
   const headshot =
     site?.ceo && !works.some((work) => work.img === site.ceo) ? site.ceo : "";
+
+  // Mobile only: drift the strip leftwards forever. Visitors can swipe it in
+  // either direction, and pressing or holding it pauses the drift.
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return undefined;
+
+    const mobile = window.matchMedia("(max-width: 767px)");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let raf = 0;
+    let last = 0;
+    let pos = 0; // float position, because scrollLeft can round to integers
+    let ready = false;
+
+    let touching = false;
+    let hovering = false;
+    let focused = false;
+    let resumeAt = 0;
+
+    // Width of one full copy of the stats (including its trailing gap)
+    const groupWidth = () => {
+      const groups = el.querySelectorAll("[data-group]");
+      return groups.length > 1
+        ? groups[1].offsetLeft - groups[0].offsetLeft
+        : 0;
+    };
+
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      if (!last) last = now;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+
+      if (!mobile.matches || reduceMotion.matches) {
+        ready = false;
+        return;
+      }
+
+      const g = groupWidth();
+      if (!g) return;
+
+      // Three copies are rendered. Live in the middle one, so there is always
+      // a full copy of room to swipe in either direction.
+      if (!ready) {
+        el.scrollLeft = g;
+        pos = g;
+        ready = true;
+      }
+
+      const paused = touching || hovering || focused || now < resumeAt;
+
+      if (paused) {
+        // Follow wherever the visitor has scrolled to
+        pos = el.scrollLeft;
+        return;
+      }
+
+      pos += SPEED_PX_PER_SEC * dt;
+
+      // Jump by exactly one copy to stay in the middle. The content is
+      // identical, so the jump is invisible.
+      while (pos >= g * 2) pos -= g;
+      while (pos < g) pos += g;
+
+      el.scrollLeft = pos;
+    };
+
+    const onTouchStart = () => {
+      touching = true;
+    };
+    const onTouchEnd = () => {
+      touching = false;
+      resumeAt = performance.now() + RESUME_DELAY_MS;
+    };
+    const onPointerEnter = (e) => {
+      if (e.pointerType === "mouse") hovering = true;
+    };
+    const onPointerLeave = (e) => {
+      if (e.pointerType === "mouse") hovering = false;
+    };
+    const onFocusIn = () => {
+      focused = true;
+    };
+    const onFocusOut = () => {
+      focused = false;
+    };
+
+    raf = requestAnimationFrame(tick);
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("touchcancel", onTouchEnd, { passive: true });
+    el.addEventListener("pointerenter", onPointerEnter);
+    el.addEventListener("pointerleave", onPointerLeave);
+    el.addEventListener("focusin", onFocusIn);
+    el.addEventListener("focusout", onFocusOut);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+      el.removeEventListener("pointerenter", onPointerEnter);
+      el.removeEventListener("pointerleave", onPointerLeave);
+      el.removeEventListener("focusin", onFocusIn);
+      el.removeEventListener("focusout", onFocusOut);
+    };
+  }, [stats.length]);
 
   return (
     <section
@@ -108,40 +220,42 @@ function GalleryStats({ works, categories, stats: customStats }) {
       <style>{marqueeCss}</style>
 
       {/*
-        Mobile: the stats scroll right-to-left in an endless loop and the
-        contact card is hidden. The stats are rendered twice back to back and
-        the track slides by exactly half its width, so the loop is seamless.
-        The second copy is aria-hidden so screen readers only hear it once.
+        Mobile: the stats drift right-to-left in an endless loop and the
+        contact card is hidden. The strip is a normal horizontally scrollable
+        container, so visitors can swipe it either way, and the script above
+        pauses the drift while a finger is down. The stats are rendered three
+        times back to back so there is always content on both sides; the extra
+        copies are aria-hidden so screen readers only hear the stats once.
 
-        md and up: the track and its first group are `display: contents`, so
-        the three stats and the contact card are direct grid children, like
-        the reference. auto-fit drops them to two rows and then a single
-        column as space runs out. The second copy is hidden.
+        md and up: the first group is `display: contents`, so the three stats
+        and the contact card are direct grid children, like the reference.
+        auto-fit drops them to two rows and then a single column as space runs
+        out. The extra copies are hidden.
       */}
       <div
-        className="gs-viewport -mx-5 overflow-hidden md:mx-0 md:grid md:gap-x-8 md:gap-y-10 md:overflow-visible md:[grid-template-columns:var(--stats-cols)]"
+        ref={viewportRef}
+        className="gs-viewport -mx-5 md:mx-0 md:grid md:gap-x-8 md:gap-y-10 md:[grid-template-columns:var(--stats-cols)]"
         style={{
           "--stats-cols": "repeat(auto-fit, minmax(min(100%, 17rem), 1fr))",
         }}
       >
-        <div
-          className="gs-track flex w-max md:contents"
-          style={{ "--gs-duration": `${stats.length * SECONDS_PER_STAT}s` }}
-        >
-          <div className="flex shrink-0 gap-x-8 pr-8 md:contents">
-            {stats.map((stat) => (
-              <StatItem key={stat.label} stat={stat} />
-            ))}
-          </div>
-
-          <div
-            aria-hidden="true"
-            className="gs-dupe flex shrink-0 gap-x-8 pr-8 md:hidden"
-          >
-            {stats.map((stat) => (
-              <StatItem key={`${stat.label}-dupe`} stat={stat} />
-            ))}
-          </div>
+        <div className="flex w-max md:contents">
+          {[0, 1, 2].map((copy) => (
+            <div
+              key={copy}
+              data-group
+              aria-hidden={copy === 0 ? undefined : "true"}
+              className={
+                copy === 0
+                  ? "flex shrink-0 gap-x-8 pr-8 md:contents"
+                  : "gs-dupe flex shrink-0 gap-x-8 pr-8 md:hidden"
+              }
+            >
+              {stats.map((stat) => (
+                <StatItem key={`${copy}-${stat.label}`} stat={stat} />
+              ))}
+            </div>
+          ))}
         </div>
 
         {/* Contact card (desktop only) */}

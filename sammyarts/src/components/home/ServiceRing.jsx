@@ -93,19 +93,6 @@ function ServiceRing({ readMoreHref, className = "" }) {
       {/* Header row */}
       <div className="flex items-center justify-between text-xs text-text">
         <p>We Deliver</p>
-
-        {readMoreHref && (
-          <a
-            href={readMoreHref}
-            className="inline-flex items-center gap-2 transition-colors duration-300 hover:text-accent"
-          >
-            <span
-              aria-hidden="true"
-              className="size-1 rounded-full bg-current"
-            />
-            Read More
-          </a>
-        )}
       </div>
 
       {reduce ? (
