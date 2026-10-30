@@ -4,8 +4,8 @@ function CoursesHeader() {
       <p className="mb-4 text-xs uppercase tracking-[0.14em] opacity-60">
         Courses and mentorship
       </p>
-      <h2 className="font-serif text-[clamp(2.75rem,9vw,7rem)] font-semibold italic leading-[0.9] tracking-[-0.04em]">
-        Learn the <br /> craft
+      <h2 className="font-serif text-[clamp(3rem,6vw,9rem)] leading-[0.92] tracking-[-0.05em]">
+        Learn the craft
       </h2>
     </header>
   );
