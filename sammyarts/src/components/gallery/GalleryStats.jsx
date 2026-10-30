@@ -89,6 +89,51 @@ function StatItem({ stat }) {
   );
 }
 
+// Rendered inside every marquee group, so it loops with the stats on mobile.
+// On md and up only the first group is visible (and is `display: contents`),
+// so this lands in the grid as a direct child, like before.
+function ContactCard({ headshot, isCopy }) {
+  return (
+    <div className="w-80 shrink-0 md:w-full md:max-w-[26rem] md:shrink md:self-center">
+      <div className="flex w-full items-center gap-5 rounded-2xl border border-border bg-surface p-5">
+        <span
+          className="flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-raised font-serif text-2xl text-accent"
+          style={{ width: "5rem", height: "5rem" }}
+        >
+          {headshot ? (
+            <img
+              src={headshot}
+              alt=""
+              decoding="async"
+              draggable={false}
+              className="h-full w-full select-none object-cover"
+              style={{ objectPosition: "50% 20%" }}
+            />
+          ) : (
+            "S"
+          )}
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <p className="text-sm leading-snug">
+            Got a project?
+            <br />
+            Talk to Samuel.
+          </p>
+
+          <PageTransitionLink
+            to="/contact"
+            tabIndex={isCopy ? -1 : undefined}
+            className="mt-3 flex h-9 w-full items-center justify-center rounded-full border border-border px-4 text-sm transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            Get in touch
+          </PageTransitionLink>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function GalleryStats({ works, categories, stats: customStats }) {
   const { site } = useContent();
   const viewportRef = useRef(null);
@@ -120,7 +165,7 @@ function GalleryStats({ works, categories, stats: customStats }) {
     let hovering = false;
     let focused = false;
 
-    // Width of one full copy of the stats (including its trailing gap)
+    // Width of one full copy of the stats and card (including its trailing gap)
     const groupWidth = () => {
       const groups = el.querySelectorAll("[data-group]");
       return groups.length > 1
@@ -231,12 +276,13 @@ function GalleryStats({ works, categories, stats: customStats }) {
       <style>{marqueeCss}</style>
 
       {/*
-        Mobile: the stats drift right-to-left in an endless loop and the
-        contact card is hidden. The strip is a normal horizontally scrollable
+        Mobile: the stats and the contact card drift right-to-left in an
+        endless loop. The strip is a normal horizontally scrollable
         container, so visitors can swipe it either way, and the script above
-        pauses the drift while a finger is down. The stats are rendered three
-        times back to back so there is always content on both sides; the extra
-        copies are aria-hidden so screen readers only hear the stats once.
+        pauses the drift while a finger is down. The group (stats + card) is
+        rendered three times back to back so there is always content on both
+        sides; the extra copies are aria-hidden so screen readers only hear
+        it once.
 
         md and up: the first group is `display: contents`, so the three stats
         and the contact card are direct grid children, like the reference.
@@ -250,7 +296,7 @@ function GalleryStats({ works, categories, stats: customStats }) {
           "--stats-cols": "repeat(auto-fit, minmax(min(100%, 17rem), 1fr))",
         }}
       >
-        <div className="flex w-max md:contents">
+        <div className="flex w-max items-center md:contents">
           {[0, 1, 2].map((copy) => (
             <div
               key={copy}
@@ -258,52 +304,16 @@ function GalleryStats({ works, categories, stats: customStats }) {
               aria-hidden={copy === 0 ? undefined : "true"}
               className={
                 copy === 0
-                  ? "flex shrink-0 gap-x-8 pr-8 md:contents"
-                  : "gs-dupe flex shrink-0 gap-x-8 pr-8 md:hidden"
+                  ? "flex shrink-0 items-center gap-x-8 pr-8 md:contents"
+                  : "gs-dupe flex shrink-0 items-center gap-x-8 pr-8 md:hidden"
               }
             >
               {stats.map((stat) => (
                 <StatItem key={`${copy}-${stat.label}`} stat={stat} />
               ))}
+              <ContactCard headshot={headshot} isCopy={copy !== 0} />
             </div>
           ))}
-        </div>
-
-        {/* Contact card (desktop only) */}
-        <div className="w-full max-w-[26rem] items-center gap-5 self-center rounded-2xl border border-border bg-surface p-5 flex">
-          <span
-            className="flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-raised font-serif text-2xl text-accent"
-            style={{ width: "5rem", height: "5rem" }}
-          >
-            {headshot ? (
-              <img
-                src={headshot}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-                className="h-full w-full select-none object-cover"
-                style={{ objectPosition: "50% 20%" }}
-              />
-            ) : (
-              "S"
-            )}
-          </span>
-
-          <div className="min-w-0 flex-1">
-            <p className="text-sm leading-snug">
-              Got a project?
-              <br />
-              Talk to Samuel.
-            </p>
-
-            <PageTransitionLink
-              to="/contact"
-              className="mt-3 flex h-9 w-full items-center justify-center rounded-full border border-border px-4 text-sm transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              Get in touch
-            </PageTransitionLink>
-          </div>
         </div>
       </div>
     </section>
