@@ -12,15 +12,21 @@ const dockButton =
 const VARIANTS = ["left", "right", "full"];
 
 function Plate({ src, alt, number, total, variant, eager }) {
+  const isHero = variant === "hero";
+
   const image = (
-    <figure className="bg-surface">
+    <figure className={isHero ? "w-fit max-w-full bg-surface" : "bg-surface"}>
       <img
         src={src}
         alt={alt}
         loading={eager ? "eager" : "lazy"}
         decoding="async"
         draggable={false}
-        className="block h-auto min-h-48 w-full select-none"
+        className={
+          isHero
+            ? "block h-auto max-h-[70vh] w-auto max-w-full select-none object-contain"
+            : "block h-auto min-h-48 w-full select-none"
+        }
       />
     </figure>
   );
@@ -34,17 +40,22 @@ function Plate({ src, alt, number, total, variant, eager }) {
     </>
   );
 
-  if (variant === "hero" || variant === "full") {
+  if (isHero) {
     return (
-      <li data-reveal className={variant === "full" ? "px-5 md:px-10" : ""}>
-        {image}
-        <div
-          className={`mt-3 flex items-baseline gap-3 ${
-            variant === "hero" ? "px-5 md:px-10" : ""
-          }`}
-        >
-          {placard}
+      <li data-reveal className="px-5 md:px-10">
+        <div className="md:max-w-[62%]">
+          {image}
+          <div className="mt-3 flex items-baseline gap-3">{placard}</div>
         </div>
+      </li>
+    );
+  }
+
+  if (variant === "full") {
+    return (
+      <li data-reveal className="px-5 md:px-10">
+        {image}
+        <div className="mt-3 flex items-baseline gap-3">{placard}</div>
       </li>
     );
   }
