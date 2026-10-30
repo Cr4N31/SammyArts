@@ -11,7 +11,7 @@ function WorkCard({ work, shape, onOpen }) {
       className="group block w-full cursor-zoom-in text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
     >
       <span
-        className={`block w-full overflow-hidden rounded-sm bg-surface ${shape}`}
+        className={`block w-full overflow-hidden rounded-xl bg-surface ${shape}`}
       >
         {failed ? (
           <span className="grid h-full w-full place-items-center px-2 text-center text-xs text-muted">
@@ -30,6 +30,7 @@ function WorkCard({ work, shape, onOpen }) {
         )}
       </span>
 
+      {/* Data panel: title, medium and year */}
       <span className="mt-3 block text-xs font-medium text-accent">
         {work.title}
       </span>

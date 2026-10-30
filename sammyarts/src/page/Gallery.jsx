@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useContent } from "../data/content";
 import GalleryIntro from "../components/gallery/GalleryIntro";
+import GalleryStats from "../components/gallery/GalleryStats";
 import WorkGrid from "../components/gallery/WorkGrid";
 import Viewer from "../components/gallery/Viewer";
 import { workCategories } from "../data/workCategories";
@@ -74,7 +76,18 @@ function CategoryGroup({ group, number, onOpen }) {
 function Gallery() {
   const { works } = useContent();
 
+  // The router owns the URL, so read the deep link from it instead of from
+  // window.location. This works with any router setup and also reacts when
+  // the query changes while the page is already mounted.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const projectId = searchParams.get("project");
+
   const groups = useMemo(() => buildGroups(works), [works]);
+
+  const categories = useMemo(
+    () => groups.map((group) => group.category),
+    [groups],
+  );
 
   // Flat list in display order so viewer navigation crosses categories.
   const ordered = useMemo(
@@ -87,8 +100,8 @@ function Gallery() {
     index: 0,
   });
 
-  // Track the URL project already opened to avoid reopening it
-  // if the content array changes after loading.
+  // The project id from the URL that is already open. Stops the effect below
+  // from snapping the viewer back to it when the content array changes.
   const openedProjectRef = useRef(null);
 
   const openViewer = useCallback(
@@ -96,10 +109,23 @@ function Gallery() {
     [],
   );
 
-  const closeViewer = useCallback(
-    () => setViewer((current) => ({ ...current, open: false })),
-    [],
-  );
+  const closeViewer = useCallback(() => {
+    setViewer((current) => ({ ...current, open: false }));
+
+    // Drop the deep link so a refresh or the back button does not reopen it.
+    if (openedProjectRef.current) {
+      openedProjectRef.current = null;
+
+      setSearchParams(
+        (previous) => {
+          const next = new URLSearchParams(previous);
+          next.delete("project");
+          return next;
+        },
+        { replace: true },
+      );
+    }
+  }, [setSearchParams]);
 
   const step = useCallback(
     (direction) =>
@@ -114,43 +140,54 @@ function Gallery() {
 
   // Open a project requested through /gallery?project=PROJECT_ID.
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const projectId = params.get("project");
-
     if (!projectId || !ordered.length) return;
     if (openedProjectRef.current === projectId) return;
 
     const index = ordered.findIndex((work) => String(work.id) === projectId);
 
-    if (index === -1) return;
+    if (index === -1) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          `[Gallery] No work has id "${projectId}". Ids available:`,
+          ordered.map((work) => work.id),
+        );
+      }
+      return;
+    }
 
     openedProjectRef.current = projectId;
     openViewer(index);
-  }, [ordered, openViewer]);
+  }, [projectId, ordered, openViewer]);
 
   return (
-    <main className="page-reveal bg-brand text-cream">
-      <GalleryIntro workCount={ordered.length} />
+    <>
+      <main className="page-reveal bg-brand text-text">
+        <GalleryIntro workCount={ordered.length} />
 
-      <section aria-label="Works" className="px-5 pb-24 md:px-10 md:pb-32">
-        {groups.length === 0 ? (
-          <p className="border-t border-border py-8 text-sm text-muted">
-            No works yet.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-20 md:gap-32">
-            {groups.map((group, index) => (
-              <CategoryGroup
-                key={group.category}
-                group={group}
-                number={index + 1}
-                onOpen={openViewer}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+        <GalleryStats works={ordered} categories={categories} />
 
+        <section aria-label="Works" className="px-5 pb-24 md:px-10 md:pb-32">
+          {groups.length === 0 ? (
+            <p className="border-t border-border py-8 text-sm text-muted">
+              No works yet.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-20 md:gap-32">
+              {groups.map((group, index) => (
+                <CategoryGroup
+                  key={group.category}
+                  group={group}
+                  number={index + 1}
+                  onOpen={openViewer}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+
+      {/* Outside <main> on purpose. .page-reveal > * would otherwise run its
+          fade-up animation on the dialog and override its own fade out. */}
       <Viewer
         works={ordered}
         open={viewer.open}
@@ -158,7 +195,7 @@ function Gallery() {
         onClose={closeViewer}
         onStep={step}
       />
-    </main>
+    </>
   );
 }
 
