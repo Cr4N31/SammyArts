@@ -53,10 +53,6 @@ function deriveStats(works, categories) {
 // Marquee speed on mobile, in pixels per second. Higher = faster.
 const SPEED_PX_PER_SEC = 40;
 
-// After a finger lifts, wait this long before auto-scroll resumes, so a
-// swipe's momentum can finish first.
-const RESUME_DELAY_MS = 1500;
-
 // Scoped on purpose, so the behaviour never depends on Tailwind config.
 // Below md (768px) the viewport becomes a horizontally scrollable strip
 // (swipeable). From md up none of this applies and the stats sit in the grid
@@ -104,7 +100,8 @@ function GalleryStats({ works, categories, stats: customStats }) {
     site?.ceo && !works.some((work) => work.img === site.ceo) ? site.ceo : "";
 
   // Mobile only: drift the strip leftwards forever. Visitors can swipe it in
-  // either direction, and pressing or holding it pauses the drift.
+  // either direction. It stops while a finger is held on it and carries on
+  // as soon as the finger lifts.
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return undefined;
@@ -118,9 +115,10 @@ function GalleryStats({ works, categories, stats: customStats }) {
     let ready = false;
 
     let touching = false;
+    let releasing = false; // finger just lifted, waiting for any swipe momentum to end
+    let prevLeft = 0;
     let hovering = false;
     let focused = false;
-    let resumeAt = 0;
 
     // Width of one full copy of the stats (including its trailing gap)
     const groupWidth = () => {
@@ -152,12 +150,23 @@ function GalleryStats({ works, categories, stats: customStats }) {
         ready = true;
       }
 
-      const paused = touching || hovering || focused || now < resumeAt;
-
-      if (paused) {
-        // Follow wherever the visitor has scrolled to
+      // Finger is down: hold still and follow wherever the visitor drags
+      if (touching || hovering || focused) {
         pos = el.scrollLeft;
         return;
+      }
+
+      // Finger just lifted. A plain press-and-release has no momentum, so
+      // this clears on the very next frame and the marquee carries on. After
+      // a swipe, wait only until the flick has finished gliding.
+      if (releasing) {
+        const moved = Math.abs(el.scrollLeft - prevLeft) > 0.5;
+        prevLeft = el.scrollLeft;
+        if (moved) {
+          pos = el.scrollLeft;
+          return;
+        }
+        releasing = false;
       }
 
       pos += SPEED_PX_PER_SEC * dt;
@@ -172,10 +181,12 @@ function GalleryStats({ works, categories, stats: customStats }) {
 
     const onTouchStart = () => {
       touching = true;
+      releasing = false;
     };
     const onTouchEnd = () => {
       touching = false;
-      resumeAt = performance.now() + RESUME_DELAY_MS;
+      releasing = true;
+      prevLeft = el.scrollLeft;
     };
     const onPointerEnter = (e) => {
       if (e.pointerType === "mouse") hovering = true;
