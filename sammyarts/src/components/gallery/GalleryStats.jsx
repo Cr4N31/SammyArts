@@ -270,7 +270,7 @@ function GalleryStats({ works, categories, stats: customStats }) {
         </div>
 
         {/* Contact card (desktop only) */}
-        <div className="hidden w-full max-w-[26rem] items-center gap-5 self-center rounded-2xl border border-border bg-surface p-5 md:flex">
+        <div className="w-full max-w-[26rem] items-center gap-5 self-center rounded-2xl border border-border bg-surface p-5 flex">
           <span
             className="flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-raised font-serif text-2xl text-accent"
             style={{ width: "5rem", height: "5rem" }}
