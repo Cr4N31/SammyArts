@@ -6,8 +6,14 @@ let bucketReady = false;
 function supabaseConfig() {
   const url = String(process.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
   const secret = process.env.SUPABASE_SECRET_KEY || "";
-  if (!url || !secret) {
-    throw new Error("Image storage is not set up yet. Add the Supabase keys.");
+  const missing = [
+    !url && "VITE_SUPABASE_URL",
+    !secret && "SUPABASE_SECRET_KEY",
+  ].filter(Boolean);
+  if (missing.length) {
+    throw new Error(
+      `Image storage is not set up yet. Missing on the server: ${missing.join(", ")}.`,
+    );
   }
   return { url, secret };
 }
