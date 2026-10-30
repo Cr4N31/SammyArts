@@ -49,6 +49,48 @@ function deriveStats(works, categories) {
   return stats;
 }
 
+// Seconds the marquee spends on each stat. Lower = faster.
+const SECONDS_PER_STAT = 6;
+
+// Scoped on purpose, so the animation never depends on Tailwind config.
+// The marquee only runs below md (768px); from md up the track is
+// `display: contents` and the stats sit in the grid exactly as before.
+const marqueeCss = `
+@keyframes gs-marquee {
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 767px) {
+  .gs-track {
+    animation: gs-marquee var(--gs-duration, 18s) linear infinite;
+    will-change: transform;
+  }
+  .gs-viewport:hover .gs-track,
+  .gs-viewport:focus-within .gs-track,
+  .gs-viewport:active .gs-track {
+    animation-play-state: paused;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gs-track { animation: none; }
+  .gs-viewport { overflow-x: auto; }
+  .gs-dupe { display: none; }
+}
+`;
+
+function StatItem({ stat }) {
+  return (
+    <dl className="w-64 shrink-0 md:w-auto md:shrink">
+      <dt className="text-base md:text-lg">{stat.label}</dt>
+      <dd className="mt-5 font-serif text-5xl leading-none tracking-[-0.03em]">
+        {stat.value}
+      </dd>
+      <dd className="mt-5 max-w-[14rem] text-xs leading-relaxed text-muted md:text-sm">
+        {stat.note}
+      </dd>
+    </dl>
+  );
+}
+
 function GalleryStats({ works, categories, stats: customStats }) {
   const { site } = useContent();
 
@@ -63,34 +105,47 @@ function GalleryStats({ works, categories, stats: customStats }) {
       aria-label="The gallery at a glance"
       className="px-5 mb-8 pb-20 md:px-10 md:pb-28"
     >
+      <style>{marqueeCss}</style>
+
       {/*
-        The three stats and the contact card share one row, like the reference.
-        auto-fit drops them to two rows and then a single column as space runs
-        out, so no breakpoints are needed. The column template is an inline
-        style on purpose, so the structure never depends on which Tailwind
-        classes happen to have been generated.
+        Mobile: the stats scroll right-to-left in an endless loop and the
+        contact card is hidden. The stats are rendered twice back to back and
+        the track slides by exactly half its width, so the loop is seamless.
+        The second copy is aria-hidden so screen readers only hear it once.
+
+        md and up: the track and its first group are `display: contents`, so
+        the three stats and the contact card are direct grid children, like
+        the reference. auto-fit drops them to two rows and then a single
+        column as space runs out. The second copy is hidden.
       */}
       <div
-        className="grid gap-x-8 gap-y-10"
+        className="gs-viewport -mx-5 overflow-hidden md:mx-0 md:grid md:gap-x-8 md:gap-y-10 md:overflow-visible md:[grid-template-columns:var(--stats-cols)]"
         style={{
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(min(100%, 17rem), 1fr))",
+          "--stats-cols": "repeat(auto-fit, minmax(min(100%, 17rem), 1fr))",
         }}
       >
-        {stats.map((stat) => (
-          <dl key={stat.label}>
-            <dt className="text-base md:text-lg">{stat.label}</dt>
-            <dd className="mt-5 font-serif text-5xl leading-none tracking-[-0.03em]">
-              {stat.value}
-            </dd>
-            <dd className="mt-5 max-w-[14rem] text-xs leading-relaxed text-muted md:text-sm">
-              {stat.note}
-            </dd>
-          </dl>
-        ))}
+        <div
+          className="gs-track flex w-max md:contents"
+          style={{ "--gs-duration": `${stats.length * SECONDS_PER_STAT}s` }}
+        >
+          <div className="flex shrink-0 gap-x-8 pr-8 md:contents">
+            {stats.map((stat) => (
+              <StatItem key={stat.label} stat={stat} />
+            ))}
+          </div>
 
-        {/* Contact card */}
-        <div className="flex w-full max-w-[26rem] items-center gap-5 self-center rounded-2xl border border-border bg-surface p-5">
+          <div
+            aria-hidden="true"
+            className="gs-dupe flex shrink-0 gap-x-8 pr-8 md:hidden"
+          >
+            {stats.map((stat) => (
+              <StatItem key={`${stat.label}-dupe`} stat={stat} />
+            ))}
+          </div>
+        </div>
+
+        {/* Contact card (desktop only) */}
+        <div className="hidden w-full max-w-[26rem] items-center gap-5 self-center rounded-2xl border border-border bg-surface p-5 md:flex">
           <span
             className="flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-raised font-serif text-2xl text-accent"
             style={{ width: "5rem", height: "5rem" }}

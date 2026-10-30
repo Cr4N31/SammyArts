@@ -144,7 +144,7 @@ function Contact() {
 
           <button
             type="submit"
-            className="group rounded-full px-4 py-2 text-sm uppercase tracking-[0.14em] text-accent transition-all duration-250 hover:bg-accent hover:text-brand"
+            className="group rounded-full px-4 py-2 text-sm uppercase tracking-[0.14em] bg-accent text-brand transition-all duration-250 hover:bg-accent hover:text-brand"
           >
             Send
             <span
