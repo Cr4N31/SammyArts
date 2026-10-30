@@ -8,13 +8,7 @@ import { blogPosts as blogSeed } from "./blogData";
 import { workCategories } from "./workCategories";
 import { ContentContext } from "./content";
 import { auth, db, firebaseConfigured } from "./firebase";
-import {
-  displayImage,
-  isFirestoreImage,
-  persistImageField,
-  resolveImage,
-  uploadLocalPath,
-} from "../admin/upload";
+import { persistImageField, uploadLocalPath } from "../admin/upload";
 
 const HERO_KEYS = [
   "Image 1",
@@ -42,9 +36,7 @@ function normalizeWorks(list) {
       ? item.caseStudyImages
           .filter((image) => typeof image === "string" && image.length > 0)
           .map((image) =>
-            image.startsWith("data:image/") || image.startsWith("fsimg:")
-              ? image
-              : image.slice(0, 2000),
+            image.startsWith("data:image/") ? image : image.slice(0, 2000),
           )
           .slice(0, 40)
       : [],
@@ -120,144 +112,6 @@ function normalizeSite(data) {
   }
   return {
     ceo: String(data?.ceo ?? ""),
-    hero,
-  };
-}
-
-function paintWorks(works) {
-  return works.map((work) => ({
-    ...work,
-    img: displayImage(work.img),
-    caseStudyImages: work.caseStudyImages.map(displayImage),
-  }));
-}
-
-function paintBlog(posts) {
-  return posts.map((post) => ({
-    ...post,
-    img: displayImage(post.img),
-  }));
-}
-
-function paintSite(site) {
-  const hero = {};
-  for (const key of HERO_KEYS) {
-    hero[key] = displayImage(site.hero[key]);
-  }
-  return {
-    ceo: displayImage(site.ceo),
-    hero,
-  };
-}
-
-async function fillWorks(raw, setWorks, cancelled) {
-  await Promise.all(
-    raw.map(async (work) => {
-      const img = isFirestoreImage(work.img) && !displayImage(work.img)
-        ? await resolveImage(work.img)
-        : "";
-      const caseStudyImages = await Promise.all(
-        work.caseStudyImages.map((image) =>
-          isFirestoreImage(image) && !displayImage(image)
-            ? resolveImage(image)
-            : Promise.resolve(""),
-        ),
-      );
-      if (cancelled()) return;
-      setWorks((prev) =>
-        prev.map((item) =>
-          item.id === work.id
-            ? {
-                ...item,
-                ...(img ? { img } : {}),
-                caseStudyImages: item.caseStudyImages.map(
-                  (image, index) => caseStudyImages[index] || image,
-                ),
-              }
-            : item,
-        ),
-      );
-    }),
-  );
-}
-
-async function fillBlog(raw, setBlogPosts, cancelled) {
-  await Promise.all(
-    raw.map(async (post) => {
-      if (!isFirestoreImage(post.img)) return;
-      if (displayImage(post.img)) return;
-      const url = await resolveImage(post.img);
-      if (cancelled() || !url) return;
-      setBlogPosts((prev) =>
-        prev.map((item) =>
-          item.id === post.id ? { ...item, img: url } : item,
-        ),
-      );
-    }),
-  );
-}
-
-async function fillSite(raw, setSite, cancelled) {
-  const jobs = [];
-
-  if (isFirestoreImage(raw.ceo) && !displayImage(raw.ceo)) {
-    jobs.push(
-      resolveImage(raw.ceo).then((url) => {
-        if (cancelled() || !url) return;
-        setSite((prev) => ({ ...prev, ceo: url }));
-      }),
-    );
-  }
-
-  for (const key of HERO_KEYS) {
-    const ref = raw.hero[key];
-    if (!isFirestoreImage(ref) || displayImage(ref)) continue;
-    jobs.push(
-      resolveImage(ref).then((url) => {
-        if (cancelled() || !url) return;
-        setSite((prev) => ({
-          ...prev,
-          hero: { ...prev.hero, [key]: url },
-        }));
-      }),
-    );
-  }
-
-  await Promise.all(jobs);
-}
-
-async function hydrateWorks(works) {
-  return Promise.all(
-    works.map(async (work) => ({
-      ...work,
-      img: (await resolveImage(work.img)) || displayImage(work.img) || "",
-      caseStudyImages: await Promise.all(
-        work.caseStudyImages.map(
-          async (image) =>
-            (await resolveImage(image)) || displayImage(image) || "",
-        ),
-      ),
-    })),
-  );
-}
-
-async function hydrateBlog(posts) {
-  return Promise.all(
-    posts.map(async (post) => ({
-      ...post,
-      img: (await resolveImage(post.img)) || displayImage(post.img) || "",
-    })),
-  );
-}
-
-async function hydrateSite(site) {
-  const hero = {};
-  for (const key of HERO_KEYS) {
-    hero[key] =
-      (await resolveImage(site.hero[key])) || displayImage(site.hero[key]) || "";
-  }
-  return {
-    ceo: (await resolveImage(site.ceo)) || displayImage(site.ceo) || "",
     hero,
   };
 }
@@ -363,39 +217,34 @@ export function ContentProvider({ children }) {
     if (!db) return undefined;
 
     let cancelled = false;
-    const isCancelled = () => cancelled;
 
     async function load() {
       try {
         const { worksSnap, siteSnap, coursesSnap, blogSnap } = await readCloud();
         if (cancelled) return;
 
-        const rawWorks = worksSnap.exists()
-          ? normalizeWorks(worksSnap.data().items)
-          : normalizeWorks(portfolioData);
-        const rawSite = siteSnap.exists()
-          ? normalizeSite(siteSnap.data())
-          : normalizeSite(siteData);
-        const rawCourses = coursesSnap.exists()
-          ? normalizeCourses(coursesSnap.data().items)
-          : normalizeCourses(coursesData);
         const cloudBlog = blogSnap.exists() ? blogSnap.data().items : null;
-        const rawBlog =
+        setWorks(
+          worksSnap.exists()
+            ? normalizeWorks(worksSnap.data().items)
+            : normalizeWorks(portfolioData),
+        );
+        setSite(
+          siteSnap.exists()
+            ? normalizeSite(siteSnap.data())
+            : normalizeSite(siteData),
+        );
+        setCourses(
+          coursesSnap.exists()
+            ? normalizeCourses(coursesSnap.data().items)
+            : normalizeCourses(coursesData),
+        );
+        setBlogPosts(
           Array.isArray(cloudBlog) && cloudBlog.length
             ? normalizeBlog(cloudBlog)
-            : normalizeBlog(blogSeed);
-
-        setWorks(paintWorks(rawWorks));
-        setSite(paintSite(rawSite));
-        setCourses(rawCourses);
-        setBlogPosts(paintBlog(rawBlog));
+            : normalizeBlog(blogSeed),
+        );
         setReady(true);
-
-        await Promise.all([
-          fillWorks(rawWorks, setWorks, isCancelled),
-          fillSite(rawSite, setSite, isCancelled),
-          fillBlog(rawBlog, setBlogPosts, isCancelled),
-        ]);
       } catch (err) {
         console.error(err);
         if (!cancelled) {
@@ -419,7 +268,7 @@ export function ContentProvider({ children }) {
     if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
     const packed = await packWorksForCloud(normalizeWorks(next));
     await setDoc(doc(db, "content", "works"), { items: packed });
-    setWorks(await hydrateWorks(packed));
+    setWorks(packed);
   }
 
   async function saveCourses(next) {
@@ -435,7 +284,7 @@ export function ContentProvider({ children }) {
     if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
     const packed = await packBlogForCloud(normalizeBlog(next));
     await setDoc(doc(db, "content", "blog"), { items: packed });
-    setBlogPosts(await hydrateBlog(packed));
+    setBlogPosts(packed);
   }
 
   async function saveSite(next) {
@@ -443,7 +292,7 @@ export function ContentProvider({ children }) {
     if (!auth?.currentUser) throw new Error("Sign in to the admin before saving.");
     const packed = await packSiteForCloud(normalizeSite(next));
     await setDoc(doc(db, "content", "site"), packed);
-    setSite(await hydrateSite(packed));
+    setSite(packed);
   }
 
   async function seedIfNeeded() {
@@ -455,11 +304,9 @@ export function ContentProvider({ children }) {
     if (!Array.isArray(cloudBlog) || cloudBlog.length === 0) {
       const packedBlog = await packBlogForCloud(normalizeBlog(blogSeed));
       await setDoc(doc(db, "content", "blog"), { items: packedBlog });
-      setBlogPosts(await hydrateBlog(packedBlog));
+      setBlogPosts(packedBlog);
     } else {
-      const rawBlog = normalizeBlog(cloudBlog);
-      setBlogPosts(paintBlog(rawBlog));
-      await fillBlog(rawBlog, setBlogPosts, () => false);
+      setBlogPosts(normalizeBlog(cloudBlog));
     }
 
     if (!coursesSnap.exists()) {
@@ -467,19 +314,12 @@ export function ContentProvider({ children }) {
       await setDoc(doc(db, "content", "courses"), { items: packedCourses });
       setCourses(packedCourses);
     } else {
-      const rawCourses = normalizeCourses(coursesSnap.data().items);
-      setCourses(rawCourses);
+      setCourses(normalizeCourses(coursesSnap.data().items));
     }
 
     if (worksSnap.exists() && siteSnap.exists()) {
-      const rawWorks = normalizeWorks(worksSnap.data().items);
-      const rawSite = normalizeSite(siteSnap.data());
-      setWorks(paintWorks(rawWorks));
-      setSite(paintSite(rawSite));
-      await Promise.all([
-        fillWorks(rawWorks, setWorks, () => false),
-        fillSite(rawSite, setSite, () => false),
-      ]);
+      setWorks(normalizeWorks(worksSnap.data().items));
+      setSite(normalizeSite(siteSnap.data()));
       return;
     }
 
@@ -497,8 +337,8 @@ export function ContentProvider({ children }) {
       setDoc(doc(db, "content", "works"), { items: packedWorks }),
       setDoc(doc(db, "content", "site"), packedSite),
     ]);
-    setWorks(await hydrateWorks(packedWorks));
-    setSite(await hydrateSite(packedSite));
+    setWorks(packedWorks);
+    setSite(packedSite);
   }
 
   useEffect(() => {
