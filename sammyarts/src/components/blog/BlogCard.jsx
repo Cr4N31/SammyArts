@@ -29,7 +29,7 @@ function BlogCard({ post }) {
           />
         </div>
 
-        <h3 className="mt-5 font-serif text-2xl italic leading-tight tracking-[-0.02em] transition-colors duration-300 group-hover:text-accent">
+        <h3 className="mt-5 font-serif text-2xl leading-tight tracking-[-0.02em] transition-colors duration-300 group-hover:text-accent">
           {post.title}
         </h3>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-cream/60">

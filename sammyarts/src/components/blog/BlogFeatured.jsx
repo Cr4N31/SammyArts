@@ -36,7 +36,7 @@ function BlogFeatured({ post }) {
 
         <div className="absolute inset-x-0 bottom-0 p-6 pr-20 md:p-12 md:pr-28">
           <p className="text-xs text-accent">Featured</p>
-          <h2 className="mt-3 max-w-3xl font-serif text-[clamp(2rem,5vw,4rem)] italic leading-[1] tracking-[-0.04em] text-cream">
+          <h2 className="mt-3 max-w-3xl font-serif text-[clamp(2rem,5vw,4rem)] leading-[1] tracking-[-0.04em] text-cream">
             {post.title}
           </h2>
           <p className="mt-4 hidden max-w-xl text-sm leading-relaxed text-cream/70 md:block">

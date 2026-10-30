@@ -32,7 +32,7 @@ function CourseCard({ course, index }) {
       className="border-t border-border py-5"
     >
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-baseline">
-        <h3 className="font-serif text-2xl italic tracking-[-0.03em] md:text-3xl">
+        <h3 className="font-serif text-2xl tracking-[-0.03em] md:text-3xl">
           {course.title}
         </h3>
         {Number.isFinite(price) && price > 0 ? (

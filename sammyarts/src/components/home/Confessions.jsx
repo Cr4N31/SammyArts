@@ -376,7 +376,7 @@ function Confessions() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
-          className="font-serif text-[clamp(3.5rem,4vw,7rem)] italic leading-[0.95] tracking-[-0.05em]"
+          className="font-serif text-[clamp(3.5rem,4vw,7rem)] leading-[0.95] tracking-[-0.05em]"
         >
           Words from the people we have worked with
         </MotionH2>

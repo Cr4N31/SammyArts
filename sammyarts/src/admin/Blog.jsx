@@ -58,7 +58,7 @@ function Notice({ message, onClear }) {
       role="status"
       className="fixed bottom-6 left-1/2 z-50 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 border border-border bg-surface px-5 py-4 text-center shadow-[0_12px_40px_rgba(0,0,0,0.45)]"
     >
-      <p className="font-serif text-2xl italic tracking-[-0.03em] text-accent">
+      <p className="font-serif text-2xl tracking-[-0.03em] text-accent">
         Saved
       </p>
       <p className="mt-1 text-sm text-muted">{message}</p>
@@ -133,7 +133,7 @@ function PostList() {
           <p className="text-xs uppercase tracking-[0.3em] text-muted">
             Writing
           </p>
-          <h1 className="mt-4 font-serif text-5xl italic leading-[0.95] tracking-[-0.04em] md:text-6xl">
+          <h1 className="mt-4 font-serif text-5xl leading-[0.95] tracking-[-0.04em] md:text-6xl">
             The <span className="text-accent">blog</span>
           </h1>
         </div>
@@ -143,7 +143,7 @@ function PostList() {
       </div>
 
       <p className="mt-6 text-sm text-muted">
-        <span className="font-serif text-4xl italic text-accent">
+        <span className="font-serif text-4xl text-accent">
           {String(posts.length).padStart(2, "0")}
         </span>
         <span className="mt-1 block">
@@ -175,7 +175,7 @@ function PostList() {
                   {post.author ? ` · ${post.author}` : ""}
                   {post.date ? ` · ${post.date}` : ""}
                 </p>
-                <h2 className="mt-1 font-serif text-3xl italic tracking-[-0.03em] break-words">
+                <h2 className="mt-1 font-serif text-3xl tracking-[-0.03em] break-words">
                   <Link
                     to={`/admin/blog/${post.id}`}
                     className="hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"

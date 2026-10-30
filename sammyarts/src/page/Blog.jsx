@@ -42,7 +42,7 @@ function Blog() {
         >
           <h2
             id="recent-posts"
-            className="font-serif text-3xl italic tracking-[-0.03em] md:text-4xl"
+            className="font-serif text-3xl tracking-[-0.03em] md:text-4xl"
           >
             Recent posts
           </h2>
