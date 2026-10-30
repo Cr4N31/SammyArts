@@ -15,11 +15,30 @@ function paymentsApiPlugin(env) {
         const url = req.url || "";
         const isCreate = url.startsWith("/api/create-checkout");
         const isConfirm = url.startsWith("/api/confirm-checkout");
-        if (!isCreate && !isConfirm) return next();
+        const isImage = url.startsWith("/api/image-upload");
+        if (!isCreate && !isConfirm && !isImage) return next();
 
         res.setHeader("Content-Type", "application/json");
 
         try {
+          if (isImage) {
+            if (req.method !== "POST") {
+              res.statusCode = 405;
+              res.end(JSON.stringify({ error: "Method not allowed" }));
+              return;
+            }
+            const { createImageUpload } = await import(
+              "./server/imageUpload.js"
+            );
+            const chunks = [];
+            for await (const chunk of req) chunks.push(chunk);
+            const raw = Buffer.concat(chunks).toString("utf8");
+            const result = await createImageUpload(raw ? JSON.parse(raw) : {});
+            res.statusCode = 200;
+            res.end(JSON.stringify(result));
+            return;
+          }
+
           const { createCourseCheckout, confirmCheckout } = await import(
             "./server/createCheckout.js"
           );
