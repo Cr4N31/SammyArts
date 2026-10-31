@@ -194,7 +194,7 @@ function ServiceRing({ readMoreHref, className = "" }) {
           ref={stageRef}
           role="img"
           aria-label={`Our services: ${services.map((s) => s.name).join(", ")}`}
-          className="mt-6 cursor-grab select-none overflow-hidden border-y border-border active:cursor-grabbing md:mt-10"
+          className="mt-6 cursor-grab select-none overflow-hidden active:cursor-grabbing md:mt-10"
           style={{
             maskImage: EDGE_MASK,
             WebkitMaskImage: EDGE_MASK,
