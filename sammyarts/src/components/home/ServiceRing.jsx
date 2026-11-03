@@ -1,244 +1,161 @@
-import { useEffect, useRef } from "react";
-import {
-  motion,
-  useAnimationFrame,
-  useInView,
-  useReducedMotion,
-} from "motion/react";
+import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { services } from "../../data/service";
+import { useContent } from "../../data/content";
 
 const EASE = [0.16, 1, 0.3, 1];
 const MotionDiv = motion.div;
 
-const SPEED = 70; // auto-scroll speed in pixels per second
-const MIN_ITEMS = 8; // each set must be wider than the stage, so short lists repeat
-const MAX_FLICK = 2500; // cap on throw velocity (px/s)
-const EASING = 5; // how quickly motion settles to its target speed
+// Back card, middle card, front card. The front card lands last.
+const POSES = [
+  { x: "-14%", y: 8, rotate: -8 },
+  { x: "12%", y: -6, rotate: 6 },
+  { x: "0%", y: 0, rotate: 0 },
+];
 
-// Fade the left and right edges out
-const EDGE_MASK =
-  "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)";
+// Used when a service has no images yet
+const FALLBACKS = ["bg-muted/40", "bg-text/80", "bg-accent"];
 
-const fadeUp = {
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-};
+function ServiceItem({ service, images, reduce, canHover }) {
+  const [open, setOpen] = useState(false);
+  const showExtras = open && !reduce;
 
-// One loop "set": the services list repeated until it is wide enough to fill
-// the stage, so the seam of the loop is never visible.
-const SET = services.length
-  ? Array.from(
-      { length: Math.ceil(MIN_ITEMS / services.length) },
-      () => services,
-    ).flat()
-  : [];
+  return (
+    <li
+      tabIndex={0}
+      className={`flex w-full flex-col items-center text-balance font-serif text-[clamp(2rem,6vw,6.5rem)] uppercase leading-none tracking-[-0.03em] outline-none transition-colors duration-300 ${
+        open ? "text-text" : "text-accent"
+      }`}
+      onPointerEnter={() => canHover && setOpen(true)}
+      onPointerLeave={() => canHover && setOpen(false)}
+      onClick={() => !canHover && setOpen((value) => !value)}
+      onFocus={(event) => {
+        if (event.target.matches?.(":focus-visible")) setOpen(true);
+      }}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      {/* Image stack: the row grows to make room, then the cards pop in */}
+      <AnimatePresence initial={false}>
+        {showExtras && (
+          <MotionDiv
+            key="stack"
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="flex w-full justify-center overflow-hidden"
+            aria-hidden="true"
+          >
+            <div className="py-6 md:py-8">
+              <div className="relative h-[clamp(7rem,13vw,11rem)] w-[clamp(9.5rem,18vw,15rem)]">
+                {POSES.map((pose, i) => {
+                  const src = images.length
+                    ? images[(POSES.length - 1 - i) % images.length]
+                    : null;
 
-const itemText =
-  "whitespace-nowrap font-serif text-[clamp(2.75rem,7vw,6.5rem)] leading-none tracking-[-0.045em]";
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{
+                        opacity: 0,
+                        scale: 0.7,
+                        y: 60,
+                        x: "0%",
+                        rotate: 0,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        x: pose.x,
+                        y: pose.y,
+                        rotate: pose.rotate,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        scale: 0.85,
+                        y: 24,
+                        transition: { duration: 0.18 },
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 22,
+                        delay: 0.08 + i * 0.08,
+                      }}
+                      className={`absolute inset-0 overflow-hidden rounded-md shadow-xl ${
+                        src ? "" : FALLBACKS[i]
+                      }`}
+                    >
+                      {src && (
+                        <img
+                          src={src}
+                          alt=""
+                          draggable={false}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </MotionDiv>
+        )}
+      </AnimatePresence>
 
-// Keep the offset inside (-width, 0] so the loop wraps seamlessly.
-const wrap = (x, width) => {
-  const m = x % width;
-  return m > 0 ? m - width : m;
-};
+      <span className="block">{service.name}</span>
+    </li>
+  );
+}
 
-function ServiceRing({ readMoreHref, className = "" }) {
-  const stageRef = useRef(null);
-  const trackRef = useRef(null);
-  const xRef = useRef(0);
-  const velRef = useRef(-SPEED); // current velocity in px/s
-  const widthRef = useRef(0);
-  const hoverRef = useRef(false);
-  const dragRef = useRef({
-    active: false,
-    startX: 0,
-    startOffset: 0,
-    lastX: 0,
-    lastT: 0,
-  });
-
-  const inView = useInView(stageRef, { margin: "100px" });
+function ServiceRing({ className = "" }) {
   const reduce = useReducedMotion();
+  const { works } = useContent();
 
-  // Measure one full set so the loop wraps without a jump.
-  useEffect(() => {
-    const track = trackRef.current;
-
-    if (!track) return undefined;
-
-    if (reduce) {
-      track.style.transform = "";
-      return undefined;
-    }
-
-    const measure = () => {
-      widthRef.current = track.scrollWidth / 2;
-    };
-
-    measure();
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(track);
-
-    return () => observer.disconnect();
-  }, [reduce]);
-
-  const apply = () => {
-    if (trackRef.current) {
-      trackRef.current.style.transform = `translate3d(${xRef.current}px, 0, 0)`;
-    }
-  };
-
-  // Written straight to the DOM, so scrolling never triggers a React render.
-  useAnimationFrame((_, delta) => {
-    if (!trackRef.current || reduce || !inView || !widthRef.current) return;
-
-    // While the user holds it, the pointer is in control.
-    if (dragRef.current.active) return;
-
-    const dt = Math.min(delta, 64) / 1000;
-
-    // Ease toward the target speed: stopped while hovered, auto-scroll otherwise.
-    // After a flick this also gives a natural inertia decay.
-    const target = hoverRef.current ? 0 : -SPEED;
-    velRef.current += (target - velRef.current) * (1 - Math.exp(-EASING * dt));
-
-    xRef.current = wrap(xRef.current + velRef.current * dt, widthRef.current);
-    apply();
-  });
-
-  const onPointerDown = (event) => {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-
-    event.currentTarget.setPointerCapture(event.pointerId);
-
-    dragRef.current = {
-      active: true,
-      startX: event.clientX,
-      startOffset: xRef.current,
-      lastX: event.clientX,
-      lastT: performance.now(),
-    };
-
-    velRef.current = 0;
-  };
-
-  const onPointerMove = (event) => {
-    const drag = dragRef.current;
-
-    if (!drag.active || !widthRef.current) return;
-
-    const now = performance.now();
-    const elapsed = Math.max(now - drag.lastT, 1);
-    const instant = ((event.clientX - drag.lastX) / elapsed) * 1000;
-
-    // Smoothed pointer velocity, used for the throw on release.
-    velRef.current = Math.max(
-      -MAX_FLICK,
-      Math.min(MAX_FLICK, velRef.current * 0.6 + instant * 0.4),
-    );
-
-    drag.lastX = event.clientX;
-    drag.lastT = now;
-
-    xRef.current = wrap(
-      drag.startOffset + (event.clientX - drag.startX),
-      widthRef.current,
-    );
-    apply();
-  };
-
-  const endDrag = (event) => {
-    if (!dragRef.current.active) return;
-
-    dragRef.current.active = false;
-
-    // If the pointer was held still before release, don't throw.
-    if (performance.now() - dragRef.current.lastT > 80) velRef.current = 0;
-
-    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
+  // Touch screens have no hover, so tapping a service toggles it instead
+  const [canHover] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: hover)").matches,
+  );
 
   if (!services.length) return null;
 
   return (
-    <MotionDiv
-      {...fadeUp}
-      transition={{ duration: 1, delay: 0.2, ease: EASE }}
-      className={className}
+    <section
+      className={`flex flex-col items-center pb-[25vh] text-center ${className}`}
+      aria-labelledby="services-heading"
     >
-      {/* Header row */}
-      <div className="flex items-center justify-between gap-4 text-xs text-text">
-        <p>We Deliver</p>
-        {!reduce && (
-          <p className="text-muted" aria-hidden="true">
-            Drag to explore
-          </p>
-        )}
-      </div>
-
-      {reduce ? (
-        // Reduced motion: a plain, static list instead of a moving track
-        <ul className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4 md:mt-14">
-          {services.map((service) => (
-            <li key={service.name} className={itemText}>
-              {service.name}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div
-          ref={stageRef}
-          role="img"
-          aria-label={`Our services: ${services.map((s) => s.name).join(", ")}`}
-          className="mt-6 cursor-grab select-none overflow-hidden active:cursor-grabbing md:mt-10"
-          style={{
-            maskImage: EDGE_MASK,
-            WebkitMaskImage: EDGE_MASK,
-            touchAction: "pan-y", // horizontal drags move the marquee, vertical still scrolls the page
-          }}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") hoverRef.current = true;
-          }}
-          onPointerLeave={() => {
-            hoverRef.current = false;
-          }}
-          onDragStart={(event) => event.preventDefault()}
+      <MotionDiv
+        initial={reduce ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 1, ease: EASE }}
+      >
+        <h2
+          id="services-heading"
+          className="font-serif text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95] tracking-[-0.04em] text-text"
         >
-          {/* py keeps descenders (g, p, y) from being clipped */}
-          <div
-            ref={trackRef}
-            aria-hidden="true"
-            className="flex w-max items-center py-6 will-change-transform md:py-8"
-          >
-            {[0, 1].map((copy) => (
-              <ul key={copy} className="flex shrink-0 items-center">
-                {SET.map((service, index) => (
-                  <li
-                    key={`${copy}-${index}`}
-                    className="flex shrink-0 items-center gap-8 pr-8 md:gap-12 md:pr-12"
-                  >
-                    <span
-                      className={`${itemText} transition-colors duration-300 hover:text-accent`}
-                    >
-                      {service.name}
-                    </span>
-                    <span className="size-2.5 shrink-0 rounded-full bg-accent md:size-3" />
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
-        </div>
-      )}
-    </MotionDiv>
+          what I’m good at!
+        </h2>
+      </MotionDiv>
+
+      <ul className="mt-10 flex w-full flex-col items-center gap-y-8 md:mt-16 md:gap-y-14">
+        {services.map((service) => (
+          <ServiceItem
+            key={service.name}
+            service={service}
+            images={works
+              .filter((work) => work.category === service.category && work.img)
+              .map((work) => work.img)}
+            reduce={reduce}
+            canHover={canHover}
+          />
+        ))}
+      </ul>
+    </section>
   );
 }
 

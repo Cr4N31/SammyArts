@@ -17,33 +17,32 @@ function About() {
   return (
     <MotionSection
       id="about"
-      className="relative overflow-hidden px-6 py-24 text-text md:px-10 md:py-32"
+      className="relative overflow-hidden px-6 pt-24 text-text md:px-10 md:pt-32"
     >
-      {/* Heading, top left */}
-      <MotionP
-        {...fadeUp}
-        transition={{ duration: 1, ease: EASE }}
-        className="mb-6 text-xs uppercase tracking-[0.3em] text-muted"
-      >
-        About
-      </MotionP>
+      {/* Intro block: label, heading, paragraph */}
+      <div className="">
+        <MotionP
+          {...fadeUp}
+          transition={{ duration: 1, ease: EASE }}
+          className="mb-6 text-xs uppercase tracking-[0.3em] text-muted"
+        >
+          About
+        </MotionP>
 
-      <MotionH2
-        {...fadeUp}
-        transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
-        className="font-serif text-[clamp(3.5rem,4vw,7rem)] leading-[0.95] tracking-[-0.05em]"
-      >
-        Who is Sammy<span className="text-accent">Arts</span>?
-      </MotionH2>
+        <MotionH2
+          {...fadeUp}
+          transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
+          className="font-serif text-[clamp(3rem,6vw,6.5rem)] leading-[0.95] tracking-[-0.05em]"
+        >
+          Who is Sammy<span className="text-accent">Arts</span>?
+        </MotionH2>
 
-      {/* Two columns: copy on the left, services carousel on the right */}
-      <div className="mt-10 grid gap-14 md:mt-14 md:grid-cols-12 md:items-start md:gap-x-12">
         <MotionDiv
           {...fadeUp}
           transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-          className="space-y-6 text-sm leading-relaxed text-muted md:col-span-5 md:text-base lg:col-span-4"
+          className="mt-8 max-w-2xl md:mt-12"
         >
-          <p>
+          <p className="text-base leading-relaxed text-text/80 md:text-lg">
             Samuel Olusola (Sammyarts) is an Artist, Brand Designer, and
             Creative Director focused on helping mid stage founders/brands
             communicate their message and improve the visual experience around
@@ -53,13 +52,10 @@ function About() {
             across diverse industries.
           </p>
         </MotionDiv>
-
-        {/* Point readMoreHref at your real services route, or drop it to hide the link */}
-        <ServiceRing
-          readMoreHref="/services"
-          className="min-w-0 md:col-span-7 lg:col-span-8"
-        />
       </div>
+
+      {/* Services: full width, centered, with room for the scroll glow */}
+      <ServiceRing className="mt-24 md:mt-40" />
     </MotionSection>
   );
 }
