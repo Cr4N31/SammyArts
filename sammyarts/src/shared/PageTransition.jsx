@@ -17,8 +17,6 @@ import { useReducedMotion } from "motion/react";
 
 const TransitionContext = createContext(null);
 
-const PANELS = 4;
-
 // Minimum time the screen stays fully covered, so the swap never flashes.
 // Raise this if you want a deliberate pause on the covered screen.
 const MIN_COVERED_MS = 200;
@@ -33,38 +31,19 @@ const NEXT_PHASE = { closing: "covered", covered: "opening" };
 const EXTERNAL_URL = /^[a-z][a-z\d+.-]*:/i;
 
 function Curtain({ phase, onDone }) {
-  const ended = useRef(0);
-
-  // Count finished panels so the phase ends when the LAST panel finishes,
-  // whatever stagger the CSS uses.
-  useEffect(() => {
-    ended.current = 0;
-  }, [phase]);
-
-  // Closing runs as a CSS animation and opening runs as a CSS transition, so
-  // both event types are handled here.
   const handleEnd = (event) => {
     if (!onDone || event.target !== event.currentTarget) return;
     if (event.propertyName && event.propertyName !== "transform") return;
-
-    ended.current += 1;
-
-    if (ended.current >= PANELS) {
-      ended.current = 0;
-      onDone();
-    }
+    onDone();
   };
 
   return (
     <div aria-hidden="true" className={`page-curtain page-curtain--${phase}`}>
-      {Array.from({ length: PANELS }, (_, panel) => (
-        <div
-          className="page-curtain__panel"
-          key={panel}
-          onAnimationEnd={handleEnd}
-          onTransitionEnd={handleEnd}
-        />
-      ))}
+      <div
+        className="page-curtain__panel"
+        onAnimationEnd={handleEnd}
+        onTransitionEnd={handleEnd}
+      />
     </div>
   );
 }
