@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { services } from "../../data/service";
 import { useContent } from "../../data/content";
@@ -15,6 +15,19 @@ const POSES = [
 
 // Used when a service has no images yet
 const FALLBACKS = ["bg-muted/40", "bg-text/80", "bg-accent"];
+
+// Fetch and decode each image once, ahead of the first hover.
+// Keeping a reference stops the browser from discarding the decoded copy.
+const preloaded = new Map();
+
+function preload(src) {
+  if (preloaded.has(src)) return;
+
+  const img = new Image();
+  img.src = src;
+  img.decode?.().catch(() => {});
+  preloaded.set(src, img);
+}
 
 function ServiceItem({ service, images, reduce, canHover }) {
   const [open, setOpen] = useState(false);
@@ -44,7 +57,7 @@ function ServiceItem({ service, images, reduce, canHover }) {
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
             exit={{ height: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
+            transition={{ duration: 0.32, ease: EASE }}
             className="flex w-full justify-center overflow-hidden"
             aria-hidden="true"
           >
@@ -79,12 +92,11 @@ function ServiceItem({ service, images, reduce, canHover }) {
                         transition: { duration: 0.18 },
                       }}
                       transition={{
-                        type: "spring",
-                        stiffness: 260,
-                        damping: 22,
-                        delay: 0.08 + i * 0.08,
+                        duration: 0.36,
+                        ease: EASE,
+                        delay: 0.03 + i * 0.05,
                       }}
-                      className={`absolute inset-0 overflow-hidden rounded-md shadow-xl ${
+                      className={`absolute inset-0 overflow-hidden rounded-md shadow-xl will-change-transform ${
                         src ? "" : FALLBACKS[i]
                       }`}
                     >
@@ -121,6 +133,31 @@ function ServiceRing({ className = "" }) {
       window.matchMedia("(hover: hover)").matches,
   );
 
+  // Only the three images each stack uses, kept stable between renders
+  const imagesByService = useMemo(
+    () =>
+      services.map((service) =>
+        works
+          .filter((work) => work.category === service.category && work.img)
+          .map((work) => work.img)
+          .slice(0, POSES.length),
+      ),
+    [works],
+  );
+
+  // Warm the cache when the browser is idle so it doesn't compete with page load
+  useEffect(() => {
+    const run = () => imagesByService.flat().forEach(preload);
+
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(run, { timeout: 2000 });
+      return () => window.cancelIdleCallback(id);
+    }
+
+    const id = setTimeout(run, 500);
+    return () => clearTimeout(id);
+  }, [imagesByService]);
+
   if (!services.length) return null;
 
   return (
@@ -143,13 +180,11 @@ function ServiceRing({ className = "" }) {
       </MotionDiv>
 
       <ul className="mt-10 flex w-full flex-col items-center gap-y-8 md:mt-16 md:gap-y-14">
-        {services.map((service) => (
+        {services.map((service, index) => (
           <ServiceItem
             key={service.name}
             service={service}
-            images={works
-              .filter((work) => work.category === service.category && work.img)
-              .map((work) => work.img)}
+            images={imagesByService[index]}
             reduce={reduce}
             canHover={canHover}
           />
