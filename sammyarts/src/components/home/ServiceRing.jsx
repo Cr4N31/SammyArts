@@ -267,7 +267,7 @@ function ServiceRing({ className = "" }) {
           id="services-heading"
           className="font-serif text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95] tracking-[-0.04em] text-text"
         >
-          what I’m good at!
+          Services
         </h2>
       </MotionDiv>
 
