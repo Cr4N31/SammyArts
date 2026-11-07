@@ -72,6 +72,8 @@ function TextField({
   error,
   hint,
   multiline = false,
+  rows = 4,
+  placeholder,
   type = "text",
   autoFocus = false,
   autoComplete,
@@ -90,8 +92,9 @@ function TextField({
       </label>
       <Tag
         id={id}
-        {...(multiline ? { rows: 4 } : { type, autoComplete })}
+        {...(multiline ? { rows } : { type, autoComplete })}
         value={value}
+        placeholder={placeholder}
         autoFocus={autoFocus}
         onChange={onChange}
         aria-invalid={error ? true : undefined}
@@ -522,11 +525,6 @@ function PieceList() {
                     {work.title}
                   </Link>
                 </h2>
-                {work.desc ? (
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted break-words">
-                    {work.desc}
-                  </p>
-                ) : null}
                 <div className="mt-3">
                   <TagPicker
                     value={work.category}
@@ -613,7 +611,7 @@ function PieceEditor() {
   const navigate = useNavigate();
   const existing = works.find((work) => String(work.id) === id);
   const [draft, setDraft] = useState(() =>
-    existing ? { ...existing } : blank,
+    existing ? { ...blank, ...existing } : blank,
   );
   const [titleError, setTitleError] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -687,7 +685,7 @@ function PieceEditor() {
       img: draft.img.trim(),
       category: draft.category,
       year: String(draft.year || "").trim(),
-      medium: draft.medium || existing?.medium || "",
+      medium: draft.medium || "",
       caseStudyImages: draft.caseStudyImages || [],
     };
     const next = isNew
@@ -788,8 +786,10 @@ function PieceEditor() {
           </div>
           <TextField
             id="work-desc"
-            label="Description"
+            label="About this project"
+            hint="Shown under the main image and in Project details. Leave a blank line between paragraphs."
             multiline
+            rows={8}
             value={draft.desc}
             onChange={(e) => updateDraft("desc", e.target.value)}
           />

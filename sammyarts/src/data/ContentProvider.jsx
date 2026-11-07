@@ -27,7 +27,7 @@ function normalizeWorks(list) {
   return list.map((item, index) => ({
     id: Number(item?.id) || index + 1,
     title: String(item?.title ?? "").slice(0, 140),
-    desc: String(item?.desc ?? "").slice(0, 600),
+    desc: String(item?.desc ?? "").slice(0, 4000),
     img: String(item?.img ?? ""),
     medium: item?.medium ? String(item.medium).slice(0, 80) : "",
     year: item?.year ?? "",
