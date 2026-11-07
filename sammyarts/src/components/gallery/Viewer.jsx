@@ -171,10 +171,9 @@ function Tile({ item, total, title, eager }) {
 
       <figcaption
         aria-hidden="true"
-        className="absolute left-0 top-0 flex items-baseline gap-1.5 bg-brand px-3 py-2 text-xs tabular-nums text-text"
+        className="absolute left-0 top-0 flex items-baseline gap-1.5  px-3 py-2 text-lg tabular-nums text-text"
       >
         <span>{pad(number)}</span>
-        <span className="text-muted">/ {pad(total)}</span>
       </figcaption>
     </figure>
   );
@@ -585,10 +584,10 @@ function Viewer({ works, open, index, onClose, onStep }) {
             </div>
           </div>
 
-          {/* Scrollable case study with hidden scrollbar */}
+          {/* Scrollable case study */}
           <div
             ref={scrollRef}
-            className="viewer-scrollbar-hidden absolute inset-0 z-0 min-h-0 min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+            className="viewer-scrollbar absolute inset-0 z-0 min-h-0 min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             style={{
               WebkitOverflowScrolling: "touch",
               touchAction: "pan-y",
