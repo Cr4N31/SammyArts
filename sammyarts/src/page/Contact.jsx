@@ -191,7 +191,7 @@ function Contact() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
             <button
               type="submit"
-              className="button-slide rounded-sm border border-accent bg-accent px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="button-slide rounded-sm border border-accent bg-bg px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Let&rsquo;s connect!
             </button>
