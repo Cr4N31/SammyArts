@@ -251,6 +251,10 @@
     font-family: var(--font-sans);
   }
 
+  p {
+    font-family: var(--font-sans);
+  }
+
   h1,
   h2,
   h3,
