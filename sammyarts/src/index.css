@@ -240,6 +240,7 @@
   --color-raised: #221918;
   --color-border: #3a2d2b;
   --color-text: #f5ede6;
+  --color-cream: var(--color-text);
   --color-muted: #b8aaa0;
   --color-accent: #f78e48;
   --color-accent-hover: #f08a58;
@@ -249,6 +250,8 @@
 @layer base {
   body {
     font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 
   p {
@@ -321,6 +324,19 @@
   animation-delay: 360ms;
 }
 
+.scroll-fade {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 450ms ease,
+    transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-fade--visible {
+  opacity: 1;
+  transform: none;
+}
+
 @keyframes page-fade-up {
   from {
     opacity: 0;
@@ -377,25 +393,66 @@
   }
 }
 
+html,
 .viewer-scrollbar {
   scrollbar-color: var(--color-accent) var(--color-brand);
   scrollbar-width: thin;
 }
 
+html::-webkit-scrollbar,
 .viewer-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
 
+html::-webkit-scrollbar-track,
 .viewer-scrollbar::-webkit-scrollbar-track {
   background: var(--color-brand);
 }
 
+html::-webkit-scrollbar-thumb,
 .viewer-scrollbar::-webkit-scrollbar-thumb {
   border: 2px solid var(--color-brand);
   border-radius: 9999px;
   background: var(--color-accent);
 }
 
+html::-webkit-scrollbar-thumb:hover,
 .viewer-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent-hover);
+}
+
+.button-slide {
+  background-image: linear-gradient(
+    to right,
+    var(--color-accent) 50%,
+    transparent 50%
+  );
+  background-position: right;
+  background-size: 200% 100%;
+  color: #f78e48;
+  transition:
+    background-position 350ms cubic-bezier(0.76, 0, 0.24, 1),
+    color 350ms ease;
+}
+
+.button-slide:hover:not(:disabled),
+.button-slide:focus-visible:not(:disabled) {
+  background-position: left;
+  color: var(--color-brand);
+}
+
+.button-slide:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button-slide,
+  .page-reveal > *,
+  .scroll-fade {
+    transition: none;
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }

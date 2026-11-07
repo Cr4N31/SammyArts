@@ -57,7 +57,7 @@ const TagIcon = () => (
 const WorkCard = ({ item }) => (
   <article
     data-reveal
-    className="group relative flex flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-border transition-colors duration-300 hover:ring-accent/40"
+    className="group relative flex flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-border transition-colors duration-300"
   >
     <div className="overflow-hidden bg-raised">
       <img
@@ -94,7 +94,7 @@ const WorkCard = ({ item }) => (
         {/* Stretched link: the after: layer makes the whole card clickable */}
         <PageTransitionLink
           to={`/gallery?project=${encodeURIComponent(item.id)}`}
-          className="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-brand transition-colors duration-300 after:absolute after:inset-0 hover:bg-accent-hover active:bg-accent-pressed"
+          className="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-full hover:bg-accent hover:text-bg transition-all duration-250 ease-in border border-accent/30 bg-transparent text-accent after:absolute after:inset-0"
         >
           <Arrow className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5" />
           <span className="sr-only">View {item.title}</span>
@@ -162,7 +162,7 @@ function Portfolio() {
         <div data-reveal className="mt-12 flex items-center justify-center">
           <PageTransitionLink
             to="/gallery"
-            className="border-b border-accent text-lg font-medium text-accent transition-colors hover:border-accent-hover hover:text-accent-hover"
+            className="button-slide inline-flex items-center justify-center rounded-sm border border-accent bg-brand px-6 py-3 text-sm font-medium text-white"
           >
             View more projects &rarr;
           </PageTransitionLink>

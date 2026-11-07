@@ -85,6 +85,13 @@ function Header() {
           })}
         </ul>
 
+        <PageTransitionLink
+          to="/contact"
+          className="button-slide hidden items-center justify-center rounded-sm border border-accent bg-transparent px-5 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white lg:inline-flex"
+        >
+          Let's connect
+        </PageTransitionLink>
+
         {/* Hamburger — mobile and tablet only */}
         <button
           type="button"
@@ -174,6 +181,24 @@ function Header() {
                   </MotionLi>
                 );
               })}
+              <MotionLi
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.08 + navlinks.length * 0.05,
+                  ease: EASE,
+                }}
+                className="p-2"
+              >
+                <PageTransitionLink
+                  to="/contact"
+                  onClick={() => setOpen(false)}
+                  className="button-slide flex w-full items-center justify-center rounded-sm border border-accent bg-brand px-4 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white"
+                >
+                  Let's connect
+                </PageTransitionLink>
+              </MotionLi>
             </MotionUl>
           </>
         )}

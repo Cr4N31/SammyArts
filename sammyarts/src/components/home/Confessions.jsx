@@ -336,7 +336,7 @@ function Confessions() {
         scale: { duration: 0.22, ease: EASE },
       }}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-[#120d0d] text-xl shadow-xl backdrop-blur-md">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-brand text-xl shadow-xl backdrop-blur-md">
         <svg
           viewBox="0 0 24 24"
           width="23"

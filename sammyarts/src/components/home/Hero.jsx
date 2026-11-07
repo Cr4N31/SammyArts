@@ -6,7 +6,8 @@ const EASE = [0.16, 1, 0.3, 1]; // easeOutExpo, long soft landing
 const MotionDiv = motion.div;
 const MotionSpan = motion.span;
 
-const WORD = "Sammyarts";
+const WORD = "Sammy";
+const WORD_SUFFIX = "arts";
 
 const ArrowRight = ({ className = "h-4 w-4" }) => (
   <svg
@@ -65,15 +66,15 @@ const Wordmark = () => {
     >
       <p
         ref={textRef}
-        aria-label={WORD}
+        aria-label={`${WORD}${WORD_SUFFIX}`}
         className="flex w-max select-none overflow-hidden whitespace-nowrap pb-[0.2em] font-serif leading-[0.9] tracking-[-0.04em] text-text"
         style={{ fontSize: size }}
       >
-        {WORD.split("").map((ch, i) => (
+        {[...WORD, ...WORD_SUFFIX].map((ch, i) => (
           <MotionSpan
             key={i}
             aria-hidden="true"
-            className="inline-block"
+            className={`inline-block ${i >= WORD.length ? "text-accent" : ""}`}
             initial={{ y: reduce ? 0 : "130%" }}
             animate={{ y: ready || reduce ? 0 : "130%" }}
             transition={{ duration: 1.3, delay: 0.7 + i * 0.05, ease: EASE }}
@@ -98,37 +99,45 @@ function Hero() {
 
   return (
     <section className="relative isolate flex min-h-svh flex-col overflow-hidden bg-brand pb-12 text-text">
-      {/* Portrait: centered, anchored to the bottom, sits behind all text */}
+      {/*
+        Landscape image. Subject sits on the right, the left is already dark,
+        so the headline lives there and the face is never covered.
+        Desktop: full-bleed. Mobile: starts below the headline and fades in
+        from the top so the crop edge never shows.
+      */}
       <MotionDiv
         aria-hidden="true"
-        className="pointer-events-none top-10 absolute inset-x-0 bottom-0 z-0 flex justify-center"
-        style={{ transformOrigin: "50% 100%" }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 top-[30svh] z-0 [mask-image:linear-gradient(to_bottom,transparent,black_30%)] md:top-0 md:[mask-image:none]"
         initial={{ opacity: reduce ? 1 : 0, scale: reduce ? 1 : 1.04 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.8, ease: EASE }}
+        style={{ transformOrigin: "80% 40%" }}
       >
         <picture>
-          <source srcSet="/img/ceo-cutout.webp" type="image/webp" />
+          <source srcSet="/img/Sammyarts-landscape.png" type="image/png" />
           <img
-            src="/img/ceo-cutout.png"
+            src="/img/Sammyarts-landscape.png"
             alt=""
-            width="1024"
-            height="1536"
+            width="2576"
+            height="1449"
             decoding="async"
             fetchPriority="high"
             draggable={false}
-            className="h-[78svh] w-auto max-w-none select-none object-contain md:h-[130svh]"
+            className="h-full w-full select-none object-cover object-[82%_30%] md:object-[right_center]"
           />
         </picture>
       </MotionDiv>
 
-      <div className="relative z-10 flex flex-1 flex-col justify-end gap-10 px-5 pb-4 pt-28 md:gap-14 md:px-10 md:pb-6">
-        {/* Headline + CTA row */}
-        <div className="flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
-          <MotionDiv
-            {...fade(1.7)}
-            className="flex flex-col items-start gap-5 md:max-w-[44%]"
-          >
+      {/* Soft shade at the bottom keeps the wordmark readable over the gold */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[40%] bg-gradient-to-t from-brand/80 via-brand/30 to-transparent"
+      />
+
+      <div className="relative z-10 flex flex-1 flex-col justify-between gap-16 px-5 pb-4 pt-28 md:px-10 md:pb-6">
+        {/* Headline + CTA, stacked on the dark left side */}
+        <div className="flex flex-col items-start gap-8 md:max-w-[42%] md:gap-10">
+          <MotionDiv {...fade(1.7)}>
             <h1 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-text md:text-[clamp(2.25rem,4vw,3.75rem)]">
               Brand Designer &amp; Strategist
             </h1>
@@ -137,12 +146,10 @@ function Hero() {
           <MotionDiv {...fade(1.9)}>
             <Link
               to="/gallery"
-              className="group inline-flex items-center gap-4 rounded-full bg-accent p-1.5 pr-7 text-sm text-brand transition-colors duration-300 hover:bg-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              className="group inline-flex items-center gap-4 rounded-full bg-accent p-3 pl-4 text-sm text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
-              <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-text text-brand transition-colors duration-300 group-hover:bg-accent">
-                <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5" />
-              </span>
               View gallery
+              <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5" />
             </Link>
           </MotionDiv>
         </div>

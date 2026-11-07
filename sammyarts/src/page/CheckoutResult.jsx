@@ -131,7 +131,7 @@ function CheckoutResult() {
           <div className="mt-12 flex flex-wrap items-center gap-4">
             <Link
               to="/atelier"
-              className="inline-flex min-h-11 items-center justify-center rounded-sm bg-accent px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-brand transition-colors hover:bg-accent-hover"
+              className="button-slide inline-flex min-h-11 items-center justify-center rounded-sm border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
             >
               Browse courses
             </Link>

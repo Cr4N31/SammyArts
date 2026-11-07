@@ -124,7 +124,7 @@ function ContactCard({ headshot, isCopy }) {
           <PageTransitionLink
             to="/contact"
             tabIndex={isCopy ? -1 : undefined}
-            className="mt-3 flex h-9 w-full items-center justify-center rounded-full border border-border px-4 text-sm transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="mt-3 flex h-9 w-full items-center justify-center rounded-xl border border-accent/50 bg-transparent px-4 text-sm text-accent focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-accent"
           >
             Get in touch
           </PageTransitionLink>

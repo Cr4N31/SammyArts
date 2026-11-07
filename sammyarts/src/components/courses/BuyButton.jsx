@@ -1,16 +1,9 @@
-function BuyButton({ onClick, label = "Buy now", variant = "solid" }) {
-  const styles =
-    variant === "solid"
-      ? "bg-accent text-brand hover:bg-white"
-      : "border-b border-current pb-1 hover:text-accent";
-
+function BuyButton({ onClick, label = "Buy now" }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`group inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] transition-colors duration-300 ${styles} ${
-        variant === "solid" ? "px-5 py-3" : ""
-      }`}
+      className="button-slide group inline-flex items-center gap-2 rounded-sm border border-accent bg-brand px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-white"
     >
       {label}
       <span

@@ -172,7 +172,7 @@ function ServiceItem({ service, sources, reduce, canHover }) {
   return (
     <li
       tabIndex={0}
-      className={`flex flex-col items-center text-balance font-serif text-[clamp(2rem,6vw,6.5rem)] uppercase leading-none tracking-[-0.03em] outline-none transition-colors duration-300 ${
+      className={`flex flex-col items-center text-balance font-serif text-[clamp(2rem,4vw,6.5rem)] uppercase leading-none tracking-[-0.03em] outline-none transition-colors duration-300 ${
         open ? "text-text" : "text-accent"
       }`}
       onPointerLeave={handleRowLeave}
@@ -254,7 +254,7 @@ function ServiceRing({ className = "" }) {
 
   return (
     <section
-      className={`flex flex-col items-center pb-[25vh] text-center ${className}`}
+      className={`flex flex-col items-center pb-[10vh] text-center ${className}`}
       aria-labelledby="services-heading"
     >
       <MotionDiv

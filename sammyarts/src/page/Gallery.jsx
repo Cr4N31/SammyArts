@@ -6,6 +6,7 @@ import GalleryStats from "../components/gallery/GalleryStats";
 import WorkGrid from "../components/gallery/WorkGrid";
 import Viewer from "../components/gallery/Viewer";
 import { workCategories } from "../data/workCategories";
+import Confessions from "../components/home/Confessions";
 
 const OTHER = "Other";
 
@@ -184,6 +185,7 @@ function Gallery() {
             </div>
           )}
         </section>
+        <Confessions />
       </main>
 
       {/* Outside <main> on purpose. .page-reveal > * would otherwise run its

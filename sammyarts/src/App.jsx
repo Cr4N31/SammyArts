@@ -10,7 +10,7 @@ import Checkout from "./page/Checkout";
 import CheckoutResult from "./page/CheckoutResult";
 import Footer from "./shared/Footer";
 import Admin from "./admin/Admin";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import Lenis from "lenis";
 import { PageLoader, PageTransitionProvider } from "./shared/PageTransition";
 import { useContent } from "./data/content";
@@ -34,6 +34,45 @@ function App() {
       lenis.destroy();
     };
   }, [isAdmin]);
+
+  useLayoutEffect(() => {
+    if (
+      isAdmin ||
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return undefined;
+    }
+
+    const targets = document.querySelectorAll(
+      "[data-scroll-fade], main > *, footer > *",
+    );
+
+    if (!targets.length) return undefined;
+
+    targets.forEach((target) => target.classList.add("scroll-fade"));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle(
+            "scroll-fade--visible",
+            entry.isIntersecting,
+          );
+        });
+      },
+      { threshold: 0.05 },
+    );
+
+    targets.forEach((target) => observer.observe(target));
+
+    return () => {
+      observer.disconnect();
+      targets.forEach((target) => {
+        target.classList.remove("scroll-fade", "scroll-fade--visible");
+      });
+    };
+  }, [isAdmin, pathname, ready]);
 
   if (!ready) return <PageLoader />;
 

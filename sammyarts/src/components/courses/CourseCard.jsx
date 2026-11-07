@@ -19,7 +19,7 @@ function CourseCard({ course, onBuy, index = 0 }) {
         </h3>
         <div className="flex items-center justify-between gap-6 sm:justify-end">
         <PriceTag price={course.price} billing={course.billing} />
-        <BuyButton variant="ghost" label="Buy" onClick={() => onBuy(course)} />
+        <BuyButton label="Buy" onClick={() => onBuy(course)} />
         </div>
       </div>
     </MotionLi>

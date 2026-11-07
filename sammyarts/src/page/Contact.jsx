@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 
 import { FaXTwitter } from "react-icons/fa6";
+import Confessions from "../components/home/Confessions";
 
 const contacts = [
   {
@@ -28,16 +29,30 @@ const contacts = [
   { name: "Pinterest", icon: FaPinterest, href: "https://pin.it/3ucODLwzR" },
 ];
 
-const fieldClass =
-  "w-full border-b border-accent bg-transparent py-3 text-base outline-none transition-colors placeholder:opacity-30 focus:border-current";
-
-const labelClass = "text-xs uppercase tracking-[0.14em] opacity-60";
-
 const whatsappLink = contacts.find((c) => c.name === "WhatsApp").href;
 
+// Boxed fields, quiet at rest, accent border on focus
+const fieldClass =
+  "w-full rounded-md border border-border bg-white/[0.03] px-4 py-4 text-sm text-text outline-none transition-colors placeholder:text-muted/70 hover:border-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent";
+
+const services = [
+  "Brand strategy",
+  "Visual identity",
+  "Logo design",
+  "Packaging and print",
+  "Social and campaign design",
+  "Something else",
+];
+
 function Contact() {
-  const [values, setValues] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    brand: "",
+    service: "",
+    message: "",
+  });
+  const [status, setStatus] = useState("idle"); // idle | sent
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +65,8 @@ function Contact() {
     const text = [
       `Hello, my name is ${values.name.trim()}.`,
       `Email: ${values.email.trim()}`,
+      `Brand: ${values.brand.trim()}`,
+      `Looking for: ${values.service}`,
       "",
       values.message.trim(),
     ].join("\n");
@@ -57,32 +74,30 @@ function Contact() {
     const url = `${whatsappLink}?text=${encodeURIComponent(text)}`;
 
     window.open(url, "_blank", "noopener,noreferrer");
-    setValues({ name: "", email: "", message: "" });
+    setValues({ name: "", email: "", brand: "", service: "", message: "" });
     setStatus("sent");
   };
 
   return (
     <section
       id="contact"
-      className="page-reveal flex min-h-[50vh] flex-col justify-center gap-16 px-6 py-24 text-text md:px-12 md:py-32"
+      className="page-reveal flex flex-col items-center gap-16 overflow-x-clip bg-brand px-6 py-24 text-text md:gap-20 md:px-12 md:py-32"
     >
-      <div>
-        <h1 className="text-[clamp(3rem,5vw,9rem)] font-semibold leading-[0.9] tracking-[-0.05em]">
-          Need some help?
+      {/* Heading */}
+      <div className="flex max-w-4xl flex-col items-center text-center">
+        <h1 className="text-[clamp(2.75rem,6.5vw,7rem)] font-medium leading-[0.95] tracking-[-0.04em]">
+          Got a brand that needs a voice? Let&rsquo;s talk
         </h1>
-        <p className="mt-6 max-w-md text-sm tracking-[-0.02em] opacity-70">
-          Fill in the form and we will continue the conversation with you on
-          WhatsApp.
+        <p className="mt-6 max-w-md text-sm tracking-[-0.01em] opacity-70">
+          Share a few details and the conversation continues on WhatsApp.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex w-full max-w-2xl flex-col gap-10"
-      >
-        <div className="grid gap-10 md:grid-cols-2">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="name" className={labelClass}>
+      {/* Form + side details */}
+      <div className="grid w-full max-w-4xl gap-12 md:grid-cols-[minmax(0,1fr)_200px] md:gap-16">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label htmlFor="name" className="sr-only">
               Name
             </label>
             <input
@@ -93,14 +108,14 @@ function Contact() {
               required
               value={values.name}
               onChange={handleChange}
-              placeholder="Your name"
+              placeholder="Name *"
               className={fieldClass}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className={labelClass}>
-              Email address
+          <div>
+            <label htmlFor="email" className="sr-only">
+              Email
             </label>
             <input
               id="email"
@@ -110,74 +125,106 @@ function Contact() {
               required
               value={values.email}
               onChange={handleChange}
-              placeholder="you@company.com"
+              placeholder="Email *"
               className={fieldClass}
             />
           </div>
-        </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="message" className={labelClass}>
-            Context
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            rows={5}
-            required
-            value={values.message}
-            onChange={handleChange}
-            placeholder="Tell us a little about what you need"
-            className={`${fieldClass} resize-none`}
-          />
-        </div>
+          <div>
+            <label htmlFor="brand" className="sr-only">
+              Brand or company
+            </label>
+            <input
+              id="brand"
+              name="brand"
+              type="text"
+              autoComplete="organization"
+              required
+              value={values.brand}
+              onChange={handleChange}
+              placeholder="Brand or company *"
+              className={fieldClass}
+            />
+          </div>
 
-        <div className="flex items-center justify-between gap-6">
-          <p
-            role="status"
-            aria-live="polite"
-            className="text-xs tracking-[-0.01em] opacity-70"
-          >
-            {status === "sent" &&
-              "Opening WhatsApp. Send the message there to reach us."}
-          </p>
-
-          <button
-            type="submit"
-            className="group rounded-full px-4 py-2 text-sm uppercase tracking-[0.14em] bg-accent text-brand transition-all duration-250 hover:bg-accent hover:text-brand"
-          >
-            Send
-            <span
-              aria-hidden
-              className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1"
+          <div>
+            <label htmlFor="service" className="sr-only">
+              What do you need
+            </label>
+            <select
+              id="service"
+              name="service"
+              required
+              value={values.service}
+              onChange={handleChange}
+              className={`${fieldClass} appearance-none ${
+                values.service ? "" : "text-muted/70"
+              }`}
             >
-              →
-            </span>
-          </button>
-        </div>
-      </form>
-      <span className="text-center text-accent uppercase">Or</span>
-      <div className="flex flex-col items-center gap-6">
-        <h2 className="text-sm uppercase tracking-[0.14em] opacity-70">
-          Reach out to us on our other platforms
-        </h2>
+              <option value="" disabled>
+                What do you need? *
+              </option>
+              {services.map((s) => (
+                <option key={s} value={s} className="text-black">
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <ul className="flex items-center gap-6">
-          {contacts.map(({ name, icon: Icon, href }) => (
+          <div>
+            <label htmlFor="message" className="sr-only">
+              Project description
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={7}
+              required
+              value={values.message}
+              onChange={handleChange}
+              placeholder="A brief description of your project is always best :)"
+              className={`${fieldClass} min-h-48 resize-y`}
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
+            <button
+              type="submit"
+              className="button-slide rounded-sm border border-accent bg-accent px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Let&rsquo;s connect!
+            </button>
+
+            <p
+              role="status"
+              aria-live="polite"
+              className="text-xs tracking-[-0.01em] text-muted"
+            >
+              {status === "sent" &&
+                "Opening WhatsApp. Send the message there to reach me."}
+            </p>
+          </div>
+        </form>
+
+        {/* Side details, plain text links like the reference */}
+        <ul className="flex flex-row flex-wrap gap-x-6 gap-y-2 text-xs leading-relaxed md:flex-col md:gap-y-1.5 md:pt-4">
+          {contacts.map(({ name, href }) => (
             <li key={name}>
               <a
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={name}
-                className="text-accent transition-all duration-250 hover:-translate-y-1 hover:opacity-70"
+                className="text-text transition-colors hover:text-accent"
               >
-                <Icon size={24} aria-hidden />
+                {name}
               </a>
             </li>
           ))}
         </ul>
       </div>
+
+      <Confessions />
     </section>
   );
 }
