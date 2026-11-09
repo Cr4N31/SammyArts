@@ -1,6 +1,6 @@
 import CourseCard from "./CourseCard";
 
-function CourseGrid({ items, onBuy }) {
+function CourseGrid({ items, onBuy, ratings, onSubmitRating }) {
   if (!items.length) {
     return (
       <p className="border-t border-border py-8 text-sm text-muted">
@@ -12,7 +12,14 @@ function CourseGrid({ items, onBuy }) {
   return (
     <ul aria-label="Course collection" className="grid grid-cols-1">
       {items.map((course, i) => (
-        <CourseCard key={course.id} course={course} onBuy={onBuy} index={i} />
+        <CourseCard
+          key={course.id}
+          course={course}
+          onBuy={onBuy}
+          index={i}
+          ratingSummary={ratings[course.slug || String(course.id)]}
+          onSubmitRating={onSubmitRating}
+        />
       ))}
     </ul>
   );
