@@ -48,7 +48,7 @@ function Curtain({ phase, onDone }) {
   );
 }
 
-export function PageLoader() {
+export function PageLoader({ exiting = false }) {
   const transitions = useContext(TransitionContext);
   const registerLoader = transitions?.registerLoader;
 
@@ -60,7 +60,37 @@ export function PageLoader() {
   // Rendering a second one would stack two curtains and cause a pop on reveal.
   if (transitions?.active) return null;
 
-  return <Curtain phase="covered" />;
+  return (
+    <div
+      role="status"
+      aria-label="Loading SammyArts"
+      aria-hidden={exiting || undefined}
+      className={`startup-loader${exiting ? " startup-loader--exiting" : ""}`}
+    >
+      <div className="startup-loader__content">
+        <div className="startup-loader__wordmark" aria-label="Sammyarts">
+          {"Sammyarts".split("").map((letter, index) => (
+            <span
+              key={index}
+              aria-hidden="true"
+              className={`startup-loader__letter${
+                index >= 5 ? " startup-loader__letter--accent" : ""
+              }`}
+              style={{ "--letter-index": index }}
+            >
+              {letter}
+            </span>
+          ))}
+        </div>
+        <p className="startup-loader__caption">
+          Brand design · Strategy · Art direction
+        </p>
+        <div className="startup-loader__track" aria-hidden="true">
+          <span />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function PageTransitionProvider({ children }) {

@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { Link } from "react-router-dom";
+import { PageTransitionLink } from "../../shared/PageTransition";
 
 const EASE = [0.16, 1, 0.3, 1]; // easeOutExpo, long soft landing
 const MotionDiv = motion.div;
@@ -154,13 +154,13 @@ function Hero() {
           </MotionDiv>
 
           <MotionDiv {...fade(1.9)}>
-            <Link
+            <PageTransitionLink
               to="/gallery"
               className="group inline-flex items-center gap-4 rounded-full bg-accent p-3 pl-4 text-sm text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
               View gallery
               <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5" />
-            </Link>
+            </PageTransitionLink>
           </MotionDiv>
         </div>
 

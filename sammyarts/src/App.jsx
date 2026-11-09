@@ -10,7 +10,7 @@ import Checkout from "./page/Checkout";
 import CheckoutResult from "./page/CheckoutResult";
 import Footer from "./shared/Footer";
 import Admin from "./admin/Admin";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Lenis from "lenis";
 import { PageLoader, PageTransitionProvider } from "./shared/PageTransition";
 import { useContent } from "./data/content";
@@ -19,6 +19,21 @@ function App() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
   const { ready } = useContent();
+  const [loaderDismissed, setLoaderDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!ready) return undefined;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const timer = window.setTimeout(
+      () => setLoaderDismissed(true),
+      reducedMotion ? 0 : 550,
+    );
+
+    return () => window.clearTimeout(timer);
+  }, [ready]);
 
   useEffect(() => {
     if (isAdmin) return;
@@ -74,27 +89,30 @@ function App() {
     };
   }, [isAdmin, pathname, ready]);
 
-  if (!ready) return <PageLoader />;
-
   return (
-    <div className="page-flow min-h-screen text-text">
-      <PageTransitionProvider>
-        {!isAdmin && <Header />}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/atelier" element={<Courses />} />
-          <Route path="/checkout/success" element={<CheckoutResult />} />
-          <Route path="/success" element={<CheckoutResult />} />
-          <Route path="/checkout/:slug" element={<Checkout />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/admin/*" element={<Admin />} />
-        </Routes>
-        {!isAdmin && <Footer />}
-      </PageTransitionProvider>
-    </div>
+    <>
+      {ready && (
+        <div className="page-flow min-h-screen text-text">
+          <PageTransitionProvider>
+            {!isAdmin && <Header />}
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/atelier" element={<Courses />} />
+              <Route path="/checkout/success" element={<CheckoutResult />} />
+              <Route path="/success" element={<CheckoutResult />} />
+              <Route path="/checkout/:slug" element={<Checkout />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/admin/*" element={<Admin />} />
+            </Routes>
+            {!isAdmin && <Footer />}
+          </PageTransitionProvider>
+        </div>
+      )}
+      {!loaderDismissed && <PageLoader exiting={ready} />}
+    </>
   );
 }
 
