@@ -189,7 +189,7 @@ function Tile({ item, total, title, eager }) {
 //   work.credits    [{ role, name }]     name can be a string or an array
 //   work.location   string               shown before the year
 //   work.link       string               optional external link
-// Without sections, work.desc is split into paragraphs.
+// work.desc comes first, split into paragraphs, then any sections.
 function DetailsPanel({ work, open, onClose, panelRef, closeRef }) {
   const reduce = useReducedMotion();
 
@@ -214,11 +214,10 @@ function DetailsPanel({ work, open, onClose, panelRef, closeRef }) {
   const footnote = [work.location, work.year].filter(Boolean).join(", ");
   const link = work.link || work.url;
 
-  const sections = (
-    Array.isArray(work.sections) && work.sections.length
-      ? work.sections
-      : [{ body: work.desc }]
-  )
+  const sections = [
+    { body: work.desc },
+    ...(Array.isArray(work.sections) ? work.sections : []),
+  ]
     .map((section) => ({
       heading: section.heading,
       paragraphs: (Array.isArray(section.body)
