@@ -19,8 +19,8 @@ function CourseCard({ course, onBuy, index = 0 }) {
       <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center md:gap-10">
         <div className="min-w-0">
           <p className="mb-2 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
-            {String(index + 1).padStart(2, "0")} <span aria-hidden="true">/</span>{" "}
-            {course.category}
+            {String(index + 1).padStart(2, "0")}{" "}
+            <span aria-hidden="true">/</span> {course.category}
           </p>
           <h3 className="break-words font-serif text-2xl leading-tight tracking-[-0.03em] md:text-3xl">
             {course.title}
@@ -70,7 +70,7 @@ function CourseCard({ course, onBuy, index = 0 }) {
             {course.duration ? ` · ${course.duration}` : ""}
             {course.lessons ? ` · ${course.lessons} lessons` : ""}
           </p>
-          <BuyButton label="Explore course" onClick={() => onBuy(course)} />
+          <BuyButton label="Buy course" onClick={() => onBuy(course)} />
         </div>
       ) : null}
     </MotionLi>

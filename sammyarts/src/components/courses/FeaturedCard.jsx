@@ -13,7 +13,7 @@ function FeaturedCard({ course, onBuy, headingId }) {
             id={headingId}
             className="max-w-3xl font-serif text-[clamp(2.5rem,5vw,5rem)] leading-[0.98] tracking-[-0.045em]"
           >
-          {course.title}
+            {course.title}
           </h2>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
             {course.desc ||
@@ -21,17 +21,26 @@ function FeaturedCard({ course, onBuy, headingId }) {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-4 md:justify-end">
-          <div className="text-sm" aria-label={course.rating ? `${course.rating.toFixed(1)} out of 5 stars` : "Not rated yet"}>
+          <div
+            className="text-sm"
+            aria-label={
+              course.rating
+                ? `${course.rating.toFixed(1)} out of 5 stars`
+                : "Not rated yet"
+            }
+          >
             <span className="text-accent" aria-hidden="true">
               {course.rating ? "★" : "☆"}
             </span>{" "}
-            <span>{course.rating ? course.rating.toFixed(1) : "Not rated"}</span>
+            <span>
+              {course.rating ? course.rating.toFixed(1) : "Not rated"}
+            </span>
             <span className="ml-2 text-xs text-muted">
               ({course.reviews} reviews)
             </span>
           </div>
           <PriceTag price={course.price} billing={course.billing} size="lg" />
-          <BuyButton label="Explore course" onClick={() => onBuy(course)} />
+          <BuyButton label="Buy course" onClick={() => onBuy(course)} />
         </div>
       </div>
     </article>
