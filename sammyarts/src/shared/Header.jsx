@@ -87,7 +87,7 @@ function Header() {
 
         <PageTransitionLink
           to="/contact"
-          className="button-slide hidden items-center justify-center rounded-sm border border-accent bg-transparent px-5 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white lg:inline-flex"
+          className="button-slide hidden items-center justify-center rounded-2xl border border-accent bg-transparent px-5 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white lg:inline-flex"
         >
           Let's connect
         </PageTransitionLink>
@@ -160,7 +160,7 @@ function Header() {
                       to={link.href}
                       onClick={() => setOpen(false)}
                       aria-current={active ? "page" : undefined}
-                      className={`flex w-full items-center justify-between rounded-xl px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
+                      className={`flex w-full items-center justify-between rounded-2xl px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
                         active ? "bg-raised text-accent" : "text-muted"
                       }`}
                     >
@@ -194,7 +194,7 @@ function Header() {
                 <PageTransitionLink
                   to="/contact"
                   onClick={() => setOpen(false)}
-                  className="button-slide flex w-full items-center justify-center rounded-sm border border-accent bg-brand px-4 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white"
+                  className="button-slide flex w-full items-center justify-center rounded-2xl border border-accent bg-brand px-4 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white"
                 >
                   Let's connect
                 </PageTransitionLink>

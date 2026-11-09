@@ -3,7 +3,7 @@ function BuyButton({ onClick, label = "Buy now" }) {
     <button
       type="button"
       onClick={onClick}
-      className="button-slide group inline-flex items-center gap-2 rounded-sm border border-accent bg-brand px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-white"
+      className="button-slide group inline-flex items-center gap-2 rounded-2xl border border-accent bg-brand px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-white"
     >
       {label}
       <span

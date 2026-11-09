@@ -21,7 +21,7 @@ function BlogCard({ post }) {
         to={`/blog/${post.slug}`}
         className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
-        <div className="overflow-hidden rounded-sm">
+        <div className="overflow-hidden rounded-2xl">
           <PostImage
             src={post.img}
             alt={post.title}

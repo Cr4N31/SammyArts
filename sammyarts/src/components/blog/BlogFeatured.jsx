@@ -22,7 +22,7 @@ function BlogFeatured({ post }) {
     <section aria-label="Featured post">
       <Link
         to={`/blog/${post.slug}`}
-        className="group relative block overflow-hidden rounded-sm bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        className="group relative block overflow-hidden rounded-2xl bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         <PostImage
           src={post.img}

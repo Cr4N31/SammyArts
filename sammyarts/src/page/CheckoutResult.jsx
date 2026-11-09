@@ -53,7 +53,8 @@ function CheckoutResult() {
         );
         const data = await res.json().catch(() => ({}));
         if (cancelled) return;
-        if (!res.ok) throw new Error(data.error || "Could not confirm payment.");
+        if (!res.ok)
+          throw new Error(data.error || "Could not confirm payment.");
         setStatus(String(data.status || "unknown").toLowerCase());
         setDetail(data.metadata?.courseTitle || "");
         setEmail(data.email || "");
@@ -131,7 +132,7 @@ function CheckoutResult() {
           <div className="mt-12 flex flex-wrap items-center gap-4">
             <Link
               to="/atelier"
-              className="button-slide inline-flex min-h-11 items-center justify-center rounded-sm border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
+              className="button-slide inline-flex min-h-11 items-center justify-center rounded-2xl border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
             >
               Browse courses
             </Link>

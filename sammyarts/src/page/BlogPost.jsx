@@ -57,13 +57,9 @@ function BlogPost() {
           </p>
         ) : null}
 
-        <AuthorLine
-          author={post.author}
-          date={post.date}
-          className="mt-8"
-        />
+        <AuthorLine author={post.author} date={post.date} className="mt-8" />
 
-        <div className="mt-10 overflow-hidden rounded-sm md:mt-14">
+        <div className="mt-10 overflow-hidden rounded-2xl md:mt-14">
           <PostImage
             src={post.img}
             alt={post.title}

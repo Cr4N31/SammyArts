@@ -139,7 +139,10 @@ function Problem({ titleError, saveError }) {
       <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
         {titleError ? (
           <li>
-            <a href="#work-title" className="text-accent underline underline-offset-4">
+            <a
+              href="#work-title"
+              className="text-accent underline underline-offset-4"
+            >
               {titleError}
             </a>
           </li>
@@ -281,7 +284,10 @@ function Frame({ onLogout }) {
 }
 
 function titleFromFile(name) {
-  const base = name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
+  const base = name
+    .replace(/\.[^.]+$/, "")
+    .replace(/[-_]+/g, " ")
+    .trim();
   return base || "Untitled";
 }
 
@@ -449,7 +455,9 @@ function PieceList() {
       <Notice message={notice} onClear={clearNotice} />
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted">Gallery</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted">
+            Gallery
+          </p>
           <h1 className="mt-4 font-serif text-5xl italic leading-[0.95] tracking-[-0.04em] md:text-6xl">
             The <span className="text-accent">projects</span>
           </h1>
@@ -489,7 +497,9 @@ function PieceList() {
         <span className="font-serif text-4xl italic text-accent">
           {String(works.length).padStart(2, "0")}
         </span>
-        <span className="mt-1 block">{saving ? "Saving" : "Projects on the site"}</span>
+        <span className="mt-1 block">
+          {saving ? "Saving" : "Projects on the site"}
+        </span>
       </p>
       {saveError ? (
         <p role="alert" className="mt-4 text-sm text-accent">
@@ -509,7 +519,7 @@ function PieceList() {
               className="grid items-center gap-4 border-t border-border py-6 last:border-b md:grid-cols-[5rem_minmax(0,1fr)_auto]"
             >
               <Shot src={work.img} />
-              <div className="min-w-0">
+              <div className="min-w-0 flex flex-col gap-1 md:gap-2 items-start justify-start">
                 <p className="text-xs tracking-[0.2em] text-muted">
                   {String(index + 1).padStart(2, "0")}
                   {work.category ? ` · ${work.category}` : " · No tag"}
@@ -523,7 +533,7 @@ function PieceList() {
                   </Link>
                 </h2>
                 {work.desc ? (
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted break-words">
+                  <p className="line-clamp-2 mt-2 max-w-xl text-sm leading-relaxed text-muted break-words">
                     {work.desc}
                   </p>
                 ) : null}
@@ -737,7 +747,10 @@ function PieceEditor() {
   }
 
   return (
-    <form onSubmit={onSave} className="border border-border bg-surface p-5 md:p-8">
+    <form
+      onSubmit={onSave}
+      className="border border-border bg-surface p-5 md:p-8"
+    >
       <Link to="/admin" className={textLinkClass}>
         All projects
       </Link>
@@ -827,7 +840,9 @@ function PieceEditor() {
               disabled={uploadingCaseStudy || saving}
               onClick={() => caseStudyFileRef.current?.click()}
             >
-              {uploadingCaseStudy ? "Uploading images" : "Add case study images"}
+              {uploadingCaseStudy
+                ? "Uploading images"
+                : "Add case study images"}
             </button>
             {draft.caseStudyImages?.length ? (
               <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -919,10 +934,14 @@ function Admin() {
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  useEffect(() => watchAuth((signedIn) => {
-    setAuthed(signedIn);
-    setChecking(false);
-  }), []);
+  useEffect(
+    () =>
+      watchAuth((signedIn) => {
+        setAuthed(signedIn);
+        setChecking(false);
+      }),
+    [],
+  );
 
   if (checking) {
     return (

@@ -93,8 +93,8 @@ function Contact() {
         </p>
       </div>
 
-      {/* Form + side details */}
-      <div className="grid w-full max-w-4xl gap-12 md:grid-cols-[minmax(0,1fr)_200px] md:gap-16">
+      {/* Contact form and social links */}
+      <div className="flex w-full max-w-2xl flex-col gap-10">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label htmlFor="name" className="sr-only">
@@ -191,7 +191,7 @@ function Contact() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
             <button
               type="submit"
-              className="button-slide rounded-sm border border-accent bg-bg px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="button-slide rounded-2xl border border-accent bg-bg px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Let&rsquo;s connect!
             </button>
@@ -207,16 +207,16 @@ function Contact() {
           </div>
         </form>
 
-        {/* Side details, plain text links like the reference */}
-        <ul className="flex flex-row flex-wrap gap-x-6 gap-y-2 text-xs leading-relaxed md:flex-col md:gap-y-1.5 md:pt-4">
-          {contacts.map(({ name, href }) => (
+        <ul className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs leading-relaxed">
+          {contacts.map(({ name, icon: Icon, href }) => (
             <li key={name}>
               <a
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text transition-colors hover:text-accent"
+                className="inline-flex items-center gap-2 text-text transition-colors hover:text-accent"
               >
+                <Icon aria-hidden="true" className="h-4 w-4" />
                 {name}
               </a>
             </li>

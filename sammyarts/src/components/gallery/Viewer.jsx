@@ -243,8 +243,13 @@ function DetailsPanel({ work, open, onClose, panelRef, closeRef }) {
           transition={{ duration: reduce ? 0 : 0.3 }}
           className="absolute inset-0 z-40 flex flex-col bg-brand text-text"
         >
-          {/* Scrollable details */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+          {/* Scrollable details. Native scrolling (wheel, trackpad, touch,
+              scrollbar). data-lenis-prevent keeps smooth-scroll libraries
+              from intercepting wheel events here. */}
+          <div
+            data-lenis-prevent
+            className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain"
+          >
             <div className="grid gap-12 px-5 pb-16 pt-10 md:grid-cols-12 md:gap-x-6 md:px-10 md:pb-24 md:pt-14">
               {/* Facts */}
               <div className="md:col-span-3">
@@ -584,26 +589,18 @@ function Viewer({ works, open, index, onClose, onStep }) {
             </div>
           </div>
 
-          {/* Scrollable case study */}
+          {/* Scrollable case study. Native scrolling only (wheel, trackpad,
+              touch, scrollbar). It is locked while the details panel is open
+              so it can't scroll underneath it. */}
           <div
             ref={scrollRef}
-            className="viewer-scrollbar absolute inset-0 z-0 min-h-0 min-w-0 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+            data-lenis-prevent
+            className={`viewer-scrollbar absolute inset-0 z-0 min-h-0 min-w-0 overflow-x-hidden overscroll-y-contain ${
+              detailsOpen ? "overflow-y-hidden" : "overflow-y-auto"
+            }`}
             style={{
               WebkitOverflowScrolling: "touch",
               touchAction: "pan-y",
-            }}
-            onWheel={(event) => {
-              const container = event.currentTarget;
-
-              if (container.scrollHeight <= container.clientHeight) {
-                return;
-              }
-
-              // Preserve native trackpad gestures while handling mouse wheels.
-              if (Math.abs(event.deltaY) > 0) {
-                event.preventDefault();
-                container.scrollTop += event.deltaY;
-              }
             }}
           >
             <MotionDiv
@@ -674,7 +671,7 @@ function Viewer({ works, open, index, onClose, onStep }) {
                   </dl>
                 )}
 
-                <p className="whitespace-pre-line font-serif text-xl leading-relaxed md:col-span-7 md:col-start-6 md:text-2xl">
+                <p className="line-clamp-7 whitespace-pre-line font-serif text-xl leading-relaxed md:col-span-7 md:col-start-6 md:text-2xl">
                   {work.desc ||
                     "No statement. The work will have to speak for itself."}
                 </p>

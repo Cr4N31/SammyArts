@@ -1,5 +1,10 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useContent } from "../data/content";
 import PriceTag from "../components/courses/PriceTag";
 
@@ -19,7 +24,8 @@ function Checkout() {
     () =>
       courses.find(
         (item) =>
-          String(item.slug) === String(slug) || String(item.id) === String(slug),
+          String(item.slug) === String(slug) ||
+          String(item.id) === String(slug),
       ),
     [courses, slug],
   );
@@ -139,7 +145,7 @@ function Checkout() {
             <button
               type="submit"
               disabled={busy || !course.price}
-              className="button-slide inline-flex min-h-11 items-center justify-center rounded-sm border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
+              className="button-slide inline-flex min-h-11 items-center justify-center rounded-2xl border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
             >
               {busy ? "Redirecting" : "Pay"}
             </button>

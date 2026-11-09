@@ -25,8 +25,9 @@ const ArrowRight = ({ className = "h-4 w-4" }) => (
 );
 
 /**
- * Full-width wordmark. Measures itself and scales the font size so the word
- * always spans the container exactly, on any screen width.
+ * Wordmark. Measures itself and scales the font size so the word always
+ * spans its container exactly. The container decides the width (full width
+ * on mobile, about two thirds of the viewport on desktop).
  * Letters rise out of a clipped line on load (the one orchestrated moment).
  */
 const Wordmark = () => {
@@ -98,10 +99,10 @@ function Hero() {
   });
 
   return (
-    <section className="relative isolate flex min-h-svh flex-col overflow-hidden bg-brand pb-12 text-text">
+    <section className="relative isolate flex min-h-svh flex-col overflow-hidden bg-brand text-text">
       {/*
         Landscape image. Subject sits on the right, the left is already dark,
-        so the headline lives there and the face is never covered.
+        so the text lives there and the face is never covered.
         Desktop: full-bleed. Mobile: starts below the headline and fades in
         from the top so the crop edge never shows.
       */}
@@ -134,12 +135,21 @@ function Hero() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[40%] bg-gradient-to-t from-brand/80 via-brand/30 to-transparent"
       />
 
-      <div className="relative z-10 flex flex-1 flex-col justify-between gap-16 px-5 pb-4 pt-28 md:px-10 md:pb-6">
+      {/*
+        Layout (desktop): everything shares one left edge, inset about 9.5vw.
+        Headline sits at roughly 28% of the viewport height, the button
+        right beneath it, and the wordmark in the lower third at about 68vw
+        wide, so it runs over the subject's shoulder. Breathing room is
+        left below it.
+      */}
+      <div className="relative z-10 flex flex-1 flex-col justify-between gap-16 px-5 pb-8 pt-28 md:gap-0 md:pb-[11svh] md:pl-[9.5vw] md:pr-10 md:pt-[27svh]">
         {/* Headline + CTA, stacked on the dark left side */}
-        <div className="flex flex-col items-start gap-8 md:max-w-[42%] md:gap-10">
+        <div className="flex flex-col items-start gap-8 md:gap-[5svh]">
           <MotionDiv {...fade(1.7)}>
-            <h1 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-text md:text-[clamp(2.25rem,4vw,3.75rem)]">
-              Brand Designer &amp; Strategist
+            <h1 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-text md:text-[clamp(2.25rem,3.9vw,4.5rem)]">
+              Brand Designer
+              <br />
+              &amp; Strategist
             </h1>
           </MotionDiv>
 
@@ -154,7 +164,10 @@ function Hero() {
           </MotionDiv>
         </div>
 
-        <Wordmark />
+        {/* Wordmark: full width on mobile, about 68vw on desktop */}
+        <div className="w-full md:w-[68vw]">
+          <Wordmark />
+        </div>
       </div>
     </section>
   );

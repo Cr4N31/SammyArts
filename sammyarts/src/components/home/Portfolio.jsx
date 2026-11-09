@@ -162,7 +162,7 @@ function Portfolio() {
         <div data-reveal className="mt-12 flex items-center justify-center">
           <PageTransitionLink
             to="/gallery"
-            className="button-slide inline-flex items-center justify-center rounded-sm border border-accent bg-brand px-6 py-3 text-sm font-medium text-white"
+            className="button-slide inline-flex items-center justify-center rounded-2xl border border-accent bg-brand px-6 py-3 text-sm font-medium text-white"
           >
             View more projects &rarr;
           </PageTransitionLink>

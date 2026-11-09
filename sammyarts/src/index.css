@@ -231,7 +231,7 @@
 }
 
 @theme {
-  --font-sans: "Prestij Numerals", "Montserrat", sans-serif;
+  --font-sans: "Montserrat", sans-serif;
   --font-serif: "Prestij", serif;
 
   --color-bg: #120d0d;
@@ -249,24 +249,23 @@
 
 @layer base {
   body {
-    font-family: var(--font-sans);
     background-color: var(--color-bg);
     color: var(--color-text);
   }
+}
 
-  p {
-    font-family: var(--font-sans);
-  }
+body,
+body *:not(h1, h2, h3, h4, h5, h6) {
+  font-family: "Montserrat", sans-serif;
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  [class~="tabular-nums"] {
-    font-family: var(--font-serif);
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Prestij", serif;
 }
 
 .page-flow {

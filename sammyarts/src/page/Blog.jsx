@@ -60,7 +60,7 @@ function Blog() {
               <button
                 type="button"
                 onClick={() => setCount((c) => c + PAGE_SIZE)}
-                className="button-slide inline-flex items-center justify-center rounded-sm border border-accent bg-brand px-5 py-2 text-xs font-medium text-white"
+                className="button-slide inline-flex items-center justify-center rounded-2xl border border-accent bg-brand px-5 py-2 text-xs font-medium text-white"
               >
                 Load more
               </button>

@@ -121,7 +121,7 @@ function CoursesMentor() {
 
           <Link
             to="/atelier"
-            className="button-slide group inline-flex items-center gap-4 rounded-sm border border-accent bg-brand px-8 py-4 text-sm uppercase tracking-[0.2em] text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            className="button-slide group inline-flex items-center gap-4 rounded-2xl border border-accent bg-brand px-8 py-4 text-sm uppercase tracking-[0.2em] text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             Browse courses
             <span className="transition-transform duration-300 group-hover:translate-x-1">
