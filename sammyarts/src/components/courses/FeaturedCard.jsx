@@ -1,56 +1,40 @@
-import { motion } from "motion/react";
 import PriceTag from "./PriceTag";
 import BuyButton from "./BuyButton";
 
-const MotionArticle = motion.article;
-
-function FeaturedCard({ course, large = false, onBuy, index = 0 }) {
+function FeaturedCard({ course, onBuy, headingId }) {
   return (
-    <MotionArticle
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.8, delay: index * 0.12, ease: "easeOut" }}
-      className={`group relative isolate flex min-h-[26rem] flex-col justify-end overflow-hidden lg:min-h-[32rem] ${
-        large ? "lg:col-span-2" : ""
-      }`}
-    >
-      {course.img || course.image ? (
-        <img
-          src={course.img || course.image}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 -z-20 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-        />
-      ) : (
-        <div className="absolute inset-0 -z-20 bg-raised" />
-      )}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-brand via-brand/50 to-transparent" />
-
-      <div className="flex flex-col gap-5 p-6 md:p-8">
-        <p className="text-[0.65rem] uppercase tracking-[0.14em] opacity-70">
-          {course.type === "mentorship" ? "Mentorship" : "Course"} ·{" "}
-          {course.duration}
-        </p>
-
-        <h3
-          className={`font-serif font-semibold leading-[1] tracking-[-0.03em] ${
-            large ? "text-4xl md:text-5xl" : "text-2xl md:text-3xl"
-          }`}
-        >
+    <article className="border-y border-border bg-surface/50 px-6 py-8 md:px-10 md:py-12">
+      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div>
+          <p className="mb-4 text-[0.65rem] uppercase tracking-[0.18em] text-accent">
+            Editor&rsquo;s pick · {course.category}
+          </p>
+          <h2
+            id={headingId}
+            className="max-w-3xl font-serif text-[clamp(2.5rem,5vw,5rem)] leading-[0.98] tracking-[-0.045em]"
+          >
           {course.title}
-        </h3>
-
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <PriceTag
-            price={course.price}
-            billing={course.billing}
-            size={large ? "lg" : "md"}
-          />
-          <BuyButton onClick={() => onBuy(course)} />
+          </h2>
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
+            {course.desc ||
+              "Build a more confident creative practice through focused lessons, practical exercises, and thoughtful guidance."}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-4 md:justify-end">
+          <div className="text-sm" aria-label={course.rating ? `${course.rating.toFixed(1)} out of 5 stars` : "Not rated yet"}>
+            <span className="text-accent" aria-hidden="true">
+              {course.rating ? "★" : "☆"}
+            </span>{" "}
+            <span>{course.rating ? course.rating.toFixed(1) : "Not rated"}</span>
+            <span className="ml-2 text-xs text-muted">
+              ({course.reviews} reviews)
+            </span>
+          </div>
+          <PriceTag price={course.price} billing={course.billing} size="lg" />
+          <BuyButton label="Explore course" onClick={() => onBuy(course)} />
         </div>
       </div>
-    </MotionArticle>
+    </article>
   );
 }
 

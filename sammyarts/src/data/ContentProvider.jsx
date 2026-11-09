@@ -56,20 +56,31 @@ function normalizeCourses(list) {
   if (!Array.isArray(list)) return [];
   return list.map((item, index) => {
     const title = String(item?.title ?? "").slice(0, 140);
+    const type = item?.type === "mentorship" ? "mentorship" : "course";
+    const rating = Number(item?.rating);
+    const reviews = Number(item?.reviews);
     return {
       id: Number(item?.id) || index + 1,
       slug: String(item?.slug || slugify(title) || `course-${index + 1}`).slice(
         0,
         120,
       ),
-      type: item?.type === "mentorship" ? "mentorship" : "course",
+      type,
       title,
+      category: String(
+        item?.category || (type === "mentorship" ? "Mentorship" : "Courses"),
+      ).slice(0, 60),
       level: String(item?.level ?? "").slice(0, 40),
       duration: String(item?.duration ?? "").slice(0, 40),
       lessons: Number(item?.lessons) || 0,
       price: Number(item?.price) || 0,
       billing: String(item?.billing ?? "one-time").slice(0, 40),
       desc: String(item?.desc ?? "").slice(0, 600),
+      rating:
+        Number.isFinite(rating) && rating > 0
+          ? Math.min(5, rating)
+          : null,
+      reviews: Number.isFinite(reviews) ? Math.max(0, Math.floor(reviews)) : 0,
       featured: Boolean(item?.featured),
     };
   });

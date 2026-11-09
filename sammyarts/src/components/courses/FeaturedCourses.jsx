@@ -1,21 +1,20 @@
 import FeaturedCard from "./FeaturedCard";
 
 function FeaturedCourses({ items, onBuy }) {
-  const [first, ...rest] = items;
-  if (!first) return null;
+  const featured = items.find((course) => course.featured) || items[0];
+  if (!featured) return null;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-4">
-      <FeaturedCard course={first} large onBuy={onBuy} index={0} />
-      {rest.slice(0, 2).map((course, i) => (
-        <FeaturedCard
-          key={course.id}
-          course={course}
-          onBuy={onBuy}
-          index={i + 1}
-        />
-      ))}
-    </div>
+    <section aria-labelledby="featured-course-heading">
+      <p className="mb-4 text-xs uppercase tracking-[0.18em] text-muted">
+        In focus
+      </p>
+      <FeaturedCard
+        course={featured}
+        onBuy={onBuy}
+        headingId="featured-course-heading"
+      />
+    </section>
   );
 }
 

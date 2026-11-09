@@ -1,24 +1,16 @@
-const options = [
-  { value: "all", label: "All" },
-  { value: "course", label: "Courses" },
-  { value: "mentorship", label: "Mentorship" },
-];
-
-function CourseFilter({ active, onChange }) {
+function CourseFilter({ categories, active, onChange }) {
   return (
-    <div
-      role="tablist"
-      aria-label="Filter by type"
-      className="mb-10 mt-24 flex gap-6 font-serif text-2xl tracking-tight md:text-3xl"
-    >
-      {options.map(({ value, label }) => (
+    <div className="flex flex-wrap gap-x-6 gap-y-3" aria-label="Filter courses">
+      {categories.map(({ value, label }) => (
         <button
           key={value}
-          role="tab"
-          aria-selected={active === value}
+          type="button"
+          aria-pressed={active === value}
           onClick={() => onChange(value)}
-          className={`transition-opacity duration-300 ${
-            active === value ? "opacity-100" : "opacity-25 hover:opacity-60"
+          className={`border-b pb-1 text-xs uppercase tracking-[0.16em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
+            active === value
+              ? "border-accent text-accent"
+              : "border-transparent text-muted hover:border-border hover:text-text"
           }`}
         >
           {label}
