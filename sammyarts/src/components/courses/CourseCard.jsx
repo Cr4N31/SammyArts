@@ -21,7 +21,7 @@ function CourseCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.7, delay: (index % 4) * 0.08, ease: "easeOut" }}
-      className="border-t border-border py-7 transition-colors duration-300 hover:bg-white/[0.02] motion-reduce:transition-none"
+      className="border-t border-border px-4 py-8 transition-colors duration-300 hover:bg-white/[0.02] motion-reduce:transition-none md:px-6 md:py-9"
     >
       <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center md:gap-10">
         <div className="min-w-0">
@@ -54,7 +54,7 @@ function CourseCard({
         </div>
       </div>
       {detailsOpen ? (
-        <div className="mt-6 border-t border-border/70 pt-5">
+        <div className="mt-6 border-t border-border/70 bg-white/[0.02] p-5 md:p-8">
           <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
             <p className="max-w-2xl whitespace-pre-line text-sm leading-relaxed text-muted">
               {course.desc || "No description yet."}
