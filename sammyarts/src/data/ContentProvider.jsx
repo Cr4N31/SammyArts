@@ -72,7 +72,7 @@ function normalizeCourses(list) {
       ).slice(0, 60),
       level: String(item?.level ?? "").slice(0, 40),
       duration: String(item?.duration ?? "").slice(0, 40),
-      lessons: Number(item?.lessons) || 0,
+      lessons: item?.lessons ? String(item.lessons).slice(0, 60) : "",
       price: Number(item?.price) || 0,
       billing: String(item?.billing ?? "one-time").slice(0, 40),
       desc: String(item?.desc ?? "").slice(0, 4000),

@@ -14,6 +14,9 @@ const blank = {
   title: "",
   price: "",
   desc: "",
+  level: "",
+  duration: "",
+  lessons: "",
   type: "course",
   billing: "one-time",
   featured: false,
@@ -222,6 +225,9 @@ function CourseEditor() {
       title,
       price: Number(String(draft.price).replace(/[^\d]/g, "")) || 0,
       desc: String(draft.desc || "").trim(),
+      level: String(draft.level || "").trim(),
+      duration: String(draft.duration || "").trim(),
+      lessons: String(draft.lessons || "").trim(),
       type: existing?.type || "course",
       billing: existing?.billing || "one-time",
       slug: String(draft.slug || title)
@@ -318,6 +324,47 @@ function CourseEditor() {
                 onChange={(e) => updateDraft("price", e.target.value)}
                 className={fieldClass}
                 required
+              />
+            </div>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            <div>
+              <label htmlFor="course-level" className={labelClass}>
+                Level
+              </label>
+              <input
+                id="course-level"
+                value={draft.level || ""}
+                placeholder="All levels"
+                maxLength={40}
+                onChange={(e) => updateDraft("level", e.target.value)}
+                className={fieldClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="course-duration" className={labelClass}>
+                Duration
+              </label>
+              <input
+                id="course-duration"
+                value={draft.duration || ""}
+                placeholder="Self-paced"
+                maxLength={40}
+                onChange={(e) => updateDraft("duration", e.target.value)}
+                className={fieldClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="course-lessons" className={labelClass}>
+                Lessons
+              </label>
+              <input
+                id="course-lessons"
+                value={draft.lessons || ""}
+                placeholder="e.g. 24 lessons"
+                maxLength={60}
+                onChange={(e) => updateDraft("lessons", e.target.value)}
+                className={fieldClass}
               />
             </div>
           </div>
