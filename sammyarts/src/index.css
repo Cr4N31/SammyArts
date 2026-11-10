@@ -249,7 +249,7 @@
 
 @layer base {
   body {
-    background-color: var(--color-bg);
+    background: var(--color-bg);
     color: var(--color-text);
   }
 }
@@ -272,11 +272,15 @@ h6 {
   background: linear-gradient(
     180deg,
     var(--color-bg) 0%,
-    var(--color-bg) 28%,
-    var(--color-bg) 55%,
-    var(--color-bg) 78%,
-    var(--color-bg) 100%
+    var(--color-bg) 42%,
+    color-mix(in srgb, var(--color-bg) 99%, var(--color-accent)) 72%,
+    color-mix(in srgb, var(--color-bg) 96%, var(--color-accent)) 100%
   );
+}
+
+.page-flow > main,
+.page-flow > #contact {
+  background-color: transparent;
 }
 
 .service-orbit {
