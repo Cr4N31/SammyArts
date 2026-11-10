@@ -140,7 +140,7 @@ function Header() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.98 }}
               transition={{ duration: 0.45, ease: EASE }}
-              className="absolute right-4 top-full w-[calc(100%-2rem)] max-w-xs origin-top-right overflow-hidden rounded-full border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:right-10 md:max-w-sm lg:hidden"
+              className="absolute right-4 top-full w-[calc(100%-2rem)] max-w-xs origin-top-right overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:right-10 md:max-w-sm lg:hidden"
             >
               {navlinks.map((link, i) => {
                 const active = isActive(pathname, link.href);
