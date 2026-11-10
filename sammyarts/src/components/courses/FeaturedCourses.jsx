@@ -1,6 +1,6 @@
 import FeaturedCard from "./FeaturedCard";
 
-function FeaturedCourses({ items, onBuy }) {
+function FeaturedCourses({ items, onBuy, ratings = {}, onSubmitRating }) {
   const featured = items.find((course) => course.featured) || items[0];
   if (!featured) return null;
 
@@ -13,6 +13,8 @@ function FeaturedCourses({ items, onBuy }) {
         course={featured}
         onBuy={onBuy}
         headingId="featured-course-heading"
+        ratingSummary={ratings[featured.slug || String(featured.id)]}
+        onSubmitRating={onSubmitRating}
       />
     </section>
   );

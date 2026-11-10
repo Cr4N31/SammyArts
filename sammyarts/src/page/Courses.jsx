@@ -189,7 +189,12 @@ function Courses() {
           </div>
 
           <div className="py-10 md:py-14">
-            <FeaturedCourses items={filteredCourses} onBuy={handleBuy} />
+            <FeaturedCourses
+              items={filteredCourses}
+              onBuy={handleBuy}
+              ratings={ratingsByCourse}
+              onSubmitRating={handleSubmitRating}
+            />
           </div>
 
           {ratingsError ? (
