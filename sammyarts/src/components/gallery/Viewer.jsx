@@ -722,7 +722,7 @@ function Viewer({ works, open, index, onClose, onStep }) {
                 <footer className="mt-28 px-5 pb-16 md:mt-44 md:px-10 md:pb-20">
                   <div className="flex items-baseline justify-between gap-4 border-t border-border pt-5">
                     <h3 className="font-serif text-2xl md:text-3xl">
-                      Still not <span className="text-accent">convinced</span>?
+                      Still not <span className="text-accent">convinced?</span>
                     </h3>
                     <p className="text-xs tabular-nums text-muted">
                       {works.length} projects
