@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContent } from "../data/content";
 import {
   listCourseRatings,
@@ -209,6 +209,88 @@ function Courses() {
             ratings={ratingsByCourse}
             onSubmitRating={handleSubmitRating}
           />
+        </section>
+
+        <section
+          aria-labelledby="courses-faq-heading"
+          className="mt-20 border-t border-border pt-8 md:mt-28"
+        >
+          <h2
+            id="courses-faq-heading"
+            className="mb-5 font-serif text-3xl tracking-[-0.04em] md:text-4xl"
+          >
+            Frequently asked questions
+          </h2>
+          <div className="divide-y divide-border">
+            <details className="group py-4">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                How long will I have access to a course?
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-transform group-open:rotate-180"
+                >
+                  ↓
+                </span>
+              </summary>
+              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
+                Course duration and access information are shown in each
+                course&rsquo;s overview. You can review those details before
+                enrolling.
+              </p>
+            </details>
+            <details className="group py-4">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                Do I get a certificate after completion?
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-transform group-open:rotate-180"
+                >
+                  ↓
+                </span>
+              </summary>
+              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
+                Yes. A certificate of completion is available after you
+                successfully complete your course.
+              </p>
+            </details>
+            <details className="group py-4">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                Can I learn offline?
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-transform group-open:rotate-180"
+                >
+                  ↓
+                </span>
+              </summary>
+              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
+                Offline access depends on the course materials provided after
+                enrollment. Check the course overview or contact us if you
+                need help confirming access options.
+              </p>
+            </details>
+            <details className="group py-4">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                What support do I get during the course?
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-transform group-open:rotate-180"
+                >
+                  ↓
+                </span>
+              </summary>
+              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
+                Support varies by course. For help with enrollment or access,
+                <Link
+                  to="/contact"
+                  className="ml-1 border-b border-current transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  contact SammyArts
+                </Link>
+                .
+              </p>
+            </details>
+          </div>
         </section>
       </div>
     </main>

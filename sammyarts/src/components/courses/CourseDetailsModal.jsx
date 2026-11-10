@@ -124,8 +124,14 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             {ratingSummary?.reviews?.length ? (
               <div className="mt-5 divide-y divide-border">
                 {ratingSummary.reviews.map((review) => (
-                  <article key={review.id} className="py-5 first:pt-0 last:pb-0">
-                    <p className="text-sm text-accent" aria-label={`${review.rating} out of 5 stars`}>
+                  <article
+                    key={review.id}
+                    className="py-5 first:pt-0 last:pb-0"
+                  >
+                    <p
+                      className="text-sm text-accent"
+                      aria-label={`${review.rating} out of 5 stars`}
+                    >
                       {"★".repeat(review.rating)}
                     </p>
                     {review.review ? (
@@ -144,6 +150,39 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             )}
           </section>
 
+          <section
+            aria-labelledby="course-certificate-heading"
+            className="mt-10 border-t border-border pt-6"
+          >
+            <h3
+              id="course-certificate-heading"
+              className="font-serif text-2xl tracking-[-0.03em]"
+            >
+              Earn a certificate of completion
+            </h3>
+            <div className="mt-5 border border-accent/50 p-1">
+              <div className="border border-border bg-surface px-6 py-8 md:px-8 md:py-10">
+                <p className="text-[0.65rem] uppercase tracking-[0.2em] text-accent">
+                  SammyArts · Learning collection
+                </p>
+                <p className="mt-10 text-xs text-muted">
+                  Certificate of completion
+                </p>
+                <p className="mt-2 font-serif text-3xl leading-tight tracking-[-0.03em] md:text-4xl">
+                  {activeCourse.title}
+                </p>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+                  Awarded to the learner upon successful completion of this
+                  course.
+                </p>
+                <div className="mt-10 flex flex-wrap justify-between gap-6 border-t border-border pt-4 text-[0.65rem] uppercase tracking-[0.14em] text-muted">
+                  <span>SammyArts</span>
+                  <span>Certificate of achievement</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {nextCourses.length ? (
             <section
               aria-labelledby="next-course-heading"
@@ -151,7 +190,7 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             >
               <h3
                 id="next-course-heading"
-                className="font-serif text-2xl tracking-[-0.03em]"
+                className="font-serif text-accent text-2xl tracking-[-0.03em]"
               >
                 Take this course next
               </h3>
