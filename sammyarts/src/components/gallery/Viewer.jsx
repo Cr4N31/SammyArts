@@ -632,48 +632,49 @@ function Viewer({ works, open, index, onClose, onStep }) {
                 </button>
               </header>
 
-              {/* Hero image (number 01) */}
-              <div className="mt-10 md:mt-16">
-                {!ready ? (
-                  <div
-                    role="status"
-                    aria-label="Loading images"
-                    className="min-h-[60vh] bg-surface"
-                  />
-                ) : layout.hero ? (
-                  <Tile
-                    key={`${work.id}-${layout.hero.src}`}
-                    item={layout.hero}
-                    total={total}
-                    title={work.title}
-                    eager
-                  />
-                ) : (
-                  <div className="mx-5 grid min-h-64 place-items-center border border-dashed border-border text-sm text-muted md:mx-10">
-                    Nothing to look at yet.
-                  </div>
-                )}
-              </div>
+              {/* Hero image (number 01) beside the description and facts */}
+              <section className="mt-10 grid gap-10 px-5 md:mt-16 md:grid-cols-12 md:items-start md:gap-x-6 md:px-10">
+                <div className="md:col-span-7">
+                  {!ready ? (
+                    <div
+                      role="status"
+                      aria-label="Loading images"
+                      className="min-h-[60vh] bg-surface"
+                    />
+                  ) : layout.hero ? (
+                    <Tile
+                      key={`${work.id}-${layout.hero.src}`}
+                      item={layout.hero}
+                      total={total}
+                      title={work.title}
+                      eager
+                    />
+                  ) : (
+                    <div className="grid min-h-64 place-items-center border border-dashed border-border text-sm text-muted">
+                      Nothing to look at yet.
+                    </div>
+                  )}
+                </div>
 
-              {/* Intro: facts and statement */}
-              <section className="mt-10 grid gap-10 px-5 md:mt-20 md:grid-cols-12 md:gap-x-6 md:px-10">
-                {meta.length > 0 && (
-                  <dl className="space-y-5 md:col-span-4">
-                    {meta.map(([label, value]) => (
-                      <div key={label}>
-                        <dt className="text-xs text-muted">{label}</dt>
-                        <dd className="mt-1 font-serif text-lg leading-tight md:text-xl">
-                          {value}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
+                <div className="flex flex-col gap-10 md:col-span-5">
+                  <p className="line-clamp-7 whitespace-pre-line font-serif text-xl leading-relaxed md:text-2xl">
+                    {work.desc ||
+                      "No statement. The work will have to speak for itself."}
+                  </p>
 
-                <p className="line-clamp-7 whitespace-pre-line font-serif text-xl leading-relaxed md:col-span-7 md:col-start-6 md:text-2xl">
-                  {work.desc ||
-                    "No statement. The work will have to speak for itself."}
-                </p>
+                  {meta.length > 0 && (
+                    <dl className="space-y-5">
+                      {meta.map(([label, value]) => (
+                        <div key={label}>
+                          <dt className="text-xs text-muted">{label}</dt>
+                          <dd className="mt-1 font-serif text-lg leading-tight md:text-xl">
+                            {value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                </div>
               </section>
 
               {/* Masonry gallery, images shown at their original size */}
