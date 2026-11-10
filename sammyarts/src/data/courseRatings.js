@@ -1,6 +1,8 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   query,
   serverTimestamp,
@@ -64,6 +66,22 @@ export async function listCourseRatings(courseSlugs) {
       (a, b) =>
         (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0),
     );
+}
+
+export async function listAllCourseRatings() {
+  if (!db) throw new Error("Firebase is not set up.");
+  const snapshot = await getDocs(collection(db, COLLECTION));
+  return snapshot.docs
+    .map((item) => toRating(item.id, item.data()))
+    .sort(
+      (a, b) =>
+        (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0),
+    );
+}
+
+export async function deleteCourseRating(id) {
+  if (!db) throw new Error("Firebase is not set up.");
+  await deleteDoc(doc(db, COLLECTION, id));
 }
 
 export async function submitCourseRating({

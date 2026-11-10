@@ -77,11 +77,6 @@ function CourseCard({
           <h3 className="break-words font-serif text-2xl leading-tight tracking-[-0.03em] md:text-3xl">
             {course.title}
           </h3>
-          {course.desc ? (
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-              {course.desc}
-            </p>
-          ) : null}
         </div>
 
         <div className="min-w-36">
@@ -134,10 +129,8 @@ function CourseCard({
       {detailsOpen ? (
         <div className="mt-6 border-t border-border/70 pt-5">
           <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-            <p className="text-xs uppercase leading-relaxed tracking-[0.12em] text-muted">
-              {course.level || "All levels"}
-              {course.duration ? ` · ${course.duration}` : ""}
-              {course.lessons ? ` · ${course.lessons} lessons` : ""}
+            <p className="max-w-2xl whitespace-pre-line text-sm leading-relaxed text-muted">
+              {course.desc || "No description yet."}
             </p>
             <BuyButton label="Buy course" onClick={() => onBuy(course)} />
           </div>

@@ -75,7 +75,7 @@ function normalizeCourses(list) {
       lessons: Number(item?.lessons) || 0,
       price: Number(item?.price) || 0,
       billing: String(item?.billing ?? "one-time").slice(0, 40),
-      desc: String(item?.desc ?? "").slice(0, 600),
+      desc: String(item?.desc ?? "").slice(0, 4000),
       rating:
         Number.isFinite(rating) && rating > 0
           ? Math.min(5, rating)

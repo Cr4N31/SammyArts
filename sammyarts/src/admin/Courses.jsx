@@ -13,6 +13,7 @@ const blank = {
   id: null,
   title: "",
   price: "",
+  desc: "",
   type: "course",
   billing: "one-time",
   featured: false,
@@ -220,6 +221,7 @@ function CourseEditor() {
       id: draft.id ?? Date.now(),
       title,
       price: Number(String(draft.price).replace(/[^\d]/g, "")) || 0,
+      desc: String(draft.desc || "").trim(),
       type: existing?.type || "course",
       billing: existing?.billing || "one-time",
       slug: String(draft.slug || title)
@@ -318,6 +320,23 @@ function CourseEditor() {
                 required
               />
             </div>
+          </div>
+          <div>
+            <label htmlFor="course-desc" className={labelClass}>
+              Description
+            </label>
+            <textarea
+              id="course-desc"
+              rows={6}
+              value={draft.desc || ""}
+              placeholder="What students will learn in this course"
+              onChange={(e) => updateDraft("desc", e.target.value)}
+              aria-describedby="course-desc-hint"
+              className={fieldClass}
+            />
+            <p id="course-desc-hint" className="mt-2 text-sm text-muted">
+              Shown when someone opens Course details.
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <button

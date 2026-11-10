@@ -16,6 +16,7 @@ import Photos from "./Photos";
 import Courses from "./Courses";
 import Blog from "./Blog";
 import Messages from "./Messages";
+import Reviews from "./Reviews";
 import Orders from "./Orders";
 import { workCategories } from "../data/workCategories";
 
@@ -270,6 +271,9 @@ function Frame({ onLogout }) {
           </Link>
           <Link to="/admin/messages" className={textLinkClass}>
             Messages
+          </Link>
+          <Link to="/admin/reviews" className={textLinkClass}>
+            Reviews
           </Link>
           <Link to="/" className={textLinkClass}>
             View site
@@ -977,6 +981,7 @@ function Admin() {
         <Route path="photos" element={<Photos />} />
         <Route path="orders" element={<Orders />} />
         <Route path="messages" element={<Messages />} />
+        <Route path="reviews" element={<Reviews />} />
         <Route path=":id" element={<PiecePage />} />
       </Route>
     </Routes>
