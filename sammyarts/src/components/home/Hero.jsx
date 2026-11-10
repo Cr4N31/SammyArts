@@ -115,9 +115,9 @@ function Hero() {
         style={{ transformOrigin: "80% 40%" }}
       >
         <picture>
-          <source srcSet="/img/Sammyarts-landscape.png" type="image/png" />
+          <source srcSet="/img/Sammyarts Studio(L).png" type="image/png" />
           <img
-            src="/img/Sammyarts-landscape.png"
+            src="/img/Sammyarts Studio(L).png"
             alt=""
             width="2576"
             height="1449"

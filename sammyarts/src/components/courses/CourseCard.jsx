@@ -1,19 +1,22 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "motion/react";
 import PriceTag from "./PriceTag";
-import BuyButton from "./BuyButton";
 import RatingWidget from "./RatingWidget";
+import CourseDetailsModal from "./CourseDetailsModal";
 
 const MotionLi = motion.li;
 
 function CourseCard({
   course,
+  courses,
+  ratings,
   onBuy,
   index = 0,
   ratingSummary,
   onSubmitRating,
 }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const closeDetails = useCallback(() => setDetailsOpen(false), []);
 
   return (
     <MotionLi
@@ -45,50 +48,22 @@ function CourseCard({
           <PriceTag price={course.price} billing={course.billing} />
           <button
             type="button"
-            aria-expanded={detailsOpen}
-            onClick={() => setDetailsOpen((open) => !open)}
+            aria-haspopup="dialog"
+            onClick={() => setDetailsOpen(true)}
             className="min-h-11 border-b border-current pb-1 text-xs uppercase tracking-[0.14em] text-muted transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
-            {detailsOpen ? "Close details" : "Course details"}
+            Course details
           </button>
         </div>
       </div>
       {detailsOpen ? (
-        <div className="mt-6 border-t border-border/70 bg-white/[0.02] p-5 md:p-8">
-          <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-            <p className="max-w-2xl whitespace-pre-line text-sm leading-relaxed text-muted">
-              {course.desc || "No description yet."}
-            </p>
-            <BuyButton label="Buy course" onClick={() => onBuy(course)} />
-          </div>
-          {ratingSummary?.reviews?.length ? (
-            <section
-              aria-label={`Reviews for ${course.title}`}
-              className="mt-6 grid gap-4"
-            >
-              {ratingSummary.reviews.map((item) => (
-                <article
-                  key={item.id}
-                  className="border-t border-border/60 pt-4"
-                >
-                  <p className="text-xs text-accent">
-                    {"★".repeat(item.rating)}
-                    <span className="sr-only">
-                      {" "}
-                      {item.rating} out of 5 stars
-                    </span>
-                  </p>
-                  {item.review ? (
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text">
-                      {item.review}
-                    </p>
-                  ) : null}
-                  <p className="mt-2 text-xs text-muted">{item.name}</p>
-                </article>
-              ))}
-            </section>
-          ) : null}
-        </div>
+        <CourseDetailsModal
+          course={course}
+          courses={courses}
+          ratings={ratings}
+          onBuy={onBuy}
+          onClose={closeDetails}
+        />
       ) : null}
     </MotionLi>
   );

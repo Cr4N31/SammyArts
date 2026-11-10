@@ -204,6 +204,7 @@ function Courses() {
           ) : null}
           <CourseGrid
             items={filteredCourses}
+            allCourses={courses}
             onBuy={handleBuy}
             ratings={ratingsByCourse}
             onSubmitRating={handleSubmitRating}

@@ -1,6 +1,6 @@
 import CourseCard from "./CourseCard";
 
-function CourseGrid({ items, onBuy, ratings, onSubmitRating }) {
+function CourseGrid({ items, allCourses, onBuy, ratings, onSubmitRating }) {
   if (!items.length) {
     return (
       <p className="border-t border-border py-8 text-sm text-muted">
@@ -15,6 +15,8 @@ function CourseGrid({ items, onBuy, ratings, onSubmitRating }) {
         <CourseCard
           key={course.id}
           course={course}
+          courses={allCourses}
+          ratings={ratings}
           onBuy={onBuy}
           index={i}
           ratingSummary={ratings[course.slug || String(course.id)]}

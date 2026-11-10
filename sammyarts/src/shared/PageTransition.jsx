@@ -70,7 +70,7 @@ export function PageLoader({ exiting = false }) {
       <div className="startup-loader__content">
         <div className="startup-loader__wordmark" aria-label="Sammyarts">
           {"Sammyarts".split("").map((letter, index) => (
-            <span
+            <h1
               key={index}
               aria-hidden="true"
               className={`startup-loader__letter${
@@ -79,7 +79,7 @@ export function PageLoader({ exiting = false }) {
               style={{ "--letter-index": index }}
             >
               {letter}
-            </span>
+            </h1>
           ))}
         </div>
         <p className="startup-loader__caption">
