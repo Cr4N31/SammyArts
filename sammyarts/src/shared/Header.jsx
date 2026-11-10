@@ -87,7 +87,7 @@ function Header() {
 
         <PageTransitionLink
           to="/contact"
-          className="button-slide hidden items-center justify-center rounded-2xl border border-accent bg-transparent px-5 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white lg:inline-flex"
+          className="button-slide hidden items-center justify-center rounded-full border border-accent bg-transparent px-5 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white lg:inline-flex"
         >
           Let's connect
         </PageTransitionLink>
@@ -140,7 +140,7 @@ function Header() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.98 }}
               transition={{ duration: 0.45, ease: EASE }}
-              className="absolute right-4 top-full w-[calc(100%-2rem)] max-w-xs origin-top-right overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:right-10 md:max-w-sm lg:hidden"
+              className="absolute right-4 top-full w-[calc(100%-2rem)] max-w-xs origin-top-right overflow-hidden rounded-full border border-border bg-surface p-2 shadow-xl backdrop-blur-md md:right-10 md:max-w-sm lg:hidden"
             >
               {navlinks.map((link, i) => {
                 const active = isActive(pathname, link.href);
@@ -160,7 +160,7 @@ function Header() {
                       to={link.href}
                       onClick={() => setOpen(false)}
                       aria-current={active ? "page" : undefined}
-                      className={`flex w-full items-center justify-between rounded-2xl px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
+                      className={`flex w-full items-center justify-between rounded-full px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
                         active ? "bg-raised text-accent" : "text-muted"
                       }`}
                     >
@@ -194,7 +194,7 @@ function Header() {
                 <PageTransitionLink
                   to="/contact"
                   onClick={() => setOpen(false)}
-                  className="button-slide flex w-full items-center justify-center rounded-2xl border border-accent bg-brand px-4 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white"
+                  className="button-slide flex w-full items-center justify-center rounded-full border border-accent bg-brand px-4 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white"
                 >
                   Let's connect
                 </PageTransitionLink>

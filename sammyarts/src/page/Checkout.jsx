@@ -145,7 +145,7 @@ function Checkout() {
             <button
               type="submit"
               disabled={busy || !course.price}
-              className="button-slide inline-flex min-h-11 items-center justify-center rounded-2xl border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
+              className="button-slide inline-flex min-h-11 items-center justify-center rounded-full border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
             >
               {busy ? "Redirecting" : "Pay"}
             </button>

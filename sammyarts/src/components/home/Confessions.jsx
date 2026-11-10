@@ -92,7 +92,7 @@ const ConfessionCard = ({ item, index }) => {
         scale: { duration: 0.3, ease: EASE },
         y: { duration: 0.3, ease: EASE },
       }}
-      className={`relative z-0 shrink-0 select-none rounded-2xl border border-border px-8 pb-12 pt-14 text-center shadow-lg ${
+      className={`relative z-0 shrink-0 select-none rounded-full border border-border px-8 pb-12 pt-14 text-center shadow-lg ${
         item.width
       } ${dark ? "bg-surface text-text" : "bg-raised text-text"}`}
       style={{
