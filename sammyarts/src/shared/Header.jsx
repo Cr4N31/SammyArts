@@ -160,7 +160,7 @@ function Header() {
                       to={link.href}
                       onClick={() => setOpen(false)}
                       aria-current={active ? "page" : undefined}
-                      className={`flex w-full items-center justify-between rounded-full px-4 py-3.5 font-serif text-2xl italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
+                      className={`flex w-full items-center justify-between rounded-full px-4 py-3.5 font-serif text-lg italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
                         active ? "bg-raised text-accent" : "text-muted"
                       }`}
                     >

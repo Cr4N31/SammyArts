@@ -149,13 +149,15 @@ function buildLayout(images, sizes, columnCount) {
 /* Gallery tile                                                               */
 /* -------------------------------------------------------------------------- */
 
-function Tile({ item, total, title, eager }) {
+function Tile({ item, total, title, eager, rounded }) {
   const { src, number, size } = item;
 
   return (
     <figure
       data-reveal
-      className="relative w-full overflow-hidden rounded-xl bg-surface"
+      className={`relative w-full overflow-hidden bg-surface ${
+        rounded ? "rounded-xl" : ""
+      }`}
       style={size ? { maxWidth: size.w } : undefined}
     >
       <img
@@ -648,6 +650,7 @@ function Viewer({ works, open, index, onClose, onStep }) {
                       total={total}
                       title={work.title}
                       eager
+                      rounded
                     />
                   ) : (
                     <div className="grid min-h-64 place-items-center border border-dashed border-border text-sm text-muted">
@@ -737,7 +740,7 @@ function Viewer({ works, open, index, onClose, onStep }) {
                           onClick={() => onStep(delta)}
                           className="group block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                         >
-                          <span className="block aspect-[4/5] overflow-hidden bg-surface">
+                          <span className="block aspect-[4/5] overflow-hidden rounded-xl bg-surface">
                             <img
                               src={item.img}
                               alt=""

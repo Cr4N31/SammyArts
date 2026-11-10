@@ -65,17 +65,17 @@ const Wordmark = () => {
       className="w-full"
       style={{ visibility: ready ? "visible" : "hidden" }}
     >
-      <p
+      <h1
         ref={textRef}
         aria-label={`${WORD}${WORD_SUFFIX}`}
-        className="hero-wordmark flex w-max select-none overflow-hidden whitespace-nowrap pb-[0.2em] font-serif leading-[0.9] tracking-[-0.08em] text-text"
+        className="flex w-max select-none overflow-hidden whitespace-nowrap pb-[0.2em] font-serif leading-[0.9] tracking-[-0.08em] text-text"
         style={{ fontSize: size }}
       >
         {[...WORD, ...WORD_SUFFIX].map((ch, i) => (
           <MotionSpan
             key={i}
             aria-hidden="true"
-            className={`inline-block ${i >= WORD.length ? "text-accent" : ""}`}
+            className={`inline-block hero-wordmark pr-2 ${i >= WORD.length ? "text-accent" : ""}`}
             initial={{ y: reduce ? 0 : "130%" }}
             animate={{ y: ready || reduce ? 0 : "130%" }}
             transition={{ duration: 1.3, delay: 0.7 + i * 0.05, ease: EASE }}
@@ -83,7 +83,7 @@ const Wordmark = () => {
             {ch}
           </MotionSpan>
         ))}
-      </p>
+      </h1>
     </div>
   );
 };

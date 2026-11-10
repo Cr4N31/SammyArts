@@ -34,18 +34,10 @@ function deriveStats(works, categories) {
     },
     {
       label: "Disciplines",
-      value: String(categories.length),
+      value: 7,
       note: "Each one treated as its own craft, not an add-on.",
     },
   ];
-
-  if (latest) {
-    stats.push({
-      label: "Latest work",
-      value: String(latest),
-      note: "The most recent piece added to the gallery.",
-    });
-  }
 
   return stats;
 }
@@ -124,7 +116,7 @@ function ContactCard({ headshot, isCopy }) {
           <PageTransitionLink
             to="/contact"
             tabIndex={isCopy ? -1 : undefined}
-            className="mt-3 flex h-9 w-full items-center justify-center rounded-full border border-accent/50 bg-transparent px-4 text-sm text-accent focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-accent"
+            className="mt-3 flex h-9 w-full items-center justify-center rounded-full border border-accent/50 bg-transparent hover:bg-accent hover:text-bg transition-all duration-200 ease-in-out px-4 text-sm text-accent focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-accent"
           >
             Get in touch
           </PageTransitionLink>

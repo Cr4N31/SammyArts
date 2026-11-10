@@ -14,14 +14,14 @@ function Footer() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-16 flex flex-col gap-10 md:mb-24 md:items-center md:justify-center">
           <div className="flex flex-col justify-center items-center">
-            <img src={logo} className="w-[400px]" />
-            <p className="max-w-xs text-sm text-center leading-relaxed text-muted">
+            <img src={logo} className="md:w-[400px] w-[200px]" />
+            <p className="max-w-xs md:text-sm text-xs text-center leading-relaxed text-muted">
               Strategic design systems built to drive sales + leads.
             </p>
           </div>
 
           <nav aria-label="Footer navigation">
-            <h2 className="mb-4 text-2xl font-serif italic tracking-[-0.07em] text-text">
+            <h2 className="mb-4 md:text-2xl text-lg font-serif italic tracking-[-0.07em] text-text">
               Explore
             </h2>
             <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm sm:grid-cols-3 md:flex md:gap-8">

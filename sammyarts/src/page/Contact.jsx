@@ -33,7 +33,7 @@ const whatsappLink = contacts.find((c) => c.name === "WhatsApp").href;
 
 // Boxed fields, quiet at rest, accent border on focus
 const fieldClass =
-  "w-full rounded-md border border-border bg-white/[0.03] px-4 py-4 text-sm text-text outline-none transition-colors placeholder:text-muted/70 hover:border-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent";
+  "w-full rounded-3xl border border-border bg-white/[0.03] px-4 py-4 text-sm text-text outline-none transition-colors placeholder:text-muted/70 hover:border-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent";
 
 const services = [
   "Brand strategy",
@@ -86,7 +86,8 @@ function Contact() {
       {/* Heading */}
       <div className="flex max-w-4xl flex-col items-center text-center">
         <h1 className="text-[clamp(2.75rem,6.5vw,7rem)] font-medium leading-[0.95] tracking-[-0.04em]">
-          Got a brand that needs a voice? Let&rsquo;s talk
+          Got a brand that needs a voice?{" "}
+          <span className="text-accent">Let&rsquo;s talk</span>
         </h1>
         <p className="mt-6 max-w-md text-sm tracking-[-0.01em] opacity-70">
           Share a few details and the conversation continues on WhatsApp.

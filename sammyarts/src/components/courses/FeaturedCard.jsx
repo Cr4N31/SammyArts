@@ -10,7 +10,7 @@ function FeaturedCard({
   onSubmitRating,
 }) {
   return (
-    <article className="border-y border-border bg-surface/50 px-6 py-8 md:px-10 md:py-12">
+    <article className="border-y rounded-3xl border-border bg-surface/50 px-6 py-8 md:px-10 md:py-12">
       <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
         <div>
           <p className="mb-4 text-[0.65rem] uppercase tracking-[0.18em] text-accent">

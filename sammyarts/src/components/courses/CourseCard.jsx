@@ -21,9 +21,9 @@ function CourseCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.7, delay: (index % 4) * 0.08, ease: "easeOut" }}
-      className="border-t border-border px-4 py-8 transition-colors duration-300 hover:bg-white/[0.02] motion-reduce:transition-none md:px-6 md:py-9"
+      className="border-t rounded-2xl mb-6 border-border px-4 py-8 transition-colors duration-300 hover:bg-white/[0.02] motion-reduce:transition-none md:px-6 md:py-9"
     >
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center md:gap-10">
+      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center md:gap-10 ">
         <div className="min-w-0">
           <p className="mb-2 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
             {String(index + 1).padStart(2, "0")}{" "}
@@ -62,12 +62,21 @@ function CourseCard({
             <BuyButton label="Buy course" onClick={() => onBuy(course)} />
           </div>
           {ratingSummary?.reviews?.length ? (
-            <section aria-label={`Reviews for ${course.title}`} className="mt-6 grid gap-4">
+            <section
+              aria-label={`Reviews for ${course.title}`}
+              className="mt-6 grid gap-4"
+            >
               {ratingSummary.reviews.map((item) => (
-                <article key={item.id} className="border-t border-border/60 pt-4">
+                <article
+                  key={item.id}
+                  className="border-t border-border/60 pt-4"
+                >
                   <p className="text-xs text-accent">
                     {"★".repeat(item.rating)}
-                    <span className="sr-only"> {item.rating} out of 5 stars</span>
+                    <span className="sr-only">
+                      {" "}
+                      {item.rating} out of 5 stars
+                    </span>
                   </p>
                   {item.review ? (
                     <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text">
