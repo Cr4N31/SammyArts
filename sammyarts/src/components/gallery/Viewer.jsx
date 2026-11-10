@@ -155,7 +155,7 @@ function Tile({ item, total, title, eager }) {
   return (
     <figure
       data-reveal
-      className="relative w-full bg-surface"
+      className="relative w-full overflow-hidden rounded-xl bg-surface"
       style={size ? { maxWidth: size.w } : undefined}
     >
       <img
@@ -722,7 +722,7 @@ function Viewer({ works, open, index, onClose, onStep }) {
                 <footer className="mt-28 px-5 pb-16 md:mt-44 md:px-10 md:pb-20">
                   <div className="flex items-baseline justify-between gap-4 border-t border-border pt-5">
                     <h3 className="font-serif text-2xl md:text-3xl">
-                      Still not convinced?
+                      Still not <span className="text-accent">convinced</span>?
                     </h3>
                     <p className="text-xs tabular-nums text-muted">
                       {works.length} projects
