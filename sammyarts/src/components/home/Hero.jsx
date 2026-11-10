@@ -68,7 +68,7 @@ const Wordmark = () => {
       <p
         ref={textRef}
         aria-label={`${WORD}${WORD_SUFFIX}`}
-        className="flex w-max select-none overflow-hidden whitespace-nowrap pb-[0.2em] font-serif leading-[0.9] tracking-[-0.04em] text-text"
+        className="hero-wordmark flex w-max select-none overflow-hidden whitespace-nowrap pb-[0.2em] font-serif leading-[0.9] tracking-[-0.08em] text-text"
         style={{ fontSize: size }}
       >
         {[...WORD, ...WORD_SUFFIX].map((ch, i) => (

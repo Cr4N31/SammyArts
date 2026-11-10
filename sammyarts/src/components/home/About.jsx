@@ -34,7 +34,7 @@ function About() {
           transition={{ duration: 1.2, delay: 0.1, ease: EASE }}
           className="font-serif text-[clamp(3rem,6vw,6.5rem)] leading-[0.95] tracking-[-0.05em]"
         >
-          Who is Sammy<span className="text-accent">Arts</span>?
+          Who is Sammy<span className="text-accent">arts</span>?
         </MotionH2>
 
         <MotionDiv
