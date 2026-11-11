@@ -194,7 +194,7 @@ function Contact() {
               type="submit"
               className="button-slide rounded-full border border-accent bg-bg px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              Let&rsquo;s connect!
+              Send
             </button>
 
             <p

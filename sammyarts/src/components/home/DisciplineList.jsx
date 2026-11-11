@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const DEFAULT_ITEMS = [
   "Brand Strategy & Identity",
   "Creative Direction",
-  "Campaign Strategy & Direction",
+  "Campaign Strategy",
   "Brand Launch Systems",
   "Packaging & Print Design",
   "Editorial & Cover Design",
@@ -21,7 +21,8 @@ const AUTO_INTERVAL = 2400; // ms between automatic steps
 const AUTO_RESUME_DELAY = 3000; // ms of quiet after interaction before autoplay resumes
 
 // Opacity by distance from the active row: 0, 1, 2, 3 rows away, then gone.
-const FADE = [1, 0.9, 0.3, 0.12, 0];
+// Only the active row is bright; everything else is dulled out.
+const FADE = [1, 0.25, 0.12, 0.05, 0];
 
 const mod = (n, m) => ((n % m) + m) % m;
 
@@ -37,9 +38,9 @@ function fadeFor(distance) {
 
 /**
  * Infinite list you can drag, flick, scroll, or leave alone. The active row
- * sits in the middle with an accent chevron, and rows fade out the further
- * they are from it. Scrolling or dragging past either end wraps around.
- * When nobody is touching it, it advances by itself.
+ * sits in the middle with an accent chevron, and every other row is dulled
+ * out the further it is from it. Scrolling or dragging past either end wraps
+ * around. When nobody is touching it, it advances by itself.
  *
  * Props:
  *   items             string[]                 labels to show
@@ -308,14 +309,18 @@ export default function DisciplineList({
 
         if (opacity <= 0) return null;
 
+        const isActive = i === active;
+
+        // A div, not an h1: the page already has its own headings, and a
+        // heading element can't carry type="button".
         return (
-          <h1
+          <div
             key={label}
-            type="button"
-            tabIndex={-1}
-            aria-current={i === active ? "true" : undefined}
+            aria-current={isActive ? "true" : undefined}
             onClick={() => move(Math.round(d))}
-            className="absolute left-0 w-full pl-12 text-left text-xl leading-none tracking-wide"
+            className={`absolute left-0 w-full pl-12 text-left text-xl leading-none tracking-wide ${
+              isActive ? "font-medium" : "font-normal"
+            }`}
             style={{
               height: ITEM_HEIGHT,
               top: rows / 2 - ITEM_HEIGHT / 2,
@@ -326,7 +331,7 @@ export default function DisciplineList({
             }}
           >
             {label}
-          </h1>
+          </div>
         );
       })}
     </div>

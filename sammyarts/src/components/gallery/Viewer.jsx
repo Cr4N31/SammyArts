@@ -158,7 +158,7 @@ function Tile({ item, total, title, eager, rounded }) {
       className={`relative w-full overflow-hidden bg-surface ${
         rounded ? "rounded-xl" : ""
       }`}
-      style={size ? { maxWidth: size.w } : undefined}
+      style={rounded && size ? { maxWidth: size.w } : undefined}
     >
       <img
         src={src}
@@ -680,7 +680,7 @@ function Viewer({ works, open, index, onClose, onStep }) {
                 </div>
               </section>
 
-              {/* Masonry gallery, images shown at their original size */}
+              {/* Supporting images are height-capped so each fits within the viewport. */}
               {ready && layout.blocks.length > 0 && (
                 <section
                   aria-label="Case study images"

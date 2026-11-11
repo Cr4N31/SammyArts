@@ -33,6 +33,11 @@ function deriveStats(works, categories) {
         : "Campaigns, brands, ads and thumbnails.",
     },
     {
+      label: "Satisfied customers",
+      value: "250+",
+      note: "Brands and creators who trusted us with their vision.",
+    },
+    {
       label: "Disciplines",
       value: 7,
       note: "Each one treated as its own craft, not an add-on.",
