@@ -9,6 +9,7 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
+import { signCourseFileDownload } from "./imageUpload.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PAYSTACK_API = "https://api.paystack.co";
@@ -252,18 +253,38 @@ export async function fetchCharge(reference) {
   return data.data || {};
 }
 
+async function courseDownload(meta) {
+  const course = await loadCourse(meta.courseSlug || meta.courseId);
+  if (!course?.courseFile) return null;
+  const ext = String(course.courseFile).split(".").pop();
+  const name =
+    course.courseFileName ||
+    `${String(course.title || "course").replace(/[^\w\s-]/g, "").trim()}.${ext}`;
+  return {
+    url: await signCourseFileDownload(course.courseFile, name),
+    name,
+  };
+}
+
 export async function confirmCheckout(reference) {
   const charge = await fetchCharge(reference);
+  let download = null;
   if (isPaidStatus(charge.status)) {
     try {
       await recordPurchase(charge);
     } catch (err) {
       console.error("Could not save purchase:", err);
     }
+    try {
+      download = await courseDownload(charge.metadata || {});
+    } catch (err) {
+      console.error("Could not prepare course download:", err);
+    }
   }
 
   const buyer = buyerFromCharge(charge);
   return {
+    download,
     reference: charge.reference || reference,
     status: charge.status || "unknown",
     metadata: charge.metadata || {},

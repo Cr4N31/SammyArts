@@ -40,6 +40,7 @@ function CheckoutResult() {
   const [status, setStatus] = useState(reference ? "checking" : "completed");
   const [detail, setDetail] = useState("");
   const [email, setEmail] = useState("");
+  const [download, setDownload] = useState(null);
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -58,6 +59,7 @@ function CheckoutResult() {
         setStatus(String(data.status || "unknown").toLowerCase());
         setDetail(data.metadata?.courseTitle || "");
         setEmail(data.email || "");
+        setDownload(data.download?.url ? data.download : null);
       } catch (err) {
         if (cancelled) return;
         setStatus("error");
@@ -118,10 +120,28 @@ function CheckoutResult() {
               ? "Hold on a moment while we confirm your purchase."
               : failed
                 ? detail
-                : detail
-                  ? `You are enrolled in ${detail}. We will reach out${email ? ` at ${email}` : " by email"} with next steps.`
-                  : "Thank you. We will reach out by email with next steps."}
+                : download
+                  ? `You are enrolled in ${detail || "your course"}. Download your course below.`
+                  : detail
+                    ? `You are enrolled in ${detail}. We will reach out${email ? ` at ${email}` : " by email"} with next steps.`
+                    : "Thank you. We will reach out by email with next steps."}
           </p>
+
+          {paid && download ? (
+            <div className="mt-8">
+              <a
+                href={download.url}
+                className="button-slide inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-accent bg-accent px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-brand"
+              >
+                Download your course
+                <span aria-hidden="true">↓</span>
+              </a>
+              <p className="mt-3 text-sm text-cream/50">
+                {download.name}. Bookmark this page: the download link renews
+                each time you open it.
+              </p>
+            </div>
+          ) : null}
 
           {!checking && !failed ? (
             <p className="mt-4 text-sm text-cream/50">

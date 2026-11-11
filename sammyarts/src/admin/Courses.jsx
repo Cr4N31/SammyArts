@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { useContent } from "../data/content";
 import CourseFaqs from "./CourseFaqs";
-import { uploadImage } from "./upload";
+import { uploadCourseFile, uploadImage } from "./upload";
 
 const blank = {
   id: null,
@@ -20,6 +20,8 @@ const blank = {
   duration: "",
   lessons: "",
   certificateImage: "",
+  courseFile: "",
+  courseFileName: "",
   type: "course",
   billing: "one-time",
   featured: false,
@@ -214,7 +216,29 @@ function CourseEditor() {
   const [saving, setSaving] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [uploadingCertificate, setUploadingCertificate] = useState(false);
+  const [uploadingCourseFile, setUploadingCourseFile] = useState(false);
   const certificateFileRef = useRef(null);
+  const courseFileRef = useRef(null);
+
+  async function onCourseFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploadingCourseFile(true);
+    setSaveError("");
+    try {
+      const path = await uploadCourseFile(file);
+      setDraft((current) => ({
+        ...current,
+        courseFile: path,
+        courseFileName: file.name.slice(0, 200),
+      }));
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setUploadingCourseFile(false);
+    }
+  }
 
   function updateDraft(key, value) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -254,6 +278,8 @@ function CourseEditor() {
       duration: String(draft.duration || "").trim(),
       lessons: String(draft.lessons || "").trim(),
       certificateImage: String(draft.certificateImage || "").trim(),
+      courseFile: draft.courseFile || "",
+      courseFileName: draft.courseFile ? draft.courseFileName || "" : "",
       type: existing?.type || "course",
       billing: existing?.billing || "one-time",
       slug: String(draft.slug || title)
@@ -412,6 +438,55 @@ function CourseEditor() {
             </p>
           </div>
           <div>
+            <p className={labelClass}>Course file</p>
+            <p className="mb-3 text-sm text-muted">
+              The PDF or image buyers receive. It stays private and is only
+              offered as a download after a confirmed payment.
+            </p>
+            <input
+              ref={courseFileRef}
+              type="file"
+              accept="application/pdf,image/jpeg,image/png,image/webp,image/gif"
+              className="sr-only"
+              onChange={onCourseFile}
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                className={ghostClass}
+                disabled={uploadingCourseFile || saving}
+                onClick={() => courseFileRef.current?.click()}
+              >
+                {uploadingCourseFile
+                  ? "Uploading"
+                  : draft.courseFile
+                    ? "Replace course file"
+                    : "Upload course file"}
+              </button>
+              {draft.courseFile ? (
+                <button
+                  type="button"
+                  className={ghostClass}
+                  disabled={uploadingCourseFile || saving}
+                  onClick={() =>
+                    setDraft((current) => ({
+                      ...current,
+                      courseFile: "",
+                      courseFileName: "",
+                    }))
+                  }
+                >
+                  Remove course file
+                </button>
+              ) : null}
+            </div>
+            <p className="mt-3 text-sm text-muted" aria-live="polite">
+              {draft.courseFile
+                ? `Attached: ${draft.courseFileName || draft.courseFile}`
+                : "No file attached yet."}
+            </p>
+          </div>
+          <div>
             <p className={labelClass}>Certificate image</p>
             <p className="mb-3 text-sm text-muted">
               Shown under &ldquo;Earn a certificate of completion&rdquo; in
@@ -459,7 +534,7 @@ function CourseEditor() {
           <div className="flex flex-wrap items-center gap-4">
             <button
               type="submit"
-              disabled={saving || uploadingCertificate}
+              disabled={saving || uploadingCertificate || uploadingCourseFile}
               className={pillClass}
             >
               {saving ? "Saving" : "Save course"}

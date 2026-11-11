@@ -77,6 +77,8 @@ function normalizeCourses(list) {
       billing: String(item?.billing ?? "one-time").slice(0, 40),
       desc: String(item?.desc ?? "").slice(0, 4000),
       certificateImage: String(item?.certificateImage ?? "").slice(0, 2000),
+      courseFile: String(item?.courseFile ?? "").slice(0, 300),
+      courseFileName: String(item?.courseFileName ?? "").slice(0, 200),
       rating:
         Number.isFinite(rating) && rating > 0
           ? Math.min(5, rating)
