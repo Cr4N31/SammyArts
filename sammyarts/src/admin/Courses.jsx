@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Link,
   Route,
@@ -8,6 +8,8 @@ import {
   useParams,
 } from "react-router-dom";
 import { useContent } from "../data/content";
+import CourseFaqs from "./CourseFaqs";
+import { uploadImage } from "./upload";
 
 const blank = {
   id: null,
@@ -17,6 +19,7 @@ const blank = {
   level: "",
   duration: "",
   lessons: "",
+  certificateImage: "",
   type: "course",
   billing: "one-time",
   featured: false,
@@ -101,9 +104,14 @@ function CourseList() {
             The <span className="text-accent">courses</span>
           </h1>
         </div>
-        <Link to="/admin/courses/new" className={pillClass}>
-          New course
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/admin/courses/new" className={pillClass}>
+            New course
+          </Link>
+          <Link to="/admin/courses/faq" className={ghostClass}>
+            Edit FAQ
+          </Link>
+        </div>
       </div>
 
       <p className="mt-6 text-sm text-muted">
@@ -205,10 +213,27 @@ function CourseEditor() {
   const [saveError, setSaveError] = useState("");
   const [saving, setSaving] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [uploadingCertificate, setUploadingCertificate] = useState(false);
+  const certificateFileRef = useRef(null);
 
   function updateDraft(key, value) {
     setDraft((current) => ({ ...current, [key]: value }));
     if (key === "title") setTitleError("");
+  }
+
+  async function onCertificateFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploadingCertificate(true);
+    setSaveError("");
+    try {
+      updateDraft("certificateImage", await uploadImage(file));
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setUploadingCertificate(false);
+    }
   }
 
   async function onSave(e) {
@@ -228,6 +253,7 @@ function CourseEditor() {
       level: String(draft.level || "").trim(),
       duration: String(draft.duration || "").trim(),
       lessons: String(draft.lessons || "").trim(),
+      certificateImage: String(draft.certificateImage || "").trim(),
       type: existing?.type || "course",
       billing: existing?.billing || "one-time",
       slug: String(draft.slug || title)
@@ -385,10 +411,55 @@ function CourseEditor() {
               Shown when someone opens Course details.
             </p>
           </div>
+          <div>
+            <p className={labelClass}>Certificate image</p>
+            <p className="mb-3 text-sm text-muted">
+              Shown under &ldquo;Earn a certificate of completion&rdquo; in
+              Course details. Leave empty to hide that section.
+            </p>
+            <input
+              ref={certificateFileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="sr-only"
+              onChange={onCertificateFile}
+            />
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                className={ghostClass}
+                disabled={uploadingCertificate || saving}
+                onClick={() => certificateFileRef.current?.click()}
+              >
+                {uploadingCertificate
+                  ? "Uploading"
+                  : draft.certificateImage
+                    ? "Replace certificate"
+                    : "Upload certificate"}
+              </button>
+              {draft.certificateImage ? (
+                <button
+                  type="button"
+                  className={ghostClass}
+                  disabled={uploadingCertificate || saving}
+                  onClick={() => updateDraft("certificateImage", "")}
+                >
+                  Remove certificate
+                </button>
+              ) : null}
+            </div>
+            {draft.certificateImage ? (
+              <img
+                src={draft.certificateImage}
+                alt="Certificate preview"
+                className="mt-4 max-h-72 w-full border border-border object-contain"
+              />
+            ) : null}
+          </div>
           <div className="flex flex-wrap items-center gap-4">
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploadingCertificate}
               className={pillClass}
             >
               {saving ? "Saving" : "Save course"}
@@ -439,6 +510,7 @@ function Courses() {
     <Routes>
       <Route index element={<CourseList />} />
       <Route path="new" element={<CoursePage />} />
+      <Route path="faq" element={<CourseFaqs />} />
       <Route path=":id" element={<CoursePage />} />
     </Routes>
   );
