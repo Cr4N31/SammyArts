@@ -159,7 +159,7 @@ function Checkout() {
           </div>
         </form>
 
-        <aside className="border border-cream/10 bg-surface/40 p-6">
+        <aside className="border rounded-2xl border-cream/10 bg-surface/40 p-6">
           <p className="mt-6 text-xs uppercase tracking-[0.2em] text-cream/50">
             Total
           </p>

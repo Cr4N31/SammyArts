@@ -12,11 +12,22 @@ function RatingWidget({ course, ratingSummary, onSubmitRating, idPrefix }) {
 
   useEffect(() => {
     if (!ratingOpen) return undefined;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
     const handleKeyDown = (event) => {
       if (event.key === "Escape" && !submitting) setRatingOpen(false);
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [ratingOpen, submitting]);
 
   function openRating(value) {
@@ -85,12 +96,17 @@ function RatingWidget({ course, ratingSummary, onSubmitRating, idPrefix }) {
       ) : null}
 
       {ratingOpen ? (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-brand/80 p-4 backdrop-blur-sm">
+        <div
+          data-lenis-prevent
+          data-lenis-prevent-wheel
+          onWheel={(event) => event.preventDefault()}
+          className="fixed inset-0 z-[120] grid place-items-center overflow-hidden overscroll-hidden bg-brand/90 p-4 backdrop-blur-xl"
+        >
           <section
             role="dialog"
             aria-modal="true"
             aria-labelledby={`${baseId}-title`}
-            className="my-auto w-full max-w-lg border border-border bg-surface p-6 text-text md:p-8"
+            className="my-auto w-full max-w-lg rounded-2xl border border-border bg-surface p-6 text-text md:p-8"
           >
             <div className="flex items-start justify-between gap-6">
               <div>
@@ -135,7 +151,7 @@ function RatingWidget({ course, ratingSummary, onSubmitRating, idPrefix }) {
                   required
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  className="w-full border-b border-border bg-transparent py-3 text-sm text-text outline-none transition-colors placeholder:text-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent"
+                  className="w-full rounded-full border border-border bg-transparent px-2 py-3 text-sm text-text outline-none transition-colors placeholder:text-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent"
                 />
               </div>
               <div>
@@ -143,7 +159,10 @@ function RatingWidget({ course, ratingSummary, onSubmitRating, idPrefix }) {
                   htmlFor={`${baseId}-review`}
                   className="mb-2 block text-xs uppercase tracking-[0.14em] text-muted"
                 >
-                  Review <span className="normal-case tracking-normal">(optional)</span>
+                  Review{" "}
+                  <span className="normal-case tracking-normal">
+                    (optional)
+                  </span>
                 </label>
                 <textarea
                   id={`${baseId}-review`}
@@ -153,7 +172,7 @@ function RatingWidget({ course, ratingSummary, onSubmitRating, idPrefix }) {
                   value={review}
                   onChange={(event) => setReview(event.target.value)}
                   placeholder="Share a little more about your experience"
-                  className="w-full resize-y border border-border bg-transparent p-3 text-sm text-text outline-none transition-colors placeholder:text-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent"
+                  className="w-full resize-y rounded-2xl border border-border bg-transparent p-3 text-sm text-text outline-none transition-colors placeholder:text-muted/60 focus:border-accent focus-visible:ring-1 focus-visible:ring-accent"
                 />
               </div>
               {submitError ? (
@@ -164,7 +183,7 @@ function RatingWidget({ course, ratingSummary, onSubmitRating, idPrefix }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="button-slide inline-flex min-h-11 items-center justify-center gap-2 border border-accent bg-brand px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="button-slide inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-accent bg-brand px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submitting ? "Submitting" : "Submit rating"}
               </button>

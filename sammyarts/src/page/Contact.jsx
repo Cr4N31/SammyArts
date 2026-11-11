@@ -87,7 +87,9 @@ function Contact() {
       <div className="flex max-w-4xl flex-col items-center text-center">
         <h1 className="text-[clamp(2.75rem,6.5vw,7rem)] font-medium leading-[0.95] tracking-[-0.04em]">
           Got a brand that needs a voice?{" "}
-          <span className="text-accent">Let&rsquo;s talk</span>
+          <span className="text-accent">
+            <h1>Let&rsquo;s talk</h1>
+          </span>
         </h1>
         <p className="mt-6 max-w-md text-sm tracking-[-0.01em] opacity-70">
           Share a few details and the conversation continues on WhatsApp.

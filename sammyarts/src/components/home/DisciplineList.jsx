@@ -313,12 +313,14 @@ export default function DisciplineList({
 
         // A div, not an h1: the page already has its own headings, and a
         // heading element can't carry type="button".
+        // flex + items-center keeps each label vertically centered in its
+        // row, so the text lines up with the chevron and spacing is even.
         return (
           <div
             key={label}
             aria-current={isActive ? "true" : undefined}
             onClick={() => move(Math.round(d))}
-            className={`absolute left-0 w-full pl-12 text-left text-xl leading-none tracking-wide ${
+            className={`absolute left-0 flex w-full items-center whitespace-nowrap pl-8 text-left text-base leading-none tracking-wide min-[400px]:text-lg md:pl-12 md:text-xl ${
               isActive ? "font-medium" : "font-normal"
             }`}
             style={{

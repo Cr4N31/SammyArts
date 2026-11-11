@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { FaBookOpen, FaClock, FaLayerGroup } from "react-icons/fa";
 import PriceTag from "./PriceTag";
 import BuyButton from "./BuyButton";
 
@@ -160,26 +161,35 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             >
               Earn a certificate of completion
             </h3>
-            <div className="mt-5 border border-accent/50 p-1">
-              <div className="border border-border bg-surface px-6 py-8 md:px-8 md:py-10">
-                <p className="text-[0.65rem] uppercase tracking-[0.2em] text-accent">
-                  SammyArts · Learning collection
-                </p>
-                <p className="mt-10 text-xs text-muted">
-                  Certificate of completion
-                </p>
-                <p className="mt-2 font-serif text-3xl leading-tight tracking-[-0.03em] md:text-4xl">
-                  {activeCourse.title}
-                </p>
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-                  Awarded to the learner upon successful completion of this
-                  course.
-                </p>
-                <div className="mt-10 flex flex-wrap justify-between gap-6 border-t border-border pt-4 text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                  <span>SammyArts</span>
-                  <span>Certificate of achievement</span>
+            <div className="mt-5 h-[18rem] rounded-2xl border border-accent/50 p-1 md:h-[20rem]">
+              {activeCourse.certificateImage ? (
+                <img
+                  src={activeCourse.certificateImage}
+                  alt={`${activeCourse.title} certificate of completion`}
+                  className="h-full w-full rounded-xl object-contain"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="h-full overflow-hidden rounded-xl border border-border bg-surface px-6 py-8 md:px-8 md:py-10">
+                  <p className="text-[0.65rem] uppercase tracking-[0.2em] text-accent">
+                    SammyArts · Learning collection
+                  </p>
+                  <p className="mt-10 text-xs text-muted">
+                    Certificate of completion
+                  </p>
+                  <p className="mt-2 font-serif text-3xl leading-tight tracking-[-0.03em] md:text-4xl">
+                    {activeCourse.title}
+                  </p>
+                  <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+                    Awarded to the learner upon successful completion of this
+                    course.
+                  </p>
+                  <div className="mt-10 flex flex-wrap justify-between gap-6 border-t border-border pt-4 text-[0.65rem] uppercase tracking-[0.14em] text-muted">
+                    <span>SammyArts</span>
+                    <span>Certificate of achievement</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </section>
 
@@ -239,26 +249,29 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
 
           <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-1">
             <div>
-              <dt className="text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                Level
+              <dt className="flex items-center gap-3 text-sm text-muted">
+                <FaLayerGroup aria-hidden="true" className="shrink-0 text-accent" />
+                <span>Level</span>
               </dt>
-              <dd className="mt-1 text-sm">
+              <dd className="ml-6 mt-1 text-sm">
                 {activeCourse.level || "All levels"}
               </dd>
             </div>
             <div>
-              <dt className="text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                Duration
+              <dt className="flex items-center gap-3 text-sm text-muted">
+                <FaClock aria-hidden="true" className="shrink-0 text-accent" />
+                <span>Duration</span>
               </dt>
-              <dd className="mt-1 text-sm">
+              <dd className="ml-6 mt-1 text-sm">
                 {activeCourse.duration || "Self-paced"}
               </dd>
             </div>
             <div>
-              <dt className="text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                Lessons
+              <dt className="flex items-center gap-3 text-sm text-muted">
+                <FaBookOpen aria-hidden="true" className="shrink-0 text-accent" />
+                <span>Lessons</span>
               </dt>
-              <dd className="mt-1 text-sm">
+              <dd className="ml-6 mt-1 text-sm">
                 {activeCourse.lessons
                   ? activeCourse.lessons
                   : "Details coming soon"}
@@ -266,7 +279,7 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             </div>
             {ratingSummary?.count ? (
               <div>
-                <dt className="text-[0.65rem] uppercase tracking-[0.14em] text-muted">
+                <dt className="text-[0.65rem] tracking-[0.14em] text-muted">
                   Student rating
                 </dt>
                 <dd className="mt-1 text-sm">

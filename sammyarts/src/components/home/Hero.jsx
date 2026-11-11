@@ -75,7 +75,7 @@ const Wordmark = () => {
           <MotionSpan
             key={i}
             aria-hidden="true"
-            className={`inline-block hero-wordmark pr-2 ${i >= WORD.length ? "text-accent" : ""}`}
+            className={`inline-block hero-wordmark md:pr-2 pr-1 ${i >= WORD.length ? "text-accent" : ""}`}
             initial={{ y: reduce ? 0 : "130%" }}
             animate={{ y: ready || reduce ? 0 : "130%" }}
             transition={{ duration: 1.3, delay: 0.7 + i * 0.05, ease: EASE }}
@@ -124,9 +124,18 @@ function Hero() {
             decoding="async"
             fetchPriority="high"
             draggable={false}
-            className="h-full w-full select-none object-cover object-[82%_30%] md:object-[right_center]"
+            className="md:block hidden h-full w-full select-none object-cover object-[82%_30%] md:object-[right_center]"
           />
         </picture>
+        <img
+          src="/img/ceo.png"
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          fetchPriority="high"
+          draggable={false}
+          className="absolute inset-0 h-full w-full select-none object-contain object-right-bottom md:hidden"
+        />
       </MotionDiv>
 
       {/* Soft shade at the bottom keeps the wordmark readable over the gold */}

@@ -61,7 +61,7 @@ function About() {
           transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
           className="md:col-span-4 md:col-start-9"
         >
-          <DisciplineList className="mx-auto w-full max-w-xs md:mx-0" />
+          <DisciplineList className="w-full" />
         </MotionDiv>
       </div>
     </MotionSection>

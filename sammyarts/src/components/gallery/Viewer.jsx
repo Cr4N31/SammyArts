@@ -10,6 +10,9 @@ const pad = (n) => String(n).padStart(2, "0");
 const WIDE_RATIO = 1.7;
 // Used until (or if) an image's real size is known.
 const FALLBACK_RATIO = 0.8;
+// Height available to a single image. Leaves room for the floating controls.
+// Increase the rem value if the controls overlap the top of an image.
+const FIT = "calc(100dvh - 4rem)";
 
 const FOCUSABLE =
   'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])';
@@ -21,8 +24,8 @@ const dockButton =
 /* Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
 
-// Measures the natural pixel size of every image so the masonry can be
-// balanced and each image can be capped at its original resolution.
+// Measures the natural pixel size of every image so rows can be balanced and
+// each image can be capped at its original resolution.
 function useImageSizes(srcs, enabled) {
   const [state, setState] = useState({ key: "", sizes: {} });
   const key = srcs.join("\n");
@@ -81,27 +84,19 @@ function useColumnCount() {
   return count;
 }
 
-// Places each item, in order, into whichever column is currently shortest.
-function toColumns(items, count) {
-  const columns = Array.from({ length: count }, () => ({
-    items: [],
-    height: 0,
-  }));
+// Groups items, in order, into rows of `count`.
+function toRows(items, count) {
+  const rows = [];
 
-  items.forEach((item) => {
-    const target = columns.reduce((shortest, col) =>
-      col.height < shortest.height - 0.001 ? col : shortest,
-    );
+  for (let i = 0; i < items.length; i += count) {
+    rows.push(items.slice(i, i + count));
+  }
 
-    target.items.push(item);
-    target.height += 1 / item.ratio;
-  });
-
-  return columns.map((col) => col.items);
+  return rows;
 }
 
-// First image is the hero. Wide images break the masonry into a full-width
-// row, and everything between them is a balanced masonry group.
+// First image is the hero. Wide images get a full-width row of their own,
+// and everything between them is split into rows of `columnCount`.
 function buildLayout(images, sizes, columnCount) {
   const describe = (src, number) => {
     const size = sizes[src] || null;
@@ -115,34 +110,28 @@ function buildLayout(images, sizes, columnCount) {
   };
 
   const [heroSrc, ...rest] = images;
-  const blocks = [];
-  let group = null;
+  const rows = [];
+  let pending = [];
+
+  const flush = () => {
+    rows.push(...toRows(pending, columnCount));
+    pending = [];
+  };
 
   rest.forEach((src, i) => {
     const item = describe(src, i + 2);
 
     if (item.ratio >= WIDE_RATIO) {
-      group = null;
-      blocks.push({ type: "full", item });
-      return;
+      flush();
+      rows.push([item]);
+    } else {
+      pending.push(item);
     }
-
-    if (!group) {
-      group = { type: "grid", items: [] };
-      blocks.push(group);
-    }
-
-    group.items.push(item);
   });
 
-  return {
-    hero: heroSrc ? describe(heroSrc, 1) : null,
-    blocks: blocks.map((block) =>
-      block.type === "grid"
-        ? { type: "grid", columns: toColumns(block.items, columnCount) }
-        : block,
-    ),
-  };
+  flush();
+
+  return { hero: heroSrc ? describe(heroSrc, 1) : null, rows };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -150,15 +139,23 @@ function buildLayout(images, sizes, columnCount) {
 /* -------------------------------------------------------------------------- */
 
 function Tile({ item, total, title, eager, rounded }) {
-  const { src, number, size } = item;
+  const { src, number, size, ratio } = item;
+
+  // Never taller than the viewport, and (for the hero) never wider than
+  // the original file.
+  const naturalCap = rounded && size ? `${size.w}px` : "100%";
 
   return (
     <figure
       data-reveal
-      className={`relative w-full overflow-hidden bg-surface ${
+      className={`relative w-full min-w-0 overflow-hidden bg-surface ${
         rounded ? "rounded-xl" : ""
       }`}
-      style={rounded && size ? { maxWidth: size.w } : undefined}
+      style={{
+        // Grow in proportion to aspect ratio so neighbours get equal heights.
+        flex: `${ratio * 100} 1 0%`,
+        maxWidth: `min(${naturalCap}, calc(${FIT} * ${ratio}))`,
+      }}
     >
       <img
         src={src}
@@ -173,7 +170,7 @@ function Tile({ item, total, title, eager, rounded }) {
 
       <figcaption
         aria-hidden="true"
-        className="absolute left-0 top-0 flex items-baseline gap-1.5  px-3 py-2 text-lg tabular-nums text-text"
+        className="absolute left-0 top-0 flex items-baseline gap-1.5 px-3 py-2 text-lg tabular-nums text-text"
       >
         <span>{pad(number)}</span>
       </figcaption>
@@ -680,43 +677,28 @@ function Viewer({ works, open, index, onClose, onStep }) {
                 </div>
               </section>
 
-              {/* Supporting images are height-capped so each fits within the viewport. */}
-              {ready && layout.blocks.length > 0 && (
+              {/* Supporting images. Each tile is capped by viewport height, so
+                  every image fits on screen without vertical scrolling. */}
+              {ready && layout.rows.length > 0 && (
                 <section
                   aria-label="Case study images"
                   className="mt-16 flex flex-col gap-2 md:mt-28 md:gap-3"
                 >
-                  {layout.blocks.map((block, bi) =>
-                    block.type === "full" ? (
-                      <Tile
-                        key={`${work.id}-${block.item.src}`}
-                        item={block.item}
-                        total={total}
-                        title={work.title}
-                      />
-                    ) : (
-                      <div
-                        key={`${work.id}-group-${bi}`}
-                        className="flex items-start gap-2 md:gap-3"
-                      >
-                        {block.columns.map((column, ci) => (
-                          <div
-                            key={ci}
-                            className="flex min-w-0 flex-1 flex-col gap-2 md:gap-3"
-                          >
-                            {column.map((item) => (
-                              <Tile
-                                key={`${work.id}-${item.src}`}
-                                item={item}
-                                total={total}
-                                title={work.title}
-                              />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    ),
-                  )}
+                  {layout.rows.map((row, ri) => (
+                    <div
+                      key={`${work.id}-row-${ri}`}
+                      className="flex items-start justify-center gap-2 md:gap-3"
+                    >
+                      {row.map((item) => (
+                        <Tile
+                          key={`${work.id}-${item.src}`}
+                          item={item}
+                          total={total}
+                          title={work.title}
+                        />
+                      ))}
+                    </div>
+                  ))}
                 </section>
               )}
 

@@ -1,14 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContent } from "../data/content";
-import {
-  listCourseRatings,
-  submitCourseRating,
-} from "../data/courseRatings";
+import { listCourseRatings, submitCourseRating } from "../data/courseRatings";
 import CoursesHeader from "../components/courses/CoursesHeader";
 import CourseFilter from "../components/courses/CourseFilter";
 import CourseGrid from "../components/courses/CourseGrid";
 import FeaturedCourses from "../components/courses/FeaturedCourses";
+
+const SORT_OPTIONS = [
+  { value: "featured", label: "Featured" },
+  { value: "price-asc", label: "Price: low to high" },
+  { value: "price-desc", label: "Price: high to low" },
+  { value: "rating", label: "Rating" },
+];
 
 function Courses() {
   const navigate = useNavigate();
@@ -16,11 +20,35 @@ function Courses() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
+  const sortTriggerRef = useRef(null);
   const [courseRatings, setCourseRatings] = useState([]);
   const [ratingsError, setRatingsError] = useState("");
 
   const handleBuy = (course) =>
     navigate(`/checkout/${course.slug || course.id}`);
+
+  useEffect(() => {
+    if (!sortOpen) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (!sortRef.current?.contains(event.target)) setSortOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        setSortOpen(false);
+        sortTriggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [sortOpen]);
 
   const courseSlugs = useMemo(
     () => courses.map((course) => course.slug || String(course.id)),
@@ -39,7 +67,9 @@ function Courses() {
       .catch((error) => {
         console.error(error);
         if (active) {
-          setRatingsError("Course ratings could not be loaded. Please try again later.");
+          setRatingsError(
+            "Course ratings could not be loaded. Please try again later.",
+          );
         }
       });
 
@@ -156,19 +186,71 @@ function Courses() {
                 The collection
               </h2>
             </div>
-            <label className="flex items-center gap-4 text-xs uppercase tracking-[0.14em] text-muted">
+            <div className="flex items-center gap-4 text-xs uppercase tracking-[0.14em] text-muted">
               <span>Sort by</span>
-              <select
-                value={sortBy}
-                onChange={(event) => setSortBy(event.target.value)}
-                className="min-h-11 border-b border-border bg-brand py-2 text-sm normal-case tracking-normal text-text outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent"
-              >
-                <option value="featured">Featured</option>
-                <option value="price-asc">Price: low to high</option>
-                <option value="price-desc">Price: high to low</option>
-                <option value="rating">Rating</option>
-              </select>
-            </label>
+              <div ref={sortRef} className="relative">
+                <button
+                  ref={sortTriggerRef}
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded={sortOpen}
+                  aria-label={`Sort by ${SORT_OPTIONS.find((option) => option.value === sortBy)?.label}`}
+                  onClick={() => setSortOpen((open) => !open)}
+                  className="flex min-h-11 min-w-44 items-center justify-between gap-5 rounded-full border border-border bg-surface py-2 pl-4 pr-4 text-sm normal-case tracking-normal text-text outline-none transition-colors hover:border-accent/60 focus-visible:ring-1 focus-visible:ring-accent"
+                >
+                  {SORT_OPTIONS.find((option) => option.value === sortBy)?.label}
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    className={`h-3.5 w-3.5 shrink-0 text-accent transition-transform ${
+                      sortOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    <path
+                      d="m3.5 6 4.5 4 4.5-4"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                </button>
+                {sortOpen ? (
+                  <div
+                    role="listbox"
+                    aria-label="Sort courses"
+                    className="absolute right-0 top-full z-30 mt-2 min-w-full overflow-hidden rounded-xl border border-border bg-surface p-1.5 shadow-xl"
+                  >
+                    {SORT_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={sortBy === option.value}
+                        onClick={() => {
+                          setSortBy(option.value);
+                          setSortOpen(false);
+                          sortTriggerRef.current?.focus();
+                        }}
+                        className={`flex min-h-10 w-full items-center justify-between gap-6 whitespace-nowrap rounded-lg px-3 py-2 text-left text-xs normal-case tracking-normal transition-colors hover:bg-raised hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                          sortBy === option.value
+                            ? "bg-raised text-accent"
+                            : "text-muted"
+                        }`}
+                      >
+                        {option.label}
+                        {sortBy === option.value ? (
+                          <span aria-hidden="true" className="text-accent">
+                            ✓
+                          </span>
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col gap-7 border-b border-border py-5 md:flex-row md:items-center md:justify-between">
@@ -265,8 +347,8 @@ function Courses() {
               </summary>
               <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
                 Offline access depends on the course materials provided after
-                enrollment. Check the course overview or contact us if you
-                need help confirming access options.
+                enrollment. Check the course overview or contact us if you need
+                help confirming access options.
               </p>
             </details>
             <details className="group py-4">
