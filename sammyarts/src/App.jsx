@@ -10,16 +10,18 @@ import Checkout from "./page/Checkout";
 import CheckoutResult from "./page/CheckoutResult";
 import Footer from "./shared/Footer";
 import Admin from "./admin/Admin";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 import { PageLoader, PageTransitionProvider } from "./shared/PageTransition";
 import { useContent } from "./data/content";
 
 function App() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname, hash } = location;
   const isAdmin = pathname.startsWith("/admin");
   const { ready } = useContent();
   const [loaderDismissed, setLoaderDismissed] = useState(false);
+  const lenisRef = useRef(null);
 
   useEffect(() => {
     if (!ready) return undefined;
@@ -38,6 +40,7 @@ function App() {
   useEffect(() => {
     if (isAdmin) return;
     const lenis = new Lenis({ lerp: 0.1 });
+    lenisRef.current = lenis;
     let id;
     const raf = (t) => {
       lenis.raf(t);
@@ -47,8 +50,16 @@ function App() {
     return () => {
       cancelAnimationFrame(id);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, [isAdmin]);
+
+  useLayoutEffect(() => {
+    if (hash) return;
+
+    lenisRef.current?.scrollTo(0, { immediate: true });
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname, hash]);
 
   useLayoutEffect(() => {
     if (
