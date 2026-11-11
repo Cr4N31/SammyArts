@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const DEFAULT_ITEMS = [
-  "Print Design",
-  "Cover Design",
-  "Brand Strategy",
+  "Brand Strategy & Identity",
   "Creative Direction",
-  "Brand Identity",
-  "Launch Systems",
-  "Editorial",
+  "Campaign Strategy & Direction",
+  "Brand Launch Systems",
+  "Packaging & Print Design",
+  "Editorial & Cover Design",
+  "Entertainment Branding",
 ];
 
 const ITEM_HEIGHT = 44; // px, height of one row
