@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useContent } from "../data/content";
 import AuthorLine from "../components/blog/AuthorLine";
@@ -6,7 +7,30 @@ import PostImage from "../components/blog/PostImage";
 function BlogPost() {
   const { slug } = useParams();
   const { blogPosts } = useContent();
-  const post = blogPosts.find((item) => item.slug === slug);
+  const [activeSlug, setActiveSlug] = useState(slug);
+  const orderedPosts = useMemo(
+    () =>
+      [...blogPosts].sort((a, b) => {
+        const byDate = String(b.date || "").localeCompare(String(a.date || ""));
+        return byDate || Number(b.id) - Number(a.id);
+      }),
+    [blogPosts],
+  );
+
+  useEffect(() => setActiveSlug(slug), [slug]);
+
+  const post = blogPosts.find((item) => item.slug === activeSlug);
+  const postIndex = orderedPosts.findIndex((item) => item.slug === activeSlug);
+  const nextPost =
+    orderedPosts.length > 1
+      ? orderedPosts[(postIndex + 1) % orderedPosts.length]
+      : null;
+
+  function showNextPost() {
+    if (!nextPost) return;
+    setActiveSlug(nextPost.slug);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   if (!post) {
     return (
@@ -79,6 +103,29 @@ function BlogPost() {
             <p className="text-cream/50">No post body yet.</p>
           )}
         </div>
+
+        {nextPost ? (
+          <footer className="mt-20 border-t border-border pt-6 md:mt-28">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">
+              Next post
+            </p>
+            <button
+              type="button"
+              onClick={showNextPost}
+              className="group mt-4 flex w-full items-center justify-between gap-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
+              <span className="font-serif text-2xl leading-tight tracking-[-0.03em] transition-colors group-hover:text-accent md:text-4xl">
+                {nextPost.title}
+              </span>
+              <span
+                aria-hidden="true"
+                className="shrink-0 text-2xl text-accent transition-transform group-hover:translate-x-1"
+              >
+                →
+              </span>
+            </button>
+          </footer>
+        ) : null}
       </article>
     </main>
   );
