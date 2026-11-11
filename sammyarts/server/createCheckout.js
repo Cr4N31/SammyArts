@@ -9,6 +9,7 @@ import {
   getFirestore,
   serverTimestamp,
   setDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { signCourseFileDownload } from "./imageUpload.js";
 
@@ -291,11 +292,14 @@ export async function recordPurchase(charge) {
     updatedAt: serverTimestamp(),
   };
 
+  // Orders are admin-read-only, so the server cannot check for an existing
+  // doc; a createdAt derived from the payment keeps repeat saves stable.
+  const paidAt = Date.parse(charge.paid_at || charge.paidAt || charge.created_at || "");
+  payload.createdAt = Number.isFinite(paidAt)
+    ? Timestamp.fromMillis(paidAt)
+    : serverTimestamp();
+
   const ref = doc(getFirestore(firebaseApp()), "orders", reference);
-  const existing = await getDoc(ref);
-  if (!existing.exists()) {
-    payload.createdAt = serverTimestamp();
-  }
   await setDoc(ref, payload, { merge: true });
   return payload;
 }
