@@ -79,6 +79,7 @@ function CheckoutResult() {
     status === "completed" ||
     status === "paid" ||
     status === "succeeded";
+  const isFree = reference.startsWith("free.");
   const checking = status === "checking";
   const failed = status === "error";
 
@@ -109,10 +110,14 @@ function CheckoutResult() {
 
           <h1 className="mt-6 font-serif text-[clamp(2.75rem,7vw,5rem)] italic leading-[0.95] tracking-[-0.04em]">
             {checking
-              ? "Confirming your payment"
+              ? isFree
+                ? "Preparing your course"
+                : "Confirming your payment"
               : failed
                 ? "Something went wrong"
-                : "Payment successful"}
+                : isFree
+                  ? "You're enrolled"
+                  : "Payment successful"}
           </h1>
 
           <p className="mt-6 max-w-lg text-base leading-relaxed text-cream/70 md:text-lg">
@@ -143,7 +148,7 @@ function CheckoutResult() {
             </div>
           ) : null}
 
-          {!checking && !failed ? (
+          {!checking && !failed && !isFree ? (
             <p className="mt-4 text-sm text-cream/50">
               A receipt may also arrive from the payment page.
             </p>

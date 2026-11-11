@@ -34,6 +34,7 @@ function Checkout() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const isFree = !(Number(course?.price) > 0);
 
   async function onPay(e) {
     e.preventDefault();
@@ -53,11 +54,15 @@ function Checkout() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.checkout_url) {
-        throw new Error(data.error || "Could not start payment.");
+        throw new Error(data.error || "Could not start checkout.");
+      }
+      if (data.free) {
+        navigate(data.checkout_url);
+        return;
       }
       window.location.href = data.checkout_url;
     } catch (err) {
-      setError(err.message || "Could not start payment.");
+      setError(err.message || "Could not start checkout.");
       setBusy(false);
     }
   }
@@ -144,10 +149,16 @@ function Checkout() {
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <button
               type="submit"
-              disabled={busy || !course.price}
+              disabled={busy}
               className="button-slide inline-flex min-h-11 items-center justify-center rounded-full border border-accent bg-brand px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
             >
-              {busy ? "Redirecting" : "Pay"}
+              {busy
+                ? isFree
+                  ? "Preparing"
+                  : "Redirecting"
+                : isFree
+                  ? "Get course"
+                  : "Pay"}
             </button>
             <button
               type="button"
