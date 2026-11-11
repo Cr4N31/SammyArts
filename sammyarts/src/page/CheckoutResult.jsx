@@ -136,7 +136,7 @@ function CheckoutResult() {
             <div className="mt-8">
               <a
                 href={download.url}
-                className="button-slide inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-accent bg-accent px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-brand"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-accent bg-accent px-6 py-3 text-xs font-medium uppercase tracking-[0.18em] text-brand transition-colors duration-300 hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
               >
                 Download your course
                 <span aria-hidden="true">↓</span>
