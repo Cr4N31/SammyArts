@@ -198,7 +198,10 @@ function Courses() {
                   onClick={() => setSortOpen((open) => !open)}
                   className="flex min-h-11 min-w-44 items-center justify-between gap-5 rounded-full border border-border bg-surface py-2 pl-4 pr-4 text-sm normal-case tracking-normal text-text outline-none transition-colors hover:border-accent/60 focus-visible:ring-1 focus-visible:ring-accent"
                 >
-                  {SORT_OPTIONS.find((option) => option.value === sortBy)?.label}
+                  {
+                    SORT_OPTIONS.find((option) => option.value === sortBy)
+                      ?.label
+                  }
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 16 16"
@@ -251,23 +254,6 @@ function Courses() {
                 ) : null}
               </div>
             </div>
-          </div>
-
-          <div className="flex flex-col gap-7 border-b border-border py-5 md:flex-row md:items-center md:justify-between">
-            <CourseFilter
-              categories={categories}
-              active={activeCategory}
-              onChange={setActiveCategory}
-            />
-            {search ? (
-              <button
-                type="button"
-                onClick={() => setSearch("")}
-                className="self-start border-b border-transparent pb-1 text-xs uppercase tracking-[0.14em] text-muted transition-colors hover:border-border hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:self-auto"
-              >
-                Clear search
-              </button>
-            ) : null}
           </div>
 
           <div className="py-10 md:py-14">

@@ -134,7 +134,7 @@ function Hero() {
           decoding="async"
           fetchPriority="high"
           draggable={false}
-          className="absolute inset-0 h-full w-full select-none object-contain object-right-bottom md:hidden"
+          className="absolute inset-0 h-full w-full select-none object-contain object-bottom md:hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
         />
       </MotionDiv>
 
