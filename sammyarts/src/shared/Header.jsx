@@ -160,7 +160,7 @@ function Header() {
                       to={link.href}
                       onClick={() => setOpen(false)}
                       aria-current={active ? "page" : undefined}
-                      className={`flex w-full items-center justify-between rounded-full px-4 py-3.5 font-serif text-lg italic transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
+                      className={`flex w-full items-center justify-between rounded-full px-4 py-3.5 font-serif text-lg transition-colors duration-300 hover:bg-raised hover:text-accent-hover ${
                         active ? "bg-raised text-accent" : "text-muted"
                       }`}
                     >
@@ -189,12 +189,12 @@ function Header() {
                   delay: 0.08 + navlinks.length * 0.05,
                   ease: EASE,
                 }}
-                className="p-2"
+                className="pt-2"
               >
                 <PageTransitionLink
                   to="/contact"
                   onClick={() => setOpen(false)}
-                  className="button-slide flex w-full items-center justify-center rounded-full border border-accent bg-brand px-4 py-3 text-xs font-medium uppercase tracking-[0.16em] text-white"
+                  className="button-slide flex min-h-14 w-full items-center justify-center rounded-full border border-accent bg-brand px-4 py-2 text-xs font-medium uppercase tracking-[0.16em] text-white"
                 >
                   Let's connect
                 </PageTransitionLink>
