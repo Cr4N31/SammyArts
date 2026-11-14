@@ -490,7 +490,8 @@ function CourseEditor() {
             <p className={labelClass}>Certificate image</p>
             <p className="mb-3 text-sm text-muted">
               Shown under &ldquo;Earn a certificate of completion&rdquo; in
-              Course details. Leave empty to hide that section.
+              Course details. A sample certificate is shown when no image is
+              uploaded.
             </p>
             <input
               ref={certificateFileRef}
@@ -527,7 +528,7 @@ function CourseEditor() {
               <img
                 src={draft.certificateImage}
                 alt="Certificate preview"
-                className="mt-4 max-h-72 w-full border border-border object-contain"
+                className="mt-4 max-h-72 w-full rounded-2xl border border-border bg-surface p-2 object-contain"
               />
             ) : null}
           </div>

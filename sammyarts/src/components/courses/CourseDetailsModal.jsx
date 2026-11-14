@@ -57,13 +57,7 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
   return createPortal(
     <div
       data-lenis-prevent
-      className="fixed inset-0 z-[110] bg-brand"
-      onWheel={(event) => {
-        event.preventDefault();
-        if (contentRef.current) {
-          contentRef.current.scrollTop += event.deltaY;
-        }
-      }}
+      className="fixed inset-0 z-[110] flex items-center justify-center overflow-y-auto bg-brand/80 p-2 backdrop-blur-sm sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -73,12 +67,12 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
         aria-modal="true"
         aria-labelledby="course-details-title"
         ref={dialogRef}
-        className="grid h-dvh w-full grid-rows-[minmax(0,1fr)_auto] overflow-hidden bg-bg text-text md:grid-cols-[minmax(0,1fr)_24rem] md:grid-rows-1"
+        className="grid max-h-[calc(100dvh-1rem)] w-full max-w-7xl grid-cols-1 grid-rows-[auto_auto] overflow-y-auto rounded-3xl bg-bg text-text shadow-2xl md:h-[min(52rem,calc(100dvh-2rem))] md:grid-cols-[minmax(0,1fr)_24rem] md:grid-rows-1 md:overflow-hidden"
       >
         <div
           ref={contentRef}
           data-lenis-prevent
-          className="min-h-0 overflow-y-auto overscroll-contain px-6 py-7 md:px-12 md:py-12"
+          className="px-5 py-6 sm:px-8 sm:py-8 md:min-h-0 md:overflow-y-auto md:overscroll-contain md:px-12 md:py-12"
         >
           <p className="text-xs uppercase tracking-[0.18em] text-muted">
             {activeCourse.category ||
@@ -151,27 +145,50 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             )}
           </section>
 
-          {activeCourse.certificateImage ? (
-            <section
-              aria-labelledby="course-certificate-heading"
-              className="mt-10 border-t border-border pt-6"
+          <section
+            aria-labelledby="course-certificate-heading"
+            className="mt-10 border-t border-border pt-6"
+          >
+            <h3
+              id="course-certificate-heading"
+              className="font-serif text-2xl tracking-[-0.03em]"
             >
-              <h3
-                id="course-certificate-heading"
-                className="font-serif text-2xl tracking-[-0.03em]"
-              >
-                Earn a certificate of completion
-              </h3>
-              <div className="mt-5 h-[18rem] rounded-2xl border border-accent/50 p-1 md:h-[20rem]">
+              Earn a certificate of completion
+            </h3>
+            <div className="relative mt-5 aspect-[1.414/1] w-full max-w-3xl overflow-hidden rounded-2xl border border-accent/50 bg-[#f7f0df] p-3 sm:p-5">
+              {activeCourse.certificateImage ? (
                 <img
                   src={activeCourse.certificateImage}
                   alt={`${activeCourse.title} certificate of completion`}
-                  className="h-full w-full rounded-xl object-cover"
+                  className="h-full w-full rounded-xl object-contain"
                   loading="lazy"
                 />
-              </div>
-            </section>
-          ) : null}
+              ) : (
+                <div
+                  aria-label={`Certificate of completion for ${activeCourse.title}`}
+                  className="relative flex h-full flex-col items-center justify-center border border-[#b39b67] px-4 text-center text-[#382f25] sm:px-8"
+                >
+                  <span className="font-serif text-xs uppercase tracking-[0.3em] text-[#927747] sm:text-sm">
+                    SammyArts
+                  </span>
+                  <span className="mt-3 h-px w-2/3 bg-[#b39b67]" />
+                  <p className="mt-4 font-serif text-[clamp(1.25rem,4vw,2.5rem)] leading-tight">
+                    Certificate of Completion
+                  </p>
+                  <p className="mt-2 text-[0.55rem] uppercase tracking-[0.15em] text-[#75674f] sm:text-xs">
+                    This certifies that
+                  </p>
+                  <p className="mt-2 max-w-full truncate font-serif text-base sm:text-xl">
+                    Your Name
+                  </p>
+                  <p className="mt-2 line-clamp-1 max-w-full text-[0.6rem] text-[#75674f] sm:text-xs">
+                    has completed {activeCourse.title}
+                  </p>
+                  <span className="mt-4 h-px w-1/3 bg-[#b39b67]" />
+                </div>
+              )}
+            </div>
+          </section>
 
           {nextCourses.length ? (
             <section
@@ -211,7 +228,7 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
           ) : null}
         </div>
 
-        <aside className="border-t border-border bg-surface px-6 py-5 md:border-l md:border-t-0 md:px-8 md:py-10">
+        <aside className="rounded-b-3xl border-t border-border bg-surface px-5 py-5 sm:px-8 md:rounded-b-none md:rounded-r-3xl md:border-l md:border-t-0 md:px-8 md:py-10">
           <div className="flex items-center justify-between gap-4">
             <p className="text-xs uppercase tracking-[0.16em] text-muted">
               Course overview

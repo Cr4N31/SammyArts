@@ -12,6 +12,55 @@ function Footer() {
   return (
     <footer className="px-5 pb-6 pt-16 text-text md:px-10 md:pt-20">
       <div className="mx-auto max-w-7xl">
+        <section
+          aria-labelledby="footer-connect-heading"
+          className="relative isolate mb-16 overflow-hidden border-y border-border py-24 text-center md:mb-24 md:py-28"
+        >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-36 text-accent/70"
+          >
+            <svg
+              viewBox="0 0 1200 220"
+              preserveAspectRatio="none"
+              className="h-full w-full"
+              fill="none"
+            >
+              <path
+                d="M0 0C210 185 430 210 600 210S990 185 1200 0"
+                stroke="currentColor"
+              />
+              <path
+                d="M120 0C290 150 455 190 600 190S910 150 1080 0"
+                stroke="currentColor"
+              />
+              <path
+                d="M260 0C380 125 485 170 600 170S820 125 940 0"
+                stroke="currentColor"
+              />
+              <path
+                d="M420 0C490 100 545 145 600 145S710 100 780 0"
+                stroke="currentColor"
+              />
+            </svg>
+          </div>
+          <div className="relative z-10 mx-auto max-w-3xl px-2 pt-10">
+            <h2
+              id="footer-connect-heading"
+              className="font-serif text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.05] tracking-[-0.04em]"
+            >
+              We create thoughtful brands and digital experiences that connect
+              people and leave a lasting mark
+            </h2>
+            <PageTransitionLink
+              to="/contact"
+              className="mt-10 inline-flex min-h-12 items-center justify-center rounded-full bg-accent px-8 py-3 font-serif text-lg text-brand transition-colors hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
+            >
+              Let&rsquo;s Connect
+            </PageTransitionLink>
+          </div>
+        </section>
+
         <div className="mb-16 flex flex-col gap-10 md:mb-24 md:items-center md:justify-center">
           <div className="flex flex-col justify-center items-center">
             <img src={logo} className="md:w-[400px] w-[200px]" />

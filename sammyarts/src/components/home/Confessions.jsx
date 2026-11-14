@@ -194,13 +194,16 @@ function Confessions() {
     if (!track) return;
 
     const measure = () => {
-      setWidthRef.current = track.scrollWidth / 2;
+      const firstSet = track.firstElementChild;
+      setWidthRef.current = firstSet
+        ? firstSet.getBoundingClientRect().width
+        : 0;
     };
 
     measure();
 
     const observer = new ResizeObserver(measure);
-    observer.observe(track);
+    if (track.firstElementChild) observer.observe(track.firstElementChild);
 
     return () => observer.disconnect();
   }, []);
