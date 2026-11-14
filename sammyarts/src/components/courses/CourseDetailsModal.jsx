@@ -166,7 +166,7 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
                 <img
                   src={activeCourse.certificateImage}
                   alt={`${activeCourse.title} certificate of completion`}
-                  className="h-full w-full rounded-xl object-contain"
+                  className="h-full w-full rounded-xl object-cover"
                   loading="lazy"
                 />
               ) : (
@@ -250,7 +250,10 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
           <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-1">
             <div>
               <dt className="flex items-center gap-3 text-sm text-muted">
-                <FaLayerGroup aria-hidden="true" className="shrink-0 text-accent" />
+                <FaLayerGroup
+                  aria-hidden="true"
+                  className="shrink-0 text-accent"
+                />
                 <span>Level</span>
               </dt>
               <dd className="ml-6 mt-1 text-sm">
@@ -268,7 +271,10 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             </div>
             <div>
               <dt className="flex items-center gap-3 text-sm text-muted">
-                <FaBookOpen aria-hidden="true" className="shrink-0 text-accent" />
+                <FaBookOpen
+                  aria-hidden="true"
+                  className="shrink-0 text-accent"
+                />
                 <span>Lessons</span>
               </dt>
               <dd className="ml-6 mt-1 text-sm">
