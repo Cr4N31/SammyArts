@@ -52,7 +52,7 @@ async function prepareFile(file) {
   return new File([blob], `${base}.webp`, { type: "image/webp" });
 }
 
-async function sendToStorage(file) {
+async function startUpload(file, kind) {
   if (!auth?.currentUser) {
     throw new Error("Sign in to the admin before uploading.");
   }
@@ -61,17 +61,20 @@ async function sendToStorage(file) {
   const res = await fetch("/api/image-upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idToken, name: file.name, type: file.type }),
+    body: JSON.stringify({ idToken, name: file.name, type: file.type, kind }),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || !data?.uploadUrl) {
     throw new Error(data?.error || "Could not start the upload.");
   }
+  return data;
+}
 
+async function putFile(uploadUrl, file) {
   const form = new FormData();
   form.append("cacheControl", "31536000");
   form.append("", file);
-  const put = await fetch(data.uploadUrl, {
+  const put = await fetch(uploadUrl, {
     method: "PUT",
     body: form,
     headers: {
@@ -83,6 +86,24 @@ async function sendToStorage(file) {
     const body = await put.json().catch(() => ({}));
     throw new Error(body?.message || body?.error || "Upload failed.");
   }
+}
+
+/** Returns the private storage path; buyers get a signed link after paying. */
+export async function uploadCourseFile(file) {
+  if (file?.type !== "application/pdf" && !file?.type?.startsWith("image/")) {
+    throw new Error("Use a PDF or an image.");
+  }
+  if (file.size > MAX_FILE_BYTES) {
+    throw new Error("That file is larger than 50 MB.");
+  }
+  const data = await startUpload(file, "courseFile");
+  await putFile(data.uploadUrl, file);
+  return data.path;
+}
+
+async function sendToStorage(file) {
+  const data = await startUpload(file);
+  await putFile(data.uploadUrl, file);
   return data.publicUrl;
 }
 

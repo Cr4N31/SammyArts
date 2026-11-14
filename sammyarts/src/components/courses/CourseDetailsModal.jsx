@@ -151,47 +151,27 @@ function CourseDetailsModal({ course, courses, ratings, onBuy, onClose }) {
             )}
           </section>
 
-          <section
-            aria-labelledby="course-certificate-heading"
-            className="mt-10 border-t border-border pt-6"
-          >
-            <h3
-              id="course-certificate-heading"
-              className="font-serif text-2xl tracking-[-0.03em]"
+          {activeCourse.certificateImage ? (
+            <section
+              aria-labelledby="course-certificate-heading"
+              className="mt-10 border-t border-border pt-6"
             >
-              Earn a certificate of completion
-            </h3>
-            <div className="mt-5 h-[18rem] rounded-2xl border border-accent/50 p-1 md:h-[20rem]">
-              {activeCourse.certificateImage ? (
+              <h3
+                id="course-certificate-heading"
+                className="font-serif text-2xl tracking-[-0.03em]"
+              >
+                Earn a certificate of completion
+              </h3>
+              <div className="mt-5 h-[18rem] rounded-2xl border border-accent/50 p-1 md:h-[20rem]">
                 <img
                   src={activeCourse.certificateImage}
                   alt={`${activeCourse.title} certificate of completion`}
                   className="h-full w-full rounded-xl object-cover"
                   loading="lazy"
                 />
-              ) : (
-                <div className="h-full overflow-hidden rounded-xl border border-border bg-surface px-6 py-8 md:px-8 md:py-10">
-                  <p className="text-[0.65rem] uppercase tracking-[0.2em] text-accent">
-                    SammyArts · Learning collection
-                  </p>
-                  <p className="mt-10 text-xs text-muted">
-                    Certificate of completion
-                  </p>
-                  <p className="mt-2 font-serif text-3xl leading-tight tracking-[-0.03em] md:text-4xl">
-                    {activeCourse.title}
-                  </p>
-                  <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-                    Awarded to the learner upon successful completion of this
-                    course.
-                  </p>
-                  <div className="mt-10 flex flex-wrap justify-between gap-6 border-t border-border pt-4 text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-                    <span>SammyArts</span>
-                    <span>Certificate of achievement</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
+              </div>
+            </section>
+          ) : null}
 
           {nextCourses.length ? (
             <section

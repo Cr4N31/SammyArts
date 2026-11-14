@@ -1,7 +1,9 @@
 const BUCKET = "images";
+const COURSE_FILES_BUCKET = "course-files";
 const MAX_BUCKET_BYTES = 50 * 1024 * 1024;
+const DOWNLOAD_LINK_SECONDS = 24 * 60 * 60;
 
-let bucketReady = false;
+const readyBuckets = new Set();
 
 function supabaseConfig() {
   const url = String(process.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
@@ -52,15 +54,15 @@ async function verifyAdmin(idToken) {
   }
 }
 
-async function ensureBucket({ url, secret }) {
-  if (bucketReady) return;
+async function ensureBucket({ url, secret }, id = BUCKET, isPublic = true) {
+  if (readyBuckets.has(id)) return;
   const res = await fetch(`${url}/storage/v1/bucket`, {
     method: "POST",
     headers: supabaseHeaders(secret),
     body: JSON.stringify({
-      id: BUCKET,
-      name: BUCKET,
-      public: true,
+      id,
+      name: id,
+      public: isPublic,
       file_size_limit: MAX_BUCKET_BYTES,
     }),
   });
@@ -68,10 +70,66 @@ async function ensureBucket({ url, secret }) {
     const body = await res.json().catch(() => ({}));
     const text = JSON.stringify(body).toLowerCase();
     if (!text.includes("already exists") && !text.includes("duplicate")) {
-      throw new Error(body?.message || "Could not prepare image storage.");
+      throw new Error(body?.message || "Could not prepare file storage.");
     }
   }
-  bucketReady = true;
+  readyBuckets.add(id);
+}
+
+function courseFileExtension(name, type) {
+  const fromName = String(name || "").split(".").pop()?.toLowerCase() || "";
+  if (/^(pdf|jpe?g|png|webp|gif)$/.test(fromName)) return fromName;
+  const fromType = String(type || "").split("/").pop()?.toLowerCase() || "";
+  if (/^(pdf|jpe?g|png|webp|gif)$/.test(fromType)) return fromType;
+  throw new Error("Course files must be a PDF or an image.");
+}
+
+async function createCourseFileUpload(body) {
+  const config = supabaseConfig();
+  await ensureBucket(config, COURSE_FILES_BUCKET, false);
+
+  const ext = courseFileExtension(body?.name, body?.type);
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+
+  const res = await fetch(
+    `${config.url}/storage/v1/object/upload/sign/${COURSE_FILES_BUCKET}/${path}`,
+    {
+      method: "POST",
+      headers: supabaseHeaders(config.secret),
+      body: JSON.stringify({ upsert: false }),
+    },
+  );
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data?.url) {
+    throw new Error(data?.message || "Could not start the upload.");
+  }
+
+  return {
+    uploadUrl: `${config.url}/storage/v1${data.url}`,
+    path,
+  };
+}
+
+/** Private course files are only reachable through short-lived signed links. */
+export async function signCourseFileDownload(path, downloadName) {
+  const config = supabaseConfig();
+  const res = await fetch(
+    `${config.url}/storage/v1/object/sign/${COURSE_FILES_BUCKET}/${path}`,
+    {
+      method: "POST",
+      headers: supabaseHeaders(config.secret),
+      body: JSON.stringify({ expiresIn: DOWNLOAD_LINK_SECONDS }),
+    },
+  );
+  const data = await res.json().catch(() => ({}));
+  const signed = data?.signedURL || data?.signedUrl;
+  if (!res.ok || !signed) {
+    throw new Error(data?.message || "Could not prepare the course download.");
+  }
+  const link = `${config.url}/storage/v1${signed}`;
+  return downloadName
+    ? `${link}&download=${encodeURIComponent(downloadName)}`
+    : link;
 }
 
 function safeExtension(name, type) {
@@ -85,6 +143,7 @@ function safeExtension(name, type) {
 
 export async function createImageUpload(body) {
   await verifyAdmin(body?.idToken);
+  if (body?.kind === "courseFile") return createCourseFileUpload(body);
   const config = supabaseConfig();
   await ensureBucket(config);
 

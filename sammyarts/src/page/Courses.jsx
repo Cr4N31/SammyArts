@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContent } from "../data/content";
 import { listCourseRatings, submitCourseRating } from "../data/courseRatings";
+import { defaultCourseFaqs, getCourseFaqs } from "../data/courseFaqs";
 import CoursesHeader from "../components/courses/CoursesHeader";
 import CourseFilter from "../components/courses/CourseFilter";
 import CourseGrid from "../components/courses/CourseGrid";
@@ -25,6 +26,19 @@ function Courses() {
   const sortTriggerRef = useRef(null);
   const [courseRatings, setCourseRatings] = useState([]);
   const [ratingsError, setRatingsError] = useState("");
+  const [faqs, setFaqs] = useState(defaultCourseFaqs);
+
+  useEffect(() => {
+    let active = true;
+    getCourseFaqs()
+      .then((items) => {
+        if (active) setFaqs(items);
+      })
+      .catch((error) => console.error(error));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleBuy = (course) =>
     navigate(`/checkout/${course.slug || course.id}`);
@@ -290,75 +304,34 @@ function Courses() {
             Frequently asked questions
           </h2>
           <div className="divide-y divide-border">
-            <details className="group py-4">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
-                How long will I have access to a course?
-                <span
-                  aria-hidden="true"
-                  className="text-accent transition-transform group-open:rotate-180"
-                >
-                  ↓
-                </span>
-              </summary>
-              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
-                Course duration and access information are shown in each
-                course&rsquo;s overview. You can review those details before
-                enrolling.
-              </p>
-            </details>
-            <details className="group py-4">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
-                Do I get a certificate after completion?
-                <span
-                  aria-hidden="true"
-                  className="text-accent transition-transform group-open:rotate-180"
-                >
-                  ↓
-                </span>
-              </summary>
-              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
-                Yes. A certificate of completion is available after you
-                successfully complete your course.
-              </p>
-            </details>
-            <details className="group py-4">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
-                Can I learn offline?
-                <span
-                  aria-hidden="true"
-                  className="text-accent transition-transform group-open:rotate-180"
-                >
-                  ↓
-                </span>
-              </summary>
-              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
-                Offline access depends on the course materials provided after
-                enrollment. Check the course overview or contact us if you need
-                help confirming access options.
-              </p>
-            </details>
-            <details className="group py-4">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
-                What support do I get during the course?
-                <span
-                  aria-hidden="true"
-                  className="text-accent transition-transform group-open:rotate-180"
-                >
-                  ↓
-                </span>
-              </summary>
-              <p className="max-w-3xl pb-3 pr-8 text-sm leading-relaxed text-muted">
-                Support varies by course. For help with enrollment or access,
-                <Link
-                  to="/contact"
-                  className="ml-1 border-b border-current transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  contact SammyArts
-                </Link>
-                .
-              </p>
-            </details>
+            {faqs.map((faq, faqIndex) => (
+              <details key={faqIndex} className="group py-4">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
+                  {faq.question}
+                  <span
+                    aria-hidden="true"
+                    className="text-accent transition-transform group-open:rotate-180"
+                  >
+                    ↓
+                  </span>
+                </summary>
+                {faq.answer ? (
+                  <p className="max-w-3xl whitespace-pre-line pb-3 pr-8 text-sm leading-relaxed text-muted">
+                    {faq.answer}
+                  </p>
+                ) : null}
+              </details>
+            ))}
           </div>
+          <p className="mt-6 text-sm text-muted">
+            Still have a question?{" "}
+            <Link
+              to="/contact"
+              className="border-b border-current transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Contact SammyArts
+            </Link>
+          </p>
         </section>
       </div>
     </main>

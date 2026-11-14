@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,7 +9,9 @@ import {
   getFirestore,
   serverTimestamp,
   setDoc,
+  Timestamp,
 } from "firebase/firestore";
+import { signCourseFileDownload } from "./imageUpload.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PAYSTACK_API = "https://api.paystack.co";
@@ -120,14 +123,78 @@ function courseMeta(course, name, email) {
   };
 }
 
+function isFreeCourse(course) {
+  return !(Number(course?.price) > 0);
+}
+
+function freeSignature(payload) {
+  const secret =
+    process.env.SUPABASE_SECRET_KEY || process.env.PAYSTACK_SECRET_KEY || "";
+  if (!secret) throw new Error("Free enrollment is not set up on the server.");
+  return createHmac("sha256", secret).update(payload).digest("hex").slice(0, 32);
+}
+
+/** Free references are signed so the success page cannot be reached without the form. */
+function makeFreeReference(courseKey) {
+  const payload = `free.${courseKey}.${Date.now()}`;
+  return `${payload}.${freeSignature(payload)}`;
+}
+
+function readFreeReference(reference) {
+  const parts = String(reference || "").split(".");
+  if (parts.length !== 4 || parts[0] !== "free") return null;
+  const payload = parts.slice(0, 3).join(".");
+  const expected = Buffer.from(freeSignature(payload));
+  const given = Buffer.from(parts[3]);
+  if (expected.length !== given.length || !timingSafeEqual(expected, given)) {
+    throw new Error("This enrollment link is not valid.");
+  }
+  return { courseKey: parts[1] };
+}
+
+async function enrollFree(course, name, email) {
+  const courseKey = String(course.slug || course.id);
+  const reference = makeFreeReference(courseKey);
+  const meta = courseMeta(course, name, email);
+  try {
+    await setDoc(doc(getFirestore(firebaseApp()), "orders", reference), {
+      checkoutId: reference,
+      name: meta.buyerName,
+      email: meta.buyerEmail,
+      courseId: meta.courseId.slice(0, 40),
+      courseSlug: meta.courseSlug.slice(0, 120),
+      courseTitle: meta.courseTitle,
+      courseType: meta.courseType,
+      billing: "free",
+      amount: "0.00",
+      currency: "NGN",
+      status: "paid",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+  } catch (err) {
+    console.error("Could not save free enrollment:", err);
+  }
+  return {
+    reference,
+    checkout_url: `/checkout/success?reference=${encodeURIComponent(
+      reference,
+    )}&course=${encodeURIComponent(courseKey)}`,
+    free: true,
+  };
+}
+
 export async function createCourseCheckout(req, body) {
-  const secret = paystackKey();
   const courseKey = body?.course || body?.slug || body?.id;
   const course = await loadCourse(courseKey);
   const email = String(body?.email || "").trim();
   const name = String(body?.name || "").trim();
   if (!name) throw new Error("Name is required.");
   if (!email || !email.includes("@")) throw new Error("Email is required.");
+
+  if (isFreeCourse(course)) return enrollFree(course, name, email);
+
+  const secret = paystackKey();
 
   const base = siteBase(req);
   const coursePath = encodeURIComponent(course.slug || course.id);
@@ -225,11 +292,14 @@ export async function recordPurchase(charge) {
     updatedAt: serverTimestamp(),
   };
 
+  // Orders are admin-read-only, so the server cannot check for an existing
+  // doc; a createdAt derived from the payment keeps repeat saves stable.
+  const paidAt = Date.parse(charge.paid_at || charge.paidAt || charge.created_at || "");
+  payload.createdAt = Number.isFinite(paidAt)
+    ? Timestamp.fromMillis(paidAt)
+    : serverTimestamp();
+
   const ref = doc(getFirestore(firebaseApp()), "orders", reference);
-  const existing = await getDoc(ref);
-  if (!existing.exists()) {
-    payload.createdAt = serverTimestamp();
-  }
   await setDoc(ref, payload, { merge: true });
   return payload;
 }
@@ -252,18 +322,67 @@ export async function fetchCharge(reference) {
   return data.data || {};
 }
 
+async function courseDownload(meta) {
+  const course = await loadCourse(meta.courseSlug || meta.courseId);
+  if (!course?.courseFile) return null;
+  const ext = String(course.courseFile).split(".").pop();
+  const name =
+    course.courseFileName ||
+    `${String(course.title || "course").replace(/[^\w\s-]/g, "").trim()}.${ext}`;
+  return {
+    url: await signCourseFileDownload(course.courseFile, name),
+    name,
+  };
+}
+
+async function confirmFree(reference, courseKey) {
+  const course = await loadCourse(courseKey);
+  if (!isFreeCourse(course)) {
+    throw new Error("This course is no longer free.");
+  }
+  let download = null;
+  try {
+    download = await courseDownload({
+      courseSlug: course.slug,
+      courseId: String(course.id),
+    });
+  } catch (err) {
+    console.error("Could not prepare course download:", err);
+  }
+  return {
+    download,
+    reference,
+    status: "success",
+    metadata: { courseTitle: String(course.title || "").slice(0, 120) },
+    amount: "0.00",
+    currency: "NGN",
+    name: "",
+    email: "",
+  };
+}
+
 export async function confirmCheckout(reference) {
+  const free = readFreeReference(reference);
+  if (free) return confirmFree(reference, free.courseKey);
+
   const charge = await fetchCharge(reference);
+  let download = null;
   if (isPaidStatus(charge.status)) {
     try {
       await recordPurchase(charge);
     } catch (err) {
       console.error("Could not save purchase:", err);
     }
+    try {
+      download = await courseDownload(charge.metadata || {});
+    } catch (err) {
+      console.error("Could not prepare course download:", err);
+    }
   }
 
   const buyer = buyerFromCharge(charge);
   return {
+    download,
     reference: charge.reference || reference,
     status: charge.status || "unknown",
     metadata: charge.metadata || {},
