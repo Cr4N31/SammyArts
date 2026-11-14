@@ -168,12 +168,14 @@ function Tile({ item, total, title, eager, rounded }) {
         className="block h-auto w-full select-none"
       />
 
-      <figcaption
-        aria-hidden="true"
-        className="absolute left-0 top-0 flex items-baseline gap-1.5 px-3 py-2 text-lg tabular-nums text-text"
-      >
-        <span>{pad(number)}</span>
-      </figcaption>
+      {total > 1 ? (
+        <figcaption
+          aria-hidden="true"
+          className="absolute left-0 top-0 flex items-baseline gap-1.5 px-3 py-2 text-lg tabular-nums text-text"
+        >
+          <span>{pad(number)}</span>
+        </figcaption>
+      ) : null}
     </figure>
   );
 }
