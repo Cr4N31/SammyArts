@@ -128,7 +128,7 @@ function Hero() {
           />
         </picture>
         <img
-          src="/img/ceo.png"
+          src="/img/ceo.webp"
           alt=""
           aria-hidden="true"
           decoding="async"
