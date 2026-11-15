@@ -14,7 +14,7 @@ function Footer() {
       <div className="mx-auto max-w-7xl">
         <section
           aria-labelledby="footer-connect-heading"
-          className="relative isolate mb-16 overflow-hidden border-y border-border py-24 text-center md:mb-24 md:py-28"
+          className="md:hidden relative isolate mb-16 overflow-hidden border-y border-border py-24 text-center md:mb-24 md:py-28"
         >
           <div
             aria-hidden="true"
