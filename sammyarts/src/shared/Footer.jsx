@@ -14,36 +14,8 @@ function Footer() {
       <div className="mx-auto max-w-7xl">
         <section
           aria-labelledby="footer-connect-heading"
-          className="md:hidden relative isolate mb-16 overflow-hidden border-y border-border py-24 text-center md:mb-24 md:py-28"
+          className="relative isolate mb-16 overflow-hidden border-y border-border py-24 text-center md:mb-24 md:py-28"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-36 text-accent/70"
-          >
-            <svg
-              viewBox="0 0 1200 220"
-              preserveAspectRatio="none"
-              className="h-full w-full"
-              fill="none"
-            >
-              <path
-                d="M0 0C210 185 430 210 600 210S990 185 1200 0"
-                stroke="currentColor"
-              />
-              <path
-                d="M120 0C290 150 455 190 600 190S910 150 1080 0"
-                stroke="currentColor"
-              />
-              <path
-                d="M260 0C380 125 485 170 600 170S820 125 940 0"
-                stroke="currentColor"
-              />
-              <path
-                d="M420 0C490 100 545 145 600 145S710 100 780 0"
-                stroke="currentColor"
-              />
-            </svg>
-          </div>
           <div className="relative z-10 mx-auto max-w-3xl px-2 pt-10">
             <h2
               id="footer-connect-heading"
