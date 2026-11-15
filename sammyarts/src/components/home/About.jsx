@@ -59,7 +59,7 @@ function About() {
         <MotionDiv
           {...fadeUp}
           transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
-          className="md:col-span-4 md:col-start-9"
+          className="md:col-span-4 md:col-start-9 md:-mt-2"
         >
           <DisciplineList className="w-full" />
         </MotionDiv>

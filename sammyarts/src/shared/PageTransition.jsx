@@ -73,7 +73,7 @@ export function PageLoader({ exiting = false }) {
             <h1
               key={index}
               aria-hidden="true"
-              className={`startup-loader__letter${
+              className={`startup-loader__letter pr-2 ${
                 index >= 5 ? " startup-loader__letter--accent" : ""
               }`}
               style={{ "--letter-index": index }}
