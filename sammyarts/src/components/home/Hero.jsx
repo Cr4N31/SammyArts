@@ -174,7 +174,7 @@ function Hero() {
         </div>
 
         {/* Wordmark: full width on mobile, about 68vw on desktop */}
-        <div className="w-full md:w-[68vw]">
+        <div className="w-full hidden md:flex md:w-[68vw]">
           <Wordmark />
         </div>
       </div>
