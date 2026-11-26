@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaBehance,
   FaWhatsapp,
@@ -53,6 +53,30 @@ function Contact() {
     message: "",
   });
   const [status, setStatus] = useState("idle"); // idle | sent
+  const [serviceOpen, setServiceOpen] = useState(false);
+  const serviceRef = useRef(null);
+  const serviceTriggerRef = useRef(null);
+
+  useEffect(() => {
+    if (!serviceOpen) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (!serviceRef.current?.contains(event.target)) setServiceOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        setServiceOpen(false);
+        serviceTriggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [serviceOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -154,25 +178,96 @@ function Contact() {
             <label htmlFor="service" className="sr-only">
               What do you need
             </label>
-            <select
-              id="service"
-              name="service"
-              required
-              value={values.service}
-              onChange={handleChange}
-              className={`${fieldClass} appearance-none ${
-                values.service ? "" : "text-muted/70"
-              }`}
-            >
-              <option value="" disabled>
-                What do you need? *
-              </option>
-              {services.map((s) => (
-                <option key={s} value={s} className="text-black">
-                  {s}
-                </option>
-              ))}
-            </select>
+            <div ref={serviceRef} className="relative">
+              <select
+                id="service"
+                name="service"
+                required
+                value={values.service}
+                onChange={handleChange}
+                onInvalid={(event) => {
+                  event.preventDefault();
+                  setServiceOpen(true);
+                  serviceTriggerRef.current?.focus();
+                }}
+                aria-hidden="true"
+                tabIndex={-1}
+                className="sr-only"
+              >
+                <option value="">What do you need?</option>
+                {services.map((service) => (
+                  <option key={service} value={service}>
+                    {service}
+                  </option>
+                ))}
+              </select>
+              <button
+                ref={serviceTriggerRef}
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={serviceOpen}
+                aria-label={`What do you need?${values.service ? ` Selected: ${values.service}` : ""}`}
+                aria-required="true"
+                onClick={() => setServiceOpen((open) => !open)}
+                className={`flex min-h-[3.5rem] w-full items-center justify-between gap-5 rounded-3xl border border-border bg-white/[0.03] px-4 py-4 text-left text-sm outline-none transition-colors hover:border-muted/60 focus-visible:ring-1 focus-visible:ring-accent ${
+                  values.service ? "text-text" : "text-muted/70"
+                }`}
+              >
+                {values.service || "What do you need? *"}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  className={`h-3.5 w-3.5 shrink-0 text-accent transition-transform ${
+                    serviceOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  <path
+                    d="m3.5 6 4.5 4 4.5-4"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+              </button>
+              {serviceOpen ? (
+                <div
+                  role="listbox"
+                  aria-label="What do you need?"
+                  className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-xl border border-border bg-surface p-1.5 shadow-xl"
+                >
+                  {services.map((service) => (
+                    <button
+                      key={service}
+                      type="button"
+                      role="option"
+                      aria-selected={values.service === service}
+                      onClick={() => {
+                        setValues((current) => ({
+                          ...current,
+                          service,
+                        }));
+                        setServiceOpen(false);
+                        serviceTriggerRef.current?.focus();
+                      }}
+                      className={`flex min-h-10 w-full items-center justify-between gap-6 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-raised hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                        values.service === service
+                          ? "bg-raised text-accent"
+                          : "text-muted"
+                      }`}
+                    >
+                      {service}
+                      {values.service === service ? (
+                        <span aria-hidden="true" className="text-accent">
+                          ✓
+                        </span>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <div>

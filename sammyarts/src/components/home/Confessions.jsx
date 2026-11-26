@@ -6,7 +6,6 @@ import {
   useMotionValue,
   useReducedMotion,
   useScroll,
-  useSpring,
   useTransform,
 } from "motion/react";
 
@@ -146,18 +145,6 @@ function Confessions() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const smoothCursorX = useSpring(cursorX, {
-    stiffness: 500,
-    damping: 38,
-    mass: 0.35,
-  });
-
-  const smoothCursorY = useSpring(cursorY, {
-    stiffness: 500,
-    damping: 38,
-    mass: 0.35,
-  });
-
   const { scrollY } = useScroll();
   const x = useMotionValue(0);
 
@@ -237,10 +224,6 @@ function Confessions() {
   const handlePointerEnter = (event) => {
     if (reduce || event.pointerType !== "mouse") return;
 
-    // Snap the spring to the pointer first so the cursor appears in place
-    // instead of flying in from wherever it was last.
-    smoothCursorX.jump?.(event.clientX);
-    smoothCursorY.jump?.(event.clientY);
     cursorX.set(event.clientX);
     cursorY.set(event.clientY);
 
@@ -282,7 +265,7 @@ function Confessions() {
     if (!reduce && event.pointerType === "mouse") {
       cursorX.set(event.clientX);
       cursorY.set(event.clientY);
-      setHovering(true);
+      if (!hovering) setHovering(true);
     }
 
     if (!draggingRef.current || activePointerRef.current !== event.pointerId) {
@@ -324,11 +307,9 @@ function Confessions() {
   const cursor = (
     <MotionDiv
       aria-hidden="true"
-      // Negative margins centre the 48px circle on the pointer. Do not use
-      // translateX/translateY here: motion treats them as the same transform
-      // as x/y, so they would overwrite the spring position.
+      // Negative margins centre the 48px circle on the pointer.
       className="pointer-events-none fixed left-0 top-0 z-[9999] -ml-6 -mt-6 hidden items-center justify-center md:flex"
-      style={{ x: smoothCursorX, y: smoothCursorY }}
+      style={{ x: cursorX, y: cursorY }}
       initial={false}
       animate={{
         opacity: showCursor ? 1 : 0,
@@ -388,11 +369,7 @@ function Confessions() {
       {/* Draggable carousel */}
       <div
         className={`relative select-none ${
-          reduce
-            ? "overflow-x-auto"
-            : `overflow-hidden md:cursor-none ${
-                isDragging ? "cursor-grabbing" : "cursor-grab"
-              }`
+          reduce ? "overflow-x-auto" : "overflow-hidden"
         }`}
         style={{
           touchAction: "pan-y",
