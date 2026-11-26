@@ -90,6 +90,11 @@
           transform: translateX(230%);
         }
       }
+      @media (max-width: 640px) {
+        .startup-loader__wordmark {
+          font-size: clamp(2.5rem, 10vw, 3.5rem);
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
         .startup-loader__letter,
         .startup-loader__track span {
