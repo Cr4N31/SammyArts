@@ -134,7 +134,7 @@ function Hero() {
           decoding="async"
           fetchPriority="high"
           draggable={false}
-          className="absolute inset-0 h-full w-full select-none object-cover object-[center_top] md:hidden"
+          className="absolute mt-8 inset-0 h-full w-full select-none object-cover object-[center_top] md:hidden"
         />
       </MotionDiv>
 
